@@ -29,7 +29,7 @@ export const BlurIn = ({
   const combinedVariants = variant || defaultVariants;
 
   return (
-    <motion.h1
+    <motion.div
       initial="hidden"
       animate="visible"
       transition={{ duration, delay }}
@@ -40,7 +40,7 @@ export const BlurIn = ({
       )}
     >
       {children}
-    </motion.h1>
+    </motion.div>
   );
 };
 
