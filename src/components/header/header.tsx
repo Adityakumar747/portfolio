@@ -60,7 +60,6 @@ const Header = ({ loader }: HeaderProps) => {
           <GitHubStarsButton
             username={config.githubUsername}
             repo={config.githubRepo}
-            onClick={(e) => e.preventDefault()}
             className="mr-4"
           />
         )}
