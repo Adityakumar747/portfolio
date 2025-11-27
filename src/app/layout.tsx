@@ -46,9 +46,15 @@ export const metadata: Metadata = {
   },
 };
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
 const archivoBlack = Archivo_Black({
   subsets: ["latin"],
   weight: "400",
+  variable: "--font-display",
 });
 
 export default function RootLayout({
@@ -57,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={[archivoBlack.className].join(" ")} suppressHydrationWarning>
+    <html lang="en" className={[inter.variable, archivoBlack.variable, "font-display"].join(" ")} suppressHydrationWarning>
       <head>
         <Script
           defer

@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useMousePosition } from "@/utils/mouse";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 interface ParticlesProps {
   className?: string;
@@ -19,6 +20,10 @@ export default function Particles({
   ease = 50,
   refresh = false,
 }: ParticlesProps) {
+  const pathname = usePathname();
+  const isBlogPost = pathname.startsWith("/blogs/") && pathname !== "/blogs";
+
+  if (isBlogPost) return null;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const context = useRef<CanvasRenderingContext2D | null>(null);

@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { useMouse } from "@/hooks/use-mouse";
 import { usePreloader } from "../preloader";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { usePathname } from "next/navigation";
 
 // Gsap Ticker Function
 function useTicker(callback: any, paused: boolean) {
@@ -71,6 +72,9 @@ function getRekt(el: HTMLElement) {
 const CURSOR_DIAMETER = 50;
 
 function ElasticCursor() {
+  const pathname = usePathname();
+  const isBlogPost = pathname.startsWith("/blogs/") && pathname !== "/blogs";
+
   const { loadingPercent, isLoading } = usePreloader();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -187,7 +191,8 @@ function ElasticCursor() {
   }, [loadingPercent]);
 
   useTicker(loop, isLoading || !cursorMoved || isMobile);
-  if (isMobile) return null;
+  if (isMobile || isBlogPost) return null;
+
   // Return UI
   return (
     <>
