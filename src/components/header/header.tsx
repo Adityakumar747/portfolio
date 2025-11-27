@@ -10,6 +10,7 @@ import FunnyThemeToggle from "../theme/funny-theme-toggle";
 import { Button } from "../ui/button";
 import { config } from "@/data/config";
 import OnlineUsers from "../realtime/online-users";
+import { GitHubStarsButton } from "../ui/shadcn-io/github-stars-button";
 
 interface HeaderProps {
   loader?: boolean;
@@ -55,6 +56,14 @@ const Header = ({ loader }: HeaderProps) => {
 
         <OnlineUsers />
         <FunnyThemeToggle className="w-6 h-6 mr-4" />
+        {config.githubUsername && config.githubRepo && (
+          <GitHubStarsButton
+            username={config.githubUsername}
+            repo={config.githubRepo}
+            onClick={(e) => e.preventDefault()}
+            className="mr-4"
+          />
+        )}
         <Button
           variant={"ghost"}
           onClick={() => setIsActive(!isActive)}
@@ -75,9 +84,8 @@ const Header = ({ loader }: HeaderProps) => {
             </motion.p>
           </div>
           <div
-            className={`${styles.burger} ${
-              isActive ? styles.burgerActive : ""
-            }`}
+            className={`${styles.burger} ${isActive ? styles.burgerActive : ""
+              }`}
           ></div>
         </Button>
       </div>

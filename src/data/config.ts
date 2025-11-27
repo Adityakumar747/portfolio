@@ -27,6 +27,10 @@ const config = {
   email: "naresh.khatri2345@gmail.com",
   site: "https://nareshkhatri.site",
 
+  // for github stars button
+  githubUsername: "naresh-khatri",
+  githubRepo: "3d-portfolio",
+
   get ogImg() {
     return this.site + "/assets/seo/og-image.png";
   },
