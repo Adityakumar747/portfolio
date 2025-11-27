@@ -31,7 +31,7 @@ import {
   SiPrettier,
   SiTypescript,
   SiVercel,
-  SiVisualstudiocode,
+  SiVscodium,
 } from "react-icons/si";
 import { VscCode } from "react-icons/vsc";
 
@@ -167,7 +167,7 @@ const TOOLS = [
   {
     name: "VS Code",
     content: "Next.js is a React framework for production",
-    icon: <SiVisualstudiocode size={"50px"} color="#007acc" />,
+    icon: <SiVscodium size={"50px"} color="#007acc" />,
     color: "#007acc",
   },
   {
