@@ -5,12 +5,9 @@ import {
   useSpring,
   useTransform,
   motion,
-  useInView,
   type MotionValue,
   type SpringOptions,
-  type UseInViewOptions,
 } from 'motion/react';
-import useMeasure from 'react-use-measure';
 import { cn } from '@/lib/utils';
 
 
@@ -35,11 +32,8 @@ function SlidingNumberRoller({
     animatedValue.set(targetNumber);
   }, [targetNumber, animatedValue]);
 
-  const [measureRef, { height }] = useMeasure();
-
   return (
     <span
-      ref={measureRef}
       data-slot="sliding-number-roller"
       className="relative inline-block w-[1ch] overflow-x-visible overflow-y-clip leading-none tabular-nums"
     >
@@ -49,7 +43,6 @@ function SlidingNumberRoller({
           key={i}
           motionValue={animatedValue}
           number={i}
-          height={height}
           transition={transition}
         />
       ))}
@@ -60,28 +53,22 @@ function SlidingNumberRoller({
 type SlidingNumberDisplayProps = {
   motionValue: MotionValue<number>;
   number: number;
-  height: number;
   transition: SpringOptions;
 };
 
 function SlidingNumberDisplay({
   motionValue,
   number,
-  height,
   transition,
 }: SlidingNumberDisplayProps) {
   const y = useTransform(motionValue, (latest) => {
-    if (!height) return 0;
+    const fontSize = 16
     const currentNumber = latest % 10;
     const offset = (10 + number - currentNumber) % 10;
-    let translateY = offset * height;
-    if (offset > 5) translateY -= 10 * height;
+    let translateY = offset * fontSize;
+    if (offset > 5) translateY -= 10 * fontSize;
     return translateY;
   });
-
-  if (!height) {
-    return <span className="invisible absolute">{number}</span>;
-  }
 
   return (
     <motion.span
@@ -97,9 +84,6 @@ function SlidingNumberDisplay({
 
 type SlidingNumberProps = React.ComponentProps<'span'> & {
   number: number | string;
-  inView?: boolean;
-  inViewMargin?: UseInViewOptions['margin'];
-  inViewOnce?: boolean;
   padStart?: boolean;
   decimalSeparator?: string;
   decimalPlaces?: number;
@@ -107,12 +91,8 @@ type SlidingNumberProps = React.ComponentProps<'span'> & {
 };
 
 function SlidingNumber({
-  ref,
   number,
   className,
-  inView = false,
-  inViewMargin = '0px',
-  inViewOnce = true,
   padStart = false,
   decimalSeparator = '.',
   decimalPlaces = 0,
@@ -123,20 +103,11 @@ function SlidingNumber({
   },
   ...props
 }: SlidingNumberProps) {
-  const localRef = React.useRef<HTMLSpanElement>(null);
-  React.useImperativeHandle(ref, () => localRef.current!);
-
-  const inViewResult = useInView(localRef, {
-    once: inViewOnce,
-    margin: inViewMargin,
-  });
-  const isInView = !inView || inViewResult;
-
   const prevNumberRef = React.useRef<number>(0);
 
   const effectiveNumber = React.useMemo(
-    () => (!isInView ? 0 : Math.abs(Number(number))),
-    [number, isInView],
+    () => (Math.abs(Number(number))),
+    [number],
   );
 
   const formatNumber = React.useCallback(
@@ -171,8 +142,8 @@ function SlidingNumber({
   }, [prevDecStrRaw, newDecStrRaw]);
 
   React.useEffect(() => {
-    if (isInView) prevNumberRef.current = effectiveNumber;
-  }, [effectiveNumber, isInView]);
+    prevNumberRef.current = effectiveNumber;
+  }, [effectiveNumber]);
 
   const intDigitCount = newIntStr?.length ?? 0;
   const intPlaces = React.useMemo(
@@ -197,12 +168,11 @@ function SlidingNumber({
 
   return (
     <span
-      ref={localRef}
       data-slot="sliding-number"
       className={cn('flex items-center', className)}
       {...props}
     >
-      {isInView && Number(number) < 0 && <span className="mr-1">-</span>}
+      {Number(number) < 0 && <span className="mr-1">-</span>}
 
       {intPlaces.map((place) => (
         <SlidingNumberRoller

@@ -1,20 +1,18 @@
 'use client';
 
-import * as React from 'react';
 import { Star } from 'lucide-react';
 import {
   motion,
   AnimatePresence,
   useMotionValue,
   useSpring,
-  useInView,
   type HTMLMotionProps,
   type SpringOptions,
-  type UseInViewOptions,
 } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 import { SlidingNumber } from '../sliding-number';
+import { Fragment, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 type FormatNumberResult = { number: string[]; unit: string };
 
@@ -42,40 +40,32 @@ type GitHubStarsButtonProps = Omit<HTMLMotionProps<'a'>, 'ref'> & {
   repo: string;
   transition?: SpringOptions;
   formatted?: boolean;
-  inView?: boolean;
-  inViewMargin?: UseInViewOptions['margin'];
-  inViewOnce?: boolean;
-  ref?: React.Ref<HTMLAnchorElement>;
 };
 
 function GitHubStarsButton({
-  ref,
   username,
   repo,
   transition = { stiffness: 90, damping: 50 },
   formatted = false,
-  inView = false,
-  inViewOnce = true,
-  inViewMargin = '0px',
   className,
   ...props
 }: GitHubStarsButtonProps) {
   const motionVal = useMotionValue(0);
   const springVal = useSpring(motionVal, transition);
-  const motionNumberRef = React.useRef(0);
-  const isCompletedRef = React.useRef(false);
-  const [, forceRender] = React.useReducer((x) => x + 1, 0);
-  const [stars, setStars] = React.useState(0);
-  const [isCompleted, setIsCompleted] = React.useState(false);
-  const [displayParticles, setDisplayParticles] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const motionNumberRef = useRef(0);
+  const isCompletedRef = useRef(false);
+  const [, forceRender] = useReducer((x) => x + 1, 0);
+  const [stars, setStars] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [displayParticles, setDisplayParticles] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const repoUrl = React.useMemo(
+  const repoUrl = useMemo(
     () => `https://github.com/${username}/${repo}`,
     [username, repo],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch(`https://api.github.com/repos/${username}/${repo}`)
       .then((response) => response.json())
       .then((data) => {
@@ -87,21 +77,12 @@ function GitHubStarsButton({
       .finally(() => setIsLoading(false));
   }, [username, repo]);
 
-  const handleDisplayParticles = React.useCallback(() => {
+  const handleDisplayParticles = useCallback(() => {
     setDisplayParticles(true);
     setTimeout(() => setDisplayParticles(false), 1500);
   }, []);
 
-  const localRef = React.useRef<HTMLAnchorElement>(null);
-  React.useImperativeHandle(ref, () => localRef.current as HTMLAnchorElement);
-
-  const inViewResult = useInView(localRef, {
-    once: inViewOnce,
-    margin: inViewMargin,
-  });
-  const isComponentInView = !inView || inViewResult;
-
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = springVal.on('change', (latest: number) => {
       const newValue = Math.round(latest);
       if (motionNumberRef.current !== newValue) {
@@ -117,9 +98,9 @@ function GitHubStarsButton({
     return () => unsubscribe();
   }, [springVal, stars, handleDisplayParticles]);
 
-  React.useEffect(() => {
-    if (stars > 0 && isComponentInView) motionVal.set(stars);
-  }, [motionVal, stars, isComponentInView]);
+  useEffect(() => {
+    if (stars > 0) motionVal.set(stars);
+  }, [motionVal, stars]);
 
   const fillPercentage = Math.min(100, (motionNumberRef.current / stars) * 100);
   const formattedResult = formatNumber(motionNumberRef.current, formatted);
@@ -137,18 +118,18 @@ function GitHubStarsButton({
       )}
     >
       {segments.map((segment, index) => (
-        <React.Fragment key={index}>
+        <Fragment key={index}>
           {Array.from(segment).map((digit, digitIndex) => (
             <SlidingNumber key={`${index}-${digitIndex}`} number={+digit} />
           ))}
-        </React.Fragment>
+        </Fragment>
       ))}
 
       {formatted && unit && <span className="leading-[1]">{unit}</span>}
     </span>
   );
 
-  const handleClick = React.useCallback(
+  const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
       handleDisplayParticles();
@@ -161,7 +142,6 @@ function GitHubStarsButton({
 
   return (
     <motion.a
-      ref={localRef}
       href={repoUrl}
       rel="noopener noreferrer"
       target="_blank"
