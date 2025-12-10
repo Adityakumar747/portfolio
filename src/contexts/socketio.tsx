@@ -40,7 +40,7 @@ type SocketContextType = {
 const INITIAL_STATE: SocketContextType = {
   socket: null,
   users: new Map(),
-  setUsers: () => {},
+  setUsers: () => { },
   msgs: [],
 };
 
@@ -53,12 +53,13 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
 
   // SETUP SOCKET.IO
   useEffect(() => {
-    const username =  localStorage.getItem("username") || generateRandomCursor().name
+    if (!process.env.NEXT_PUBLIC_WS_URL) return
+    const username = localStorage.getItem("username") || generateRandomCursor().name
     const socket = io(process.env.NEXT_PUBLIC_WS_URL!, {
       query: { username },
     });
     setSocket(socket);
-    socket.on("connect", () => {});
+    socket.on("connect", () => { });
     socket.on("msgs-receive-init", (msgs) => {
       setMsgs(msgs);
     });
