@@ -159,6 +159,9 @@ const OnlineUsers = () => {
             onTyping={handleTyping}
             placeholder="Message #general"
           />
+          <div className={cn("text-[10px] text-center pb-2 opacity-50 select-none", THEME.text.secondary)}>
+            Hold Right Click to send Confetti to everyone
+          </div>
 
           <UserList
             users={users}
