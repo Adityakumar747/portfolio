@@ -9,6 +9,8 @@ import { THEME } from "../constants";
 
 interface Message {
   sessionId: string;
+  flag: string;
+  country: string;
   username: string;
   content: string;
   createdAt: string | Date;
@@ -89,6 +91,9 @@ export const ChatMessageList = ({
                         style={{ color: user?.color }}
                       >
                         {user?.name || msg.username}
+                      </span>
+                      <span>
+                        {msg.flag}
                       </span>
                       {isMe && (
                         <span className="bg-[#5865f2] text-white text-[10px] px-1 rounded font-bold">
