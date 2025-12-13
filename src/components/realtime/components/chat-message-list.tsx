@@ -4,17 +4,9 @@ import { differenceInMinutes, format } from "date-fns";
 import { ArrowDown, Hash } from "lucide-react";
 import { ScrollArea } from "../../ui/scroll-area";
 import { cn } from "@/lib/utils";
-import type { User } from "@/contexts/socketio";
+import type { Message, User } from "@/contexts/socketio";
 import { THEME } from "../constants";
 
-interface Message {
-  sessionId: string;
-  flag: string;
-  country: string;
-  username: string;
-  content: string;
-  createdAt: string | Date;
-}
 
 interface ChatMessageListProps {
   msgs: Message[];

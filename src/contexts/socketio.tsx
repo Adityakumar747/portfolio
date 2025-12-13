@@ -26,10 +26,12 @@ export type User = {
 export type Message = {
   id: string;
   sessionId: string;
-  content: string;
+  flag: string;
+  country: string;
   username: string;
-  createdAt: Date;
-};
+  content: string;
+  createdAt: string | Date;
+}
 
 type SocketContextType = {
   socket: Socket | null;
