@@ -1,11 +1,11 @@
 "use client";
-import { SocketContext, User, UserMap } from "@/contexts/socketio";
+import { SocketContext, type User } from "@/contexts/socketio";
 import { useMouse } from "@/hooks/use-mouse";
 import { useThrottle } from "@/hooks/use-throttle";
 import { MousePointer2 } from "lucide-react";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
-import { AnimatePresence, motion, useAnimation } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 // TODO: add clicking animation
@@ -17,24 +17,22 @@ const RemoteCursors = () => {
   useEffect(() => {
     if (typeof window === "undefined" || !socket || isMobile) return;
     socket.on("cursor-changed", (data) => {
-      setUsers((prev: UserMap) => {
-        const newMap = new Map(prev);
-        if (!prev.has(data.socketId)) {
-          newMap.set(data.socketId, {
+      setUsers((prev: User[]) => {
+        const newUsers = [...prev]
+        const user = newUsers.find(u => u.socketId === data.socketId)
+        if (user) {
+          user.posX = data.pos.x;
+          user.posY = data.pos.y
+        } else {
+          newUsers.push({
             ...data,
           });
-        } else {
-          newMap.set(data.socketId, { ...prev.get(data.socketId), ...data });
         }
-        return newMap;
+        return newUsers;
       });
     });
     socket.on("users-updated", (data: User[]) => {
-      const newMap = new Map();
-      data.forEach((user) => {
-        newMap.set(user.socketId, { ...user });
-      });
-      setUsers(newMap);
+      setUsers(data);
     });
     return () => {
       socket.off("cursor-changed");
@@ -58,8 +56,8 @@ const RemoteCursors = () => {
         .map((user) => (
           <Cursor
             key={user.socketId}
-            x={user.pos.x}
-            y={user.pos.y}
+            x={user.posX}
+            y={user.posY}
             color={user.color}
             socketId={user.socketId}
             headerText={`${user.location} ${user.flag}`}
@@ -84,7 +82,7 @@ const Cursor = ({
 }) => {
   const [showText, setShowText] = useState(false);
   const [msgText, setMsgText] = useState("");
-  const { msgs } = useContext(SocketContext);
+  const { msgs, users } = useContext(SocketContext);
 
   useEffect(() => {
     setShowText(true);
@@ -97,12 +95,15 @@ const Cursor = ({
     };
   }, [x, y, msgText]);
 
+
   useEffect(() => {
-    if (msgs.at(-1)?.socketId === socketId) {
+    const lastMsgSessionId = msgs.at(-1)?.sessionId;
+    const cursorUserId = users.find(u => u.socketId === socketId)?.id;
+    if (lastMsgSessionId === cursorUserId) {
       const lastMsgContent = msgs.at(-1)?.content || "";
       const textSlice =
         lastMsgContent.slice(0, 30) + (lastMsgContent.length > 30 ? "..." : "");
-      const timeToRead = Math.min(4000, Math.max(textSlice.length * 100, 1000));
+      const timeToRead = Math.max(4000, Math.max(textSlice.length * 100, 1000));
       setMsgText(textSlice);
       // setShowText(true);
       const t = setTimeout(() => {
