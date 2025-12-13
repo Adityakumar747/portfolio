@@ -105,6 +105,7 @@ const UserItem = ({
           >
             <span className={cn("font-medium truncate text-sm", isMe ? THEME.text.header : cn(THEME.text.secondary, THEME.text.hover))}>
               {user.name}
+              {user.flag}
             </span>
             {isMe && (
               <Button
