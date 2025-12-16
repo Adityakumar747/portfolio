@@ -16,6 +16,12 @@ interface UserListProps {
 }
 
 export const UserList = ({ users, socket, updateUsername, showUserList }: UserListProps) => {
+  const sortedUsers = [...users].sort((a, b) => {
+    if (a.socketId === socket?.id) return -1;
+    if (b.socketId === socket?.id) return 1;
+    return 0;
+  });
+
   return (
     <AnimatePresence>
       {showUserList && (
@@ -31,9 +37,9 @@ export const UserList = ({ users, socket, updateUsername, showUserList }: UserLi
               Online — {users.length}
             </h3>
           </div>
-          <ScrollArea className="flex-1 px-2">
+          <ScrollArea className="flex-1 px-2" data-lenis-prevent >
             <div className="space-y-0.5 pb-4">
-              {users.map((user) => (
+              {sortedUsers.map((user) => (
                 <UserItem
                   key={user.socketId}
                   user={user}
@@ -100,13 +106,20 @@ const UserItem = ({
           <div className="flex items-center justify-between"
             onClick={(e) => {
               e.stopPropagation();
-              setIsEditing(true);
+              if (isMe)
+                setIsEditing(true);
             }}
           >
-            <span className={cn("font-medium truncate text-sm", isMe ? THEME.text.header : cn(THEME.text.secondary, THEME.text.hover))}>
-              {user.name}
-              {user.flag}
-            </span>
+            <div className="flex gap-1 items-center">
+              <span className={cn("font-medium truncate text-sm", isMe ? THEME.text.header : cn(THEME.text.secondary, THEME.text.hover))}>
+                {user.name}
+              </span>
+              {isMe && (
+                <span className="bg-[#5865f2] text-white text-[10px] px-1 rounded font-bold">
+                  YOU
+                </span>
+              )}
+            </div>
             {isMe && (
               <Button
                 variant={'ghost'}
@@ -123,8 +136,14 @@ const UserItem = ({
         {isEditing ? (
           <span className={cn("text-[10px]", THEME.text.secondary)}>Press Enter to save</span>
         ) : (
-          <div className={cn("text-[10px] truncate", THEME.text.secondary)}>
-            {isMe ? "Playing VS Code" : "Just vibing"}
+          <div className={cn("text-[10px] truncate space-x-1", THEME.text.secondary)}>
+            <span>
+              {user.location}
+            </span>
+            <span>
+              {user.flag}
+            </span>
+            {/* {isMe ? "Playing VS Code" : "Just vibing"} */}
           </div>
         )}
       </div>

@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/popover";
 import { motion } from "framer-motion";
 
-import { SocketContext, type User } from "@/contexts/socketio"; // Keep type User for UserItem
-import { Users, Users2, Hash } from "lucide-react"; // Keep Edit for UserItem
+import { SocketContext } from "@/contexts/socketio";
+import { Users, Users2, Hash } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { useChatScroll } from "./hooks/use-chat-scroll";
@@ -17,11 +17,7 @@ import { useTyping } from "./hooks/use-typing";
 import { ChatMessageList } from "./components/chat-message-list";
 import { ChatInput } from "./components/chat-input";
 import { UserList } from "./components/user-list";
-import { THEME } from "./constants"; // New import for THEME
-import { Edit } from "lucide-react"; // Keep Edit for UserItem
-import { Socket } from "socket.io-client"; // Keep Socket type for UserItem
-import { format } from "date-fns"; // Keep format for ChatMessageList (which uses it)
-
+import { THEME } from "./constants";
 
 const OnlineUsers = () => {
   const { socket, users: _users, msgs } = useContext(SocketContext);
@@ -72,14 +68,13 @@ const OnlineUsers = () => {
   const isSingleUser = users.length <= 1;
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={(isOpen) => { setIsOpen(isOpen); if (!isOpen) setShowUserList(false) }}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
           className={cn(
-            "mr-4 h-12 w-12 rounded-full shadow-lg transition-all duration-300 z-50 p-0",
-            "bg-background/20 hover:bg-background/80 backdrop-blur-sm border",
-            THEME.border.subtle
+            "mr-4 h-11 w-12 shadow-lg transition-all duration-300 z-50 p-0",
+            "bg-background/20 hover:bg-background/80 backdrop-blur-sm border-2 border-white/30 rounded-lg",
           )}
         >
           <div className="relative flex items-center justify-center w-full h-full">
@@ -121,7 +116,7 @@ const OnlineUsers = () => {
           </div>
           <div className="flex items-center gap-2">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               className={cn(
                 "transition-colors gap-2",
@@ -132,9 +127,12 @@ const OnlineUsers = () => {
               )}
               onClick={() => setShowUserList(!showUserList)}
             >
-              <span>
-                {users.length}
-              </span>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-green-500 rounded-full" />
+                <span>
+                  {users.length}
+                </span>
+              </div>
               <Users className="w-5 h-5" />
             </Button>
           </div>
@@ -159,9 +157,6 @@ const OnlineUsers = () => {
             onTyping={handleTyping}
             placeholder="Message #general"
           />
-          <div className={cn("text-[10px] text-center pb-2 opacity-50 select-none", THEME.text.secondary)}>
-            Hold Right Click to send Confetti to everyone
-          </div>
 
           <UserList
             users={users}
