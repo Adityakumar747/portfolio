@@ -160,13 +160,10 @@ export default function RadialMenu() {
       if (activeIndexRef.current !== null) {
         const item = MENU_ITEMS[activeIndexRef.current];
         // Trigger action
-        console.log(`Selected: ${item.label}`);
         triggerConfetti(e.pageX, e.pageY, item);
 
-        console.log('socket', socket)
-        //. Broadcast to others
+        // Broadcast to others
         if (socket) {
-          console.log('seting now')
           const burstId = `${socket.id}-${Date.now()}-${Math.random()}`;
           myTriggersRef.current.add(burstId);
 
