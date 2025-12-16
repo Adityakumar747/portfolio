@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { io, Socket } from "socket.io-client";
 import { generateRandomCursor } from "../lib/generate-random-cursor"
+import { useToast } from "@/components/ui/use-toast";
 
 export type User = {
   id: string;
@@ -58,6 +59,7 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [msgs, setMsgs] = useState<Message[]>([]);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const { toast } = useToast();
 
   // SETUP SOCKET.IO
   useEffect(() => {
@@ -81,6 +83,20 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
 
     socket.on("msg-receive", (msgs) => {
       setMsgs((p) => [...p, msgs]);
+    });
+
+    socket.on("warning", (data: { message: string }) => {
+      console.log(data)
+      toast({
+        variant: "destructive",
+        title: "System Warning",
+        description: data.message,
+      });
+    });
+
+    socket.on("msg-delete", (data: { id: number }) => {
+      console.log(data)
+      setMsgs((prev) => prev.filter((m) => Number(m.id) !== data.id));
     });
     return () => {
       socket.disconnect();
