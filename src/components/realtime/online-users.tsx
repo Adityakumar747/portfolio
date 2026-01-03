@@ -58,11 +58,15 @@ const OnlineUsers = () => {
     });
   };
 
-  const updateUsername = (newName: string) => {
-    socket?.emit("username-change", {
-      username: newName,
+  const updateProfile = ({ name, avatar, color }: { name: string; avatar: string, color?: string }) => {
+    socket?.emit("update-user", {
+      username: name,
+      avatar,
+      color
     });
-    localStorage.setItem("username", newName);
+    localStorage.setItem("username", name);
+    localStorage.setItem("avatar", avatar);
+    if (color) localStorage.setItem("color", color);
   };
 
   const isSingleUser = users.length <= 1;
@@ -161,7 +165,7 @@ const OnlineUsers = () => {
           <UserList
             users={users}
             socket={socket}
-            updateUsername={updateUsername}
+            updateProfile={updateProfile}
             showUserList={showUserList}
           />
         </div>

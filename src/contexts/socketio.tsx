@@ -8,13 +8,13 @@ import React, {
   useState,
 } from "react";
 import { io, Socket } from "socket.io-client";
-import { generateRandomCursor } from "../lib/generate-random-cursor"
 import { useToast } from "@/components/ui/use-toast";
 
 export type User = {
   id: string;
   socketId: string;
   name: string;
+  avatar: string;
   color: string;
   isOnline: string;
   posX: number;
@@ -30,6 +30,7 @@ export type Message = {
   flag: string;
   country: string;
   username: string;
+  avatar: string;
   content: string;
   createdAt: string | Date;
 }
@@ -64,13 +65,10 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   // SETUP SOCKET.IO
   useEffect(() => {
     if (!process.env.NEXT_PUBLIC_WS_URL) return
-    const username = localStorage.getItem("username") || generateRandomCursor().name
     const socket = io(process.env.NEXT_PUBLIC_WS_URL!, {
-      query: { username },
       auth: {
         sessionId: localStorage.getItem(SESSION_ID_KEY), // send on reconnect to restore session
       },
-
     });
     setSocket(socket);
     socket.on("connect", () => { });

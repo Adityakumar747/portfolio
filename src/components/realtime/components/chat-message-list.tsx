@@ -6,6 +6,7 @@ import { ScrollArea } from "../../ui/scroll-area";
 import { cn } from "@/lib/utils";
 import type { Message, User } from "@/contexts/socketio";
 import { THEME } from "../constants";
+import { getAvatarUrl } from "@/lib/avatar";
 
 
 interface ChatMessageListProps {
@@ -60,11 +61,13 @@ export const ChatMessageList = ({
             return (
               <div key={i} className={cn("group flex gap-3 pr-2", showHeader && i != 0 && "!mt-4")}>
                 {showHeader ? (
-                  <div
-                    className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-sm mt-0.5 relative"
-                    style={{ backgroundColor: user?.color || "#5865f2" }}
-                  >
-                    {(user?.name || msg.username).slice(0, 2).toUpperCase()}
+                  <div className="relative w-10 h-10 flex-shrink-0 mt-0.5">
+                    <img
+                      src={getAvatarUrl(user?.avatar || msg.avatar)}
+                      alt={user?.name || msg.username}
+                      className="w-10 h-10 rounded-full"
+                      style={{ backgroundColor: user?.color || '#60a5fa' }}
+                    />
                     {
                       user?.isOnline && <div className={cn("absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2", THEME.border.status)} />
                     }
