@@ -15,9 +15,10 @@ interface UserListProps {
   socket: Socket | null;
   updateProfile: (data: { name: string; avatar: string; color: string }) => void;
   showUserList: boolean;
+  onClose: () => void;
 }
 
-export const UserList = ({ users, socket, updateProfile, showUserList }: UserListProps) => {
+export const UserList = ({ users, socket, updateProfile, showUserList, onClose }: UserListProps) => {
   const sortedUsers = [...users].sort((a, b) => {
     if (a.socketId === socket?.id) return -1;
     if (b.socketId === socket?.id) return 1;
@@ -27,31 +28,42 @@ export const UserList = ({ users, socket, updateProfile, showUserList }: UserLis
   return (
     <AnimatePresence>
       {showUserList && (
-        <motion.div
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "100%" }}
-          transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-          className={cn("absolute inset-y-0 right-0 w-60 shadow-xl z-20 flex flex-col border-l", THEME.bg.secondary, THEME.border.primary)}
-        >
-          <div className="p-4 pb-2">
-            <h3 className={cn("text-xs font-bold uppercase tracking-wide mb-2", THEME.text.secondary)}>
-              Online — {users.length}
-            </h3>
-          </div>
-          <ScrollArea className="flex-1 px-2" data-lenis-prevent >
-            <div className="space-y-0.5 pb-4">
-              {sortedUsers.map((user) => (
-                <UserItem
-                  key={user.socketId}
-                  user={user}
-                  socket={socket}
-                  updateProfile={updateProfile}
-                />
-              ))}
+        <>
+          {/* Overlay to close user list when clicking on messages area */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-10 cursor-pointer"
+            onClick={onClose}
+          />
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+            className={cn("absolute inset-y-0 right-0 w-60 shadow-xl z-20 flex flex-col border-l", THEME.bg.secondary, THEME.border.primary)}
+          >
+            <div className="p-4 pb-2">
+              <h3 className={cn("text-xs font-bold uppercase tracking-wide mb-2", THEME.text.secondary)}>
+                Online — {users.length}
+              </h3>
             </div>
-          </ScrollArea>
-        </motion.div>
+            <ScrollArea className="flex-1 px-2" data-lenis-prevent >
+              <div className="space-y-0.5 pb-4">
+                {sortedUsers.map((user) => (
+                  <UserItem
+                    key={user.socketId}
+                    user={user}
+                    socket={socket}
+                    updateProfile={updateProfile}
+                  />
+                ))}
+              </div>
+            </ScrollArea>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
   );

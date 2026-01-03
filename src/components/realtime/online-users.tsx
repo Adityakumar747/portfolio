@@ -167,6 +167,7 @@ const OnlineUsers = () => {
             socket={socket}
             updateProfile={updateProfile}
             showUserList={showUserList}
+            onClose={() => setShowUserList(false)}
           />
         </div>
 
