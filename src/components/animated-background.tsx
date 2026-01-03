@@ -17,7 +17,7 @@ gsap.registerPlugin(ScrollTrigger);
 const AnimatedBackground = () => {
   const { isLoading, bypassLoading } = usePreloader();
   const { theme } = useTheme();
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery("(max-width: 767px)");
   const splineContainer = useRef<HTMLDivElement>(null);
   const [splineApp, setSplineApp] = useState<Application>();
 
@@ -401,6 +401,7 @@ const AnimatedBackground = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Spline
+        className="w-full h-full fixed"
         ref={splineContainer}
         onLoad={(app: Application) => {
           setSplineApp(app);
