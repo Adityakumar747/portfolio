@@ -14,11 +14,13 @@ import ScrollDownIcon from "../scroll-down-icon";
 import { SiGithub, SiLinkedin, SiX } from "react-icons/si";
 import { config } from "@/data/config";
 
+import SectionWrapper from "../ui/section-wrapper";
+
 const HeroSection = () => {
   const { isLoading } = usePreloader();
 
   return (
-    <section id="hero" className={cn("relative w-full h-screen")}>
+    <SectionWrapper id="hero" className={cn("relative w-full h-screen")}>
       <div className="grid md:grid-cols-2">
         <div
           className={cn(
@@ -147,7 +149,7 @@ const HeroSection = () => {
       <div className="absolute bottom-10 left-[50%] translate-x-[-50%]">
         <ScrollDownIcon />
       </div>
-    </section>
+    </SectionWrapper>
   );
 };
 
