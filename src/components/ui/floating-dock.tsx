@@ -124,7 +124,7 @@ const FloatingDockDesktop = ({
     };
   }, [showHint]);
   return (
-    <div className="relative h-fit flex items-center justify-center">
+    <div className="relative h-fit flex items-center justify-center pointer-events-auto">
       <motion.div
         onMouseMove={(e) => {
           mouseX.set(e.pageX);
