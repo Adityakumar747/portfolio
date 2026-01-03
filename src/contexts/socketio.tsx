@@ -31,6 +31,7 @@ export type Message = {
   country: string;
   username: string;
   avatar: string;
+  color?: string;
   content: string;
   createdAt: string | Date;
 }

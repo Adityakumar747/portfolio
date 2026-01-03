@@ -34,6 +34,7 @@ export const ChatMessageList = ({
   typingUsers,
   getTypingText
 }: ChatMessageListProps) => {
+  console.log(msgs)
   return (
     <div className="flex-1 relative overflow-hidden flex flex-col">
       <ScrollArea className="h-[400px]" data-lenis-prevent ref={chatContainerRef} type="always">
@@ -83,7 +84,7 @@ export const ChatMessageList = ({
                     <div className="flex items-center gap-2">
                       <span
                         className={cn("font-medium hover:underline cursor-pointer", THEME.text.header)}
-                        style={{ color: user?.color }}
+                        style={{ color: user?.color || msg.color }}
                       >
                         {user?.name || msg.username}
                       </span>
