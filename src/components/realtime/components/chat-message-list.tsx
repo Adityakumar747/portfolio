@@ -34,7 +34,6 @@ export const ChatMessageList = ({
   typingUsers,
   getTypingText
 }: ChatMessageListProps) => {
-  console.log(msgs)
   return (
     <div className="flex-1 relative overflow-hidden flex flex-col">
       <ScrollArea className="h-[400px]" data-lenis-prevent ref={chatContainerRef} type="always">
