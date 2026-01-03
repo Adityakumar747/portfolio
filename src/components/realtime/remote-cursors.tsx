@@ -2,6 +2,7 @@
 import { SocketContext, type User } from "@/contexts/socketio";
 import { useMouse } from "@/hooks/use-mouse";
 import { useThrottle } from "@/hooks/use-throttle";
+import { getAvatarUrl } from "@/lib/avatar";
 import { MousePointer2 } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 
@@ -50,7 +51,11 @@ const RemoteCursors = () => {
   }, [x, y, isMobile]);
   const users = Array.from(_users.values());
   return (
-    <div className="h-0 z-10 relative">
+    <div
+      //  className="h-0 z-10 relative "
+      className="absolute top-0 left-0 w-full h-full z-10 animate-fade-in pointer-events-none overflow-visible"
+      style={{ minHeight: '100vh' }}
+    >
       {users
         .filter((user) => user.socketId !== socket?.id)
         .map((user) => (
@@ -60,6 +65,7 @@ const RemoteCursors = () => {
             y={user.posY}
             color={user.color}
             socketId={user.socketId}
+            avatar={user.avatar}
             headerText={`${user.location} ${user.flag}`}
           />
         ))}
@@ -73,12 +79,14 @@ const Cursor = ({
   y,
   headerText,
   socketId,
+  avatar,
 }: {
   x: number;
   y: number;
   color?: string;
   headerText: string;
   socketId: string;
+  avatar: string;
 }) => {
   const [showText, setShowText] = useState(false);
   const [msgText, setMsgText] = useState("");
@@ -120,7 +128,7 @@ const Cursor = ({
         x: x,
         y: y,
       }}
-      className="w-6 h-6"
+      className="w-6 h-6 pointer-events-auto"
       transition={{
         duration: 0.2, // Adjust duration for smoothness
         ease: "easeOut", // Choose an easing function
@@ -128,27 +136,56 @@ const Cursor = ({
       onMouseEnter={() => setShowText(true)}
       onMouseLeave={() => setShowText(false)}
     >
+      {/* Cursor pointer */}
       <MousePointer2
-        className="w-6 h-6 z-[9999999]"
+        className="w-6 h-6 z-[9999999] absolute top-0 left-0"
         style={{ color: color }}
         strokeWidth={7.2}
       />
-      <AnimatePresence>
-        {showText && headerText && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: -7 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="text-xs rounded-xl w-fit p-2 px-4 ml-4 cursor-can-hover cursor-can-hover cursor-can-hover cursor-can-hover"
-            style={{
-              backgroundColor: color + "f0",
-            }}
-          >
-            <div className="text-nowrap">{headerText}</div>
-            {msgText && <div className="font-mono w-44">{msgText}</div>}
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+      {/* Avatar pill that expands to show text */}
+      <motion.div
+        className="absolute top-4 left-4 flex items-center rounded-full border-2 shadow-lg overflow-hidden"
+        style={{
+          borderColor: color,
+          backgroundColor: color + '60',
+        }}
+        initial={false}
+        animate={{
+          width: showText && headerText ? 'auto' : 40,
+        }}
+        transition={{
+          duration: 0.3,
+          ease: 'easeOut',
+        }}
+      >
+        {/* Avatar image */}
+        <img
+          src={getAvatarUrl(avatar)}
+          alt=""
+          className="w-10 h-10 rounded-full flex-shrink-0"
+        />
+
+        {/* Text content - always rendered but clipped when collapsed */}
+        <AnimatePresence>
+          {showText && headerText && (
+            <motion.div
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: 'auto' }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="flex flex-col justify-center pl-2 pr-3 py-1 whitespace-nowrap"
+            >
+              <div className="text-xs font-medium text-white">{headerText}</div>
+              {msgText && (
+                <div className="text-xs font-mono text-white/90 max-w-44 truncate">
+                  {msgText}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </motion.div>
   );
 };
