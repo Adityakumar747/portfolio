@@ -123,8 +123,26 @@ export const getKeyboardState = ({
   isMobile: boolean;
 }) => {
   const baseTransform = STATES[section][isMobile ? "mobile" : "desktop"];
-  // const scaleOffset = +(window.devicePixelRatio - 0.4).toFixed(1)
-  const scaleOffset = +(window.innerWidth / 1024).toFixed(1)
+
+  const getScaleOffset = () => {
+    const width = window.innerWidth;
+    // Reference widths for "ideal" size
+    // Using 1024 for desktop to maintain backward compatibility with previous look
+    const DESKTOP_REF_WIDTH = 1280;
+    const MOBILE_REF_WIDTH = 390;
+
+    const targetScale = isMobile
+      ? width / MOBILE_REF_WIDTH
+      : width / DESKTOP_REF_WIDTH;
+
+    // Clamp values to prevent extremes
+    const minScale = isMobile ? 0.5 : 0.5;
+    const maxScale = isMobile ? 0.6 : 1.15;
+
+    return Math.min(Math.max(targetScale, minScale), maxScale);
+  };
+
+  const scaleOffset = getScaleOffset();
 
   return {
     ...baseTransform,
