@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 
 import { useChatScroll } from "./hooks/use-chat-scroll";
 import { useTyping } from "./hooks/use-typing";
+import { useSounds } from "./hooks/use-sounds";
 import { ChatMessageList } from "./components/chat-message-list";
 import { ChatInput } from "./components/chat-input";
 import { UserList } from "./components/user-list";
@@ -26,6 +27,31 @@ const OnlineUsers = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const currentUser = users.find(u => u.socketId === socket?.id);
+  const { playSendSound, playReceiveSound } = useSounds();
+  const prevMsgsLength = useRef(msgs.length);
+
+  useEffect(() => {
+    if (msgs.length > prevMsgsLength.current) {
+      const isSmallBatch = msgs.length - prevMsgsLength.current <= 2;
+      const lastMsg = msgs[msgs.length - 1];
+      let isRecent = true;
+      if (lastMsg?.createdAt) {
+        const msgTime = new Date(lastMsg.createdAt).getTime();
+        const now = Date.now();
+        // If message is older than 10 seconds, assume it's history
+        if (now - msgTime > 10000) isRecent = false;
+      }
+
+      if (isSmallBatch && isRecent && lastMsg) {
+        if (lastMsg.username === currentUser?.name) {
+          playSendSound();
+        } else {
+          playReceiveSound();
+        }
+      }
+    }
+    prevMsgsLength.current = msgs.length;
+  }, [msgs, playSendSound, playReceiveSound, currentUser]);
 
   // Use custom hooks
   const {

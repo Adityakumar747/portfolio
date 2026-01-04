@@ -11,6 +11,7 @@ import { usePreloader } from "./preloader";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { Section, getKeyboardState } from "./animated-background-config";
+import { useSounds } from "./realtime/hooks/use-sounds";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,6 +21,9 @@ const AnimatedBackground = () => {
   const isMobile = useMediaQuery("(max-width: 767px)");
   const splineContainer = useRef<HTMLDivElement>(null);
   const [splineApp, setSplineApp] = useState<Application>();
+  const selectedSkillRef = useRef<Skill | null>(null);
+
+  const { playPressSound, playReleaseSound } = useSounds();
 
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
   const [activeSection, setActiveSection] = useState<Section>("hero");
@@ -34,35 +38,58 @@ const AnimatedBackground = () => {
   // --- Event Handlers ---
 
   const handleMouseHover = (e: SplineEvent) => {
-    if (!splineApp || selectedSkill?.name === e.target.name) return;
+    if (!splineApp || selectedSkillRef.current?.name === e.target.name) return;
 
     if (e.target.name === "body" || e.target.name === "platform") {
+      if (selectedSkillRef.current) playReleaseSound();
       setSelectedSkill(null);
+      selectedSkillRef.current = null;
       if (splineApp.getVariable("heading") && splineApp.getVariable("desc")) {
         splineApp.setVariable("heading", "");
         splineApp.setVariable("desc", "");
       }
     } else {
-      if (!selectedSkill || selectedSkill.name !== e.target.name) {
+      if (!selectedSkillRef.current || selectedSkillRef.current.name !== e.target.name) {
         const skill = SKILLS[e.target.name as SkillNames];
-        setSelectedSkill(skill);
+        if (skill) {
+          if (selectedSkillRef.current) playReleaseSound();
+          playPressSound();
+          setSelectedSkill(skill);
+          selectedSkillRef.current = skill;
+        }
       }
     }
   };
 
   const handleSplineInteractions = () => {
     if (!splineApp) return;
+
+    const isInputFocused = () => {
+      const activeElement = document.activeElement;
+      return (
+        activeElement &&
+        (activeElement.tagName === "INPUT" ||
+          activeElement.tagName === "TEXTAREA" ||
+          (activeElement as HTMLElement).isContentEditable)
+      );
+    };
+
     splineApp.addEventListener("keyUp", () => {
-      if (!splineApp) return;
+      if (!splineApp || isInputFocused()) return;
+      playReleaseSound();
       splineApp.setVariable("heading", "");
       splineApp.setVariable("desc", "");
     });
     splineApp.addEventListener("keyDown", (e) => {
-      if (!splineApp) return;
+      if (!splineApp || isInputFocused()) return;
       const skill = SKILLS[e.target.name as SkillNames];
-      if (skill) setSelectedSkill(skill);
-      splineApp.setVariable("heading", skill.label);
-      splineApp.setVariable("desc", skill.shortDescription);
+      if (skill) {
+        playPressSound();
+        setSelectedSkill(skill);
+        selectedSkillRef.current = skill;
+        splineApp.setVariable("heading", skill.label);
+        splineApp.setVariable("desc", skill.shortDescription);
+      }
     });
     splineApp.addEventListener("mouseHover", handleMouseHover);
   };
@@ -298,9 +325,9 @@ const AnimatedBackground = () => {
     }
   }, [theme, splineApp, isMobile, activeSection]);
 
-  // Handle keyboard press interaction
   useEffect(() => {
     if (!selectedSkill || !splineApp) return;
+    // console.log(selectedSkill)
     splineApp.setVariable("heading", selectedSkill.label);
     splineApp.setVariable("desc", selectedSkill.shortDescription);
   }, [selectedSkill]);
