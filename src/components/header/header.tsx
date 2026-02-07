@@ -55,7 +55,7 @@ const Header = ({ loader }: HeaderProps) => {
         </Link>
 
         <FunnyThemeToggle className="w-6 h-6 mr-4 hidden md:flex" />
-        <OnlineUsers />
+        {process.env.NEXT_PUBLIC_WS_URL && <OnlineUsers />}
         {config.githubUsername && config.githubRepo && (
           <GitHubStarsButton
             username={config.githubUsername}
