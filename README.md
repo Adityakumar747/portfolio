@@ -1,6 +1,6 @@
 # 🚀 3D Portfolio
 
-A jaw-dropping developer portfolio packed with interactive 3D animations, buttery smooth transitions, and a space-themed aesthetic. Not your average portfolio template — this one has a fully interactive 3D keyboard where each keycap is a skill.
+A jaw-dropping developer portfolio packed with interactive 3D animations, buttery smooth transitions, and a space-themed aesthetic. Not your average portfolio template! This one has a fully interactive 3D keyboard where each keycap is a skill.
 
 > **Free to use!** This portfolio is open source. If you use it, a credit/link back would be really appreciated 🙏
 
@@ -24,7 +24,7 @@ A jaw-dropping developer portfolio packed with interactive 3D animations, butter
 |---|---|
 | **Framework** | Next.js 14, React 18, TypeScript |
 | **Styling** | Tailwind CSS, Shadcn UI, Aceternity UI |
-| **Animation** | GSAP, Framer Motion, Motion |
+| **Animation** | GSAP, Framer Motion |
 | **3D** | Spline Runtime |
 | **Email** | Resend |
 | **Misc** | Lenis (smooth scroll), Zod, next-themes |
