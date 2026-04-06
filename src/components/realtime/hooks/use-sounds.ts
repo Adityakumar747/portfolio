@@ -23,6 +23,10 @@ export const useSounds = () => {
         const releaseArrayBuffer = await releaseResponse.arrayBuffer();
         const releaseDecodedBuffer = await ctx.decodeAudioData(releaseArrayBuffer);
         releaseBufferRef.current = releaseDecodedBuffer;
+
+        const confettiResponse = await fetch('/assets/sounds/vine-boom.mp3');
+        const confettiArrayBuffer = await confettiResponse.arrayBuffer();
+        confettiBufferRef.current = await ctx.decodeAudioData(confettiArrayBuffer);
       } catch (error) {
         console.error("Failed to load keycap sound", error);
       }
@@ -37,7 +41,7 @@ export const useSounds = () => {
 
   const getContext = useCallback(() => {
     if (audioContextRef.current?.state === 'suspended') {
-      audioContextRef.current.resume().catch(() => {});
+      audioContextRef.current.resume().catch(() => { });
     }
     return audioContextRef.current;
   }, []);
@@ -151,5 +155,11 @@ export const useSounds = () => {
     }
   }, [getContext]);
 
-  return { playSendSound, playReceiveSound, playPressSound, playReleaseSound, playJoinSound };
+  const confettiBufferRef = useRef<AudioBuffer | null>(null);
+
+  const playConfettiSound = useCallback(() => {
+    playSoundBuffer(confettiBufferRef.current);
+  }, [playSoundBuffer]);
+
+  return { playSendSound, playReceiveSound, playPressSound, playReleaseSound, playJoinSound, playConfettiSound };
 };

@@ -3,8 +3,10 @@
 import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
 import confetti from 'canvas-confetti';
 import { RadialMenuPresentational } from './radial-menu-presentational';
+import { Shockwave, ShockwaveData } from './shockwave';
 import { MenuItem, Position } from './types';
 import { SocketContext } from '@/contexts/socketio';
+import { useSounds } from '@/components/realtime/hooks/use-sounds';
 
 // Define our menu items
 const MENU_ITEMS: MenuItem[] = [
@@ -22,9 +24,11 @@ const INTERACTIVE_SELECTOR = 'a, button, input, textarea, select, [contenteditab
 
 export default function RadialMenu() {
   const { socket } = useContext(SocketContext);
+  const { playConfettiSound } = useSounds();
   const [isOpen, setIsOpen] = useState(false);
   const [menuPos, setMenuPos] = useState<Position>({ x: 0, y: 0 });
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [shockwaves, setShockwaves] = useState<ShockwaveData[]>([]);
 
   // Refs
   const isOpenRef = useRef(false);
@@ -71,9 +75,21 @@ export default function RadialMenu() {
     }
   }, []);
 
+  const spawnShockwave = useCallback((clientX: number, clientY: number, color: string, emoji: string) => {
+    const id = `${Date.now()}-${Math.random()}`;
+    setShockwaves(prev => [...prev, { id, x: clientX, y: clientY, color, emoji }]);
+    setTimeout(() => {
+      setShockwaves(prev => prev.filter(s => s.id !== id));
+    }, 1600);
+  }, []);
+
   const triggerConfetti = (x: number, y: number, item: MenuItem) => {
-    // 1. Trigger Locally using Page Coordinates
+    playConfettiSound();
     fireConfetti(x, y, item.emoji);
+    // Shockwave uses viewport coordinates
+    const cx = x - window.scrollX;
+    const cy = y - window.scrollY;
+    spawnShockwave(cx, cy, item.color, item.emoji);
   };
 
   // Listen for remote confetti
@@ -88,8 +104,13 @@ export default function RadialMenu() {
         return;
       }
 
-      // Received data is in Page Coordinates, fire directly
       fireConfetti(data.x, data.y, data.emoji);
+      playConfettiSound();
+      // Convert page coords to viewport for shockwave
+      const cx = data.x - window.scrollX;
+      const cy = data.y - window.scrollY;
+      const item = MENU_ITEMS.find(m => m.emoji === data.emoji);
+      spawnShockwave(cx, cy, item?.color ?? '#fff', data.emoji);
     };
 
     socket.on("confetti-receive", handleConfettiReceive);
@@ -97,7 +118,7 @@ export default function RadialMenu() {
     return () => {
       socket.off("confetti-receive", handleConfettiReceive);
     };
-  }, [socket, fireConfetti]);
+  }, [socket, fireConfetti, spawnShockwave]);
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
     // Check for Right Click (button 2)
@@ -214,12 +235,17 @@ export default function RadialMenu() {
   }, [handleMouseDown, handleMouseMove, handleMouseUp, handleContextMenu]);
 
   return (
-    <RadialMenuPresentational
-      isOpen={isOpen}
-      position={menuPos}
-      items={MENU_ITEMS}
-      activeIndex={activeIndex}
-    />
+    <>
+      <RadialMenuPresentational
+        isOpen={isOpen}
+        position={menuPos}
+        items={MENU_ITEMS}
+        activeIndex={activeIndex}
+      />
+      {shockwaves.map(sw => (
+        <Shockwave key={sw.id} data={sw} />
+      ))}
+    </>
   );
 }
 
