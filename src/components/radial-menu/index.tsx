@@ -32,10 +32,12 @@ export default function RadialMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [menuPos, setMenuPos] = useState<Position>({ x: 0, y: 0 });
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [shockwaves, setShockwaves] = useState<ShockwaveData[]>([]);
 
   // Refs
   const isOpenRef = useRef(false);
+  const isDisabledRef = useRef(false);
   const menuPosRef = useRef<Position>({ x: 0, y: 0 });
   const activeIndexRef = useRef<number | null>(null);
   const intensityRef = useRef(0);
@@ -52,9 +54,10 @@ export default function RadialMenu() {
   // Sync refs
   useEffect(() => {
     isOpenRef.current = isOpen;
+    isDisabledRef.current = isDisabled;
     menuPosRef.current = menuPos;
     activeIndexRef.current = activeIndex;
-  }, [isOpen, menuPos, activeIndex]);
+  }, [isOpen, isDisabled, menuPos, activeIndex]);
 
   const isOnCooldown = () => Date.now() < cooldownUntilRef.current;
 
@@ -136,18 +139,25 @@ export default function RadialMenu() {
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
     if (e.button === 2) {
-      // Block opening if on cooldown
-      if (isOnCooldown()) return;
-
       const target = e.target as HTMLElement;
       if (target.closest(INTERACTIVE_SELECTOR)) return;
 
       suppressMenuRef.current = true;
       const pos = { x: e.clientX, y: e.clientY };
 
+      // Show disabled menu during cooldown
+      if (isOnCooldown()) {
+        setMenuPos(pos);
+        setIsOpen(true);
+        setIsDisabled(true);
+        setActiveIndex(null);
+        return;
+      }
+
       timerRef.current = setTimeout(() => {
         setMenuPos(pos);
         setIsOpen(true);
+        setIsDisabled(false);
         setActiveIndex(null);
         intensityRef.current = 0;
         startChargeTone();
@@ -156,7 +166,7 @@ export default function RadialMenu() {
   }, [startChargeTone]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isOpenRef.current) return;
+    if (!isOpenRef.current || isDisabledRef.current) return;
 
     const currentPos = { x: e.clientX, y: e.clientY };
     const origin = menuPosRef.current;
@@ -195,7 +205,7 @@ export default function RadialMenu() {
     stopChargeTone();
 
     if (isOpenRef.current) {
-      if (activeIndexRef.current !== null) {
+      if (activeIndexRef.current !== null && !isDisabledRef.current) {
         const item = MENU_ITEMS[activeIndexRef.current];
         const int = intensityRef.current;
         triggerConfetti(e.pageX, e.pageY, item, int);
@@ -219,6 +229,7 @@ export default function RadialMenu() {
       }
 
       setIsOpen(false);
+      setIsDisabled(false);
       setActiveIndex(null);
       intensityRef.current = 0;
     } else {
@@ -250,6 +261,7 @@ export default function RadialMenu() {
     <>
       <RadialMenuPresentational
         isOpen={isOpen}
+        disabled={isDisabled}
         position={menuPos}
         items={MENU_ITEMS}
         activeIndex={activeIndex}

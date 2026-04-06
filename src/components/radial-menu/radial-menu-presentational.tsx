@@ -4,6 +4,7 @@ import { MenuItem, Position } from './types';
 
 interface RadialMenuPresentationalProps {
   isOpen: boolean;
+  disabled?: boolean;
   position: Position;
   items: MenuItem[];
   activeIndex: number | null;
@@ -178,6 +179,7 @@ function CooldownRing({ cooldownEndRef, position }: {
 
 export const RadialMenuPresentational = ({
   isOpen,
+  disabled,
   position,
   items,
   activeIndex,
@@ -199,7 +201,22 @@ export const RadialMenuPresentational = ({
               pointerEvents: 'none',
             }}
           >
-            <IntensityIndicator intensityRef={intensityRef} />
+            {!disabled && <IntensityIndicator intensityRef={intensityRef} />}
+
+            {disabled && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                className="absolute rounded-full bg-neutral-900/80 backdrop-blur-md border border-white/10 w-12 h-12 flex items-center justify-center shadow-2xl"
+                style={{ left: -24, top: -24 }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-neutral-500">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M4.93 4.93l14.14 14.14" />
+                </svg>
+              </motion.div>
+            )}
 
             {items.map((item, index) => {
               const count = items.length;
@@ -212,14 +229,14 @@ export const RadialMenuPresentational = ({
               const x = Math.cos(angleRad) * radius - itemSize / 2;
               const y = Math.sin(angleRad) * radius - itemSize / 2;
 
-              const isActive = activeIndex === index;
+              const isActive = !disabled && activeIndex === index;
 
               return (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, scale: 0, x: -itemSize / 2, y: -itemSize / 2 }}
                   animate={{
-                    opacity: 1,
+                    opacity: disabled ? 0.4 : 1,
                     scale: isActive ? 1.2 : 1,
                     x,
                     y,
@@ -235,7 +252,7 @@ export const RadialMenuPresentational = ({
                   <div
                     className={`
                         relative flex items-center justify-center w-14 h-14 rounded-full shadow-lg border transition-colors duration-200
-                        ${isActive ? 'bg-white text-black border-white' : 'bg-neutral-800 text-white border-neutral-700'}
+                        ${disabled ? 'bg-neutral-800/60 text-white/40 border-neutral-700/40 grayscale' : isActive ? 'bg-white text-black border-white' : 'bg-neutral-800 text-white border-neutral-700'}
                       `}
                     style={{
                       backgroundColor: isActive ? item.color : undefined,
