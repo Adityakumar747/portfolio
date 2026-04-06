@@ -23,6 +23,7 @@ export type User = {
   flag: string;
   lastSeen: string;
   createdAt: string;
+  isAdmin?: boolean;
 };
 export type Message = {
   id: string;
@@ -34,13 +35,29 @@ export type Message = {
   color?: string;
   content: string;
   createdAt: string | Date;
-}
+  replyTo?: { id: string; username: string; content: string };
+};
+
+export type SystemMessage = {
+  id: string;
+  type: "system";
+  subtype: "join";
+  sessionId: string;
+  username: string;
+  flag: string;
+  createdAt: string | Date;
+};
+
+export type ChatItem = Message | SystemMessage;
+
+export type Reaction = { emoji: string; sessionIds: string[] };
 
 type SocketContextType = {
   socket: Socket | null;
   users: User[];
   setUsers: Dispatch<SetStateAction<User[]>>;
-  msgs: Message[];
+  msgs: ChatItem[];
+  reactions: Map<string, Reaction[]>;
   focusedCursorId: string | null;
   setFocusedCursorId: Dispatch<SetStateAction<string | null>>;
 };
@@ -50,6 +67,7 @@ const INITIAL_STATE: SocketContextType = {
   users: [],
   setUsers: () => { },
   msgs: [],
+  reactions: new Map(),
   focusedCursorId: null,
   setFocusedCursorId: () => { },
 };
@@ -61,7 +79,8 @@ const SESSION_ID_KEY = "portfolio-site-session-id";
 const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [users, setUsers] = useState<User[]>([]);
-  const [msgs, setMsgs] = useState<Message[]>([]);
+  const [msgs, setMsgs] = useState<ChatItem[]>([]);
+  const [reactions, setReactions] = useState<Map<string, Reaction[]>>(new Map());
   const [focusedCursorId, setFocusedCursorId] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -107,6 +126,19 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
     newSocket.on("msg-delete", (data: { id: string | number }) => {
       setMsgs((prev) => prev.filter((m) => String(m.id) !== String(data.id)));
     });
+
+    newSocket.on("reactions-init", (data: Record<string, Reaction[]>) => {
+      setReactions(new Map(Object.entries(data)));
+    });
+    newSocket.on("reaction-update", (data: { messageId: string; reactions: Reaction[] }) => {
+      setReactions(prev => {
+        const next = new Map(prev);
+        if (data.reactions.length === 0) next.delete(data.messageId);
+        else next.set(data.messageId, data.reactions);
+        return next;
+      });
+    });
+
     return () => {
       newSocket.disconnect();
     };
@@ -114,7 +146,7 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <SocketContext.Provider value={{ socket, users, setUsers, msgs, focusedCursorId, setFocusedCursorId }}>
+    <SocketContext.Provider value={{ socket, users, setUsers, msgs, reactions, focusedCursorId, setFocusedCursorId }}>
       {children}
     </SocketContext.Provider>
   );

@@ -135,10 +135,11 @@ const Cursor = ({
 
 
   useEffect(() => {
-    const lastMsgSessionId = msgs.at(-1)?.sessionId;
+    const lastMsg = msgs.at(-1);
+    const lastMsgSessionId = lastMsg?.sessionId;
     const cursorUserId = users.find(u => u.socketId === socketId)?.id;
-    if (lastMsgSessionId === cursorUserId) {
-      const lastMsgContent = msgs.at(-1)?.content || "";
+    if (lastMsgSessionId === cursorUserId && lastMsg && "content" in lastMsg) {
+      const lastMsgContent = lastMsg.content || "";
       const textSlice =
         lastMsgContent.slice(0, 30) + (lastMsgContent.length > 30 ? "..." : "");
       const timeToRead = Math.max(4000, Math.max(textSlice.length * 100, 1000));
