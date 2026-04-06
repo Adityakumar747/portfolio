@@ -40,20 +40,20 @@ export const MessageReactions = ({ reactions, currentSessionId, onToggle, onPick
           </button>
         );
       })}
-      <button
-        type="button"
-        className={cn(
-          "flex items-center justify-center w-7 h-6 rounded-md border transition-colors",
-          "border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5",
-          THEME.bg.itemHover, THEME.text.secondary
-        )}
-        onMouseDown={(e) => {
-          e.preventDefault();
-          onPickerOpen();
-        }}
-      >
-        <SmilePlus className="w-3.5 h-3.5" />
-      </button>
+      {/* <button */}
+      {/*   type="button" */}
+      {/*   className={cn( */}
+      {/*     "flex items-center justify-center w-7 h-6 rounded-md border transition-colors", */}
+      {/*     "border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5", */}
+      {/*     THEME.bg.itemHover, THEME.text.secondary */}
+      {/*   )} */}
+      {/*   onMouseDown={(e) => { */}
+      {/*     e.preventDefault(); */}
+      {/*     onPickerOpen(); */}
+      {/*   }} */}
+      {/* > */}
+      {/*   <SmilePlus className="w-3.5 h-3.5" /> */}
+      {/* </button> */}
     </div>
   );
 };

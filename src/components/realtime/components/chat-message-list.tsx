@@ -177,7 +177,7 @@ export const ChatMessageList = ({
             }
             lastRenderedDate = msgDate;
 
-            const msgReactions = reactions.get(msg.id) || [];
+            const msgReactions = reactions.get(String(msg.id)) || [];
 
             return (
               <React.Fragment key={msg.id}>
