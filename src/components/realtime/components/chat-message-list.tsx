@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Users, Reply } from "lucide-react";
+import { Users, Reply, Pencil } from "lucide-react";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import { ArrowDown, Hash } from "lucide-react";
 import { ScrollArea } from "../../ui/scroll-area";
@@ -76,6 +76,7 @@ interface ChatMessageListProps {
   typingUsers: Map<string, { username: string }>;
   getTypingText: () => string | null;
   onReply: (msg: Message) => void;
+  onEdit: (msg: Message) => void;
 }
 
 export const ChatMessageList = ({
@@ -90,6 +91,7 @@ export const ChatMessageList = ({
   typingUsers,
   getTypingText,
   onReply,
+  onEdit,
 }: ChatMessageListProps) => {
   const { setFocusedCursorId, socket, reactions, profileMap } = useContext(SocketContext);
   const [pickerOpenFor, setPickerOpenFor] = useState<string | null>(null);
@@ -276,6 +278,9 @@ export const ChatMessageList = ({
 
                     <p className={cn("whitespace-pre-wrap break-words leading-[1.375rem] text-sm font-light", THEME.text.primary)}>
                       {msg.content}
+                      {msg.editedAt && (
+                        <span className={cn("text-[10px] ml-1.5 opacity-50 select-none", THEME.text.secondary)}>(edited)</span>
+                      )}
                     </p>
 
                     <MessageReactions
@@ -296,6 +301,18 @@ export const ChatMessageList = ({
                       open={pickerOpenFor === msg.id}
                       onOpenChange={(open) => setPickerOpenFor(open ? msg.id : null)}
                     />
+                    {isMe && differenceInMinutes(new Date(), msgDate) < 5 && (
+                      <button
+                        type="button"
+                        className={cn("p-1.5 rounded transition-colors", THEME.bg.hover, THEME.text.secondary)}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          onEdit(msg);
+                        }}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    )}
                     <button
                       type="button"
                       className={cn("p-1.5 rounded transition-colors", THEME.bg.hover, THEME.text.secondary)}

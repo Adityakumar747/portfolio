@@ -9,6 +9,7 @@ export type SlashCommand = {
 };
 
 export const SLASH_COMMANDS: SlashCommand[] = [
+  { name: "/admin", description: "Authenticate as admin", replacement: null },
   { name: "/shrug", description: "Appends ¯\\_(ツ)_/¯", replacement: "¯\\_(ツ)_/¯" },
   { name: "/tableflip", description: "Flips the table", replacement: "(╯°□°)╯︵ ┻━┻" },
   { name: "/unflip", description: "Puts the table back", replacement: "┬─┬ノ( º _ ºノ)" },
@@ -68,15 +69,14 @@ export const getFilteredCommands = (query: string) =>
 
 export type ProcessedCommand =
   | { type: "message"; content: string }
-  | { type: "admin"; password: string };
+  | { type: "admin" };
 
 export const processSlashCommand = (text: string): ProcessedCommand => {
   const trimmed = text.trim();
 
-  // /admin <password> → special auth command, not a chat message
-  if (trimmed.startsWith("/admin ")) {
-    const password = trimmed.slice(7).trim();
-    return { type: "admin", password };
+  // /admin → open password dialog (no password in chat input)
+  if (trimmed === "/admin") {
+    return { type: "admin" };
   }
 
   // /me <action> → *<action>*

@@ -28,6 +28,7 @@ import { ChatInput } from "./components/chat-input";
 import type { ProcessedCommand } from "./components/slash-command-menu";
 import { UserList } from "./components/user-list";
 import { EditProfileModal } from "./components/edit-profile-modal";
+import { AdminPasswordDialog } from "./components/admin-password-dialog";
 import { THEME } from "./constants";
 import { getAvatarUrl } from "@/lib/avatar";
 
@@ -38,6 +39,8 @@ const OnlineUsers = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [replyTarget, setReplyTarget] = useState<Message | null>(null);
+  const [editTarget, setEditTarget] = useState<Message | null>(null);
+  const [showAdminDialog, setShowAdminDialog] = useState(false);
 
   const currentUser = users.find(u => u.socketId === socket?.id);
   const { toast } = useToast();
@@ -100,7 +103,12 @@ const OnlineUsers = () => {
 
   const handleCommand = (cmd: ProcessedCommand) => {
     if (cmd.type === "admin") {
-      socket?.emit("admin-auth", { password: cmd.password });
+      setShowAdminDialog(true);
+      return;
+    }
+    if (editTarget) {
+      socket?.emit("msg-edit", { id: editTarget.id, content: cmd.content });
+      setEditTarget(null);
       return;
     }
     socket?.emit("msg-send", {
@@ -309,6 +317,7 @@ const OnlineUsers = () => {
               typingUsers={typingUsers}
               getTypingText={getTypingText}
               onReply={setReplyTarget}
+              onEdit={setEditTarget}
             />
 
             <ChatInput
@@ -317,6 +326,8 @@ const OnlineUsers = () => {
               placeholder="Message #general"
               replyTarget={replyTarget}
               onCancelReply={() => setReplyTarget(null)}
+              editTarget={editTarget}
+              onCancelEdit={() => setEditTarget(null)}
             />
 
             <UserList
@@ -339,6 +350,12 @@ const OnlineUsers = () => {
           updateProfile={updateProfile}
         />
       )}
+
+      <AdminPasswordDialog
+        isOpen={showAdminDialog}
+        onClose={() => setShowAdminDialog(false)}
+        onSubmit={(password) => socket?.emit("admin-auth", { password })}
+      />
     </>
   );
 };

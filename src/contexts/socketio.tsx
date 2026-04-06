@@ -35,6 +35,7 @@ export type Message = {
   color?: string;
   content: string;
   createdAt: string | Date;
+  editedAt?: string | Date;
   replyTo?: { id: string; username: string; content: string };
 };
 
@@ -142,6 +143,14 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
 
     newSocket.on("msg-delete", (data: { id: string | number }) => {
       setMsgs((prev) => prev.filter((m) => String(m.id) !== String(data.id)));
+    });
+
+    newSocket.on("msg-update", (data: { id: string; content: string; editedAt: string }) => {
+      setMsgs((prev) => prev.map((m) =>
+        String(m.id) === String(data.id) && !("type" in m)
+          ? { ...m, content: data.content, editedAt: data.editedAt }
+          : m
+      ));
     });
 
     newSocket.on("reactions-init", (data: Record<string, Reaction[]>) => {
