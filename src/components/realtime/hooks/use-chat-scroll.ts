@@ -26,8 +26,8 @@ export const useChatScroll = (isOpen: boolean, msgsLength: number, currentUserId
   // Initial scroll to bottom
   useEffect(() => {
     if (isOpen) {
-      // Small timeout to ensure content is rendered
-      setTimeout(() => scrollToBottom(false), 100);
+      const timer = setTimeout(() => scrollToBottom(false), 100);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
@@ -69,7 +69,7 @@ export const useChatScroll = (isOpen: boolean, msgsLength: number, currentUserId
     } else {
       setUnreads(prev => prev + 1);
     }
-  }, [msgsLength, currentUserId]);
+  }, [msgsLength, currentUserId, lastMsgSessionId]);
 
   return {
     chatContainer,

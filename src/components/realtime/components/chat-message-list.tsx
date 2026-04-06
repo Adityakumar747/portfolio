@@ -62,7 +62,7 @@ export const ChatMessageList = ({
               differenceInMinutes(msgs[i].createdAt, msgs[i - 1].createdAt) > 3;
 
             return (
-              <div key={i} className={cn("group flex gap-3 pr-2", showHeader && i != 0 && "!mt-4")}>
+              <div key={msg.id} className={cn("group flex gap-3 pr-2", showHeader && i != 0 && "!mt-4")}>
                 {showHeader ? (
                   <div
                     className={cn(

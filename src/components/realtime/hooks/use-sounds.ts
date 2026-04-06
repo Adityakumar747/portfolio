@@ -37,7 +37,7 @@ export const useSounds = () => {
 
   const getContext = useCallback(() => {
     if (audioContextRef.current?.state === 'suspended') {
-      audioContextRef.current.resume();
+      audioContextRef.current.resume().catch(() => {});
     }
     return audioContextRef.current;
   }, []);

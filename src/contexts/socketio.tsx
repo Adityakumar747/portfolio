@@ -16,7 +16,7 @@ export type User = {
   name: string;
   avatar: string;
   color: string;
-  isOnline: string;
+  isOnline: boolean;
   posX: number;
   posY: number;
   location: string;
@@ -78,6 +78,14 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
     });
     setSocket(newSocket);
     newSocket.on("connect", () => { });
+    newSocket.on("connect_error", (err) => {
+      console.error("Socket connection error:", err.message);
+    });
+    newSocket.on("disconnect", (reason) => {
+      if (reason === "io server disconnect") {
+        newSocket.connect();
+      }
+    });
     newSocket.on("msgs-receive-init", (msgs) => {
       setMsgs(msgs);
     });
