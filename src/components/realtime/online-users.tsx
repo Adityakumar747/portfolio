@@ -1,20 +1,28 @@
 "use client";
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { motion } from "motion/react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { motion, AnimatePresence } from "motion/react";
 
 import { SocketContext } from "@/contexts/socketio";
+import { useToast } from "@/components/ui/use-toast";
 import { Users, Users2, Hash, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { useChatScroll } from "./hooks/use-chat-scroll";
 import { useTyping } from "./hooks/use-typing";
 import { useSounds } from "./hooks/use-sounds";
+import { useConnectionStatus } from "./hooks/use-connection-status";
 import { ChatMessageList } from "./components/chat-message-list";
 import { ChatInput } from "./components/chat-input";
 import { UserList } from "./components/user-list";
@@ -30,7 +38,9 @@ const OnlineUsers = () => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   const currentUser = users.find(u => u.socketId === socket?.id);
+  const { toast } = useToast();
   const { playSendSound, playReceiveSound } = useSounds();
+  const connectionStatus = useConnectionStatus(socket);
   const prevMsgsLength = useRef(msgs.length);
 
   useEffect(() => {
@@ -96,7 +106,28 @@ const OnlineUsers = () => {
     localStorage.setItem("username", name);
     localStorage.setItem("avatar", avatar);
     if (color) localStorage.setItem("color", color);
+    const { dismiss } = toast({ title: "Profile updated" });
+    setTimeout(dismiss, 3000);
   };
+
+  // Feature 6: Keyboard shortcut Ctrl+/ to toggle chat
+  const toggleOpen = useCallback(() => {
+    setIsOpen(prev => {
+      if (prev) setShowUserList(false);
+      return !prev;
+    });
+  }, []);
+
+  useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === "/") {
+        e.preventDefault();
+        toggleOpen();
+      }
+    };
+    document.addEventListener("keydown", handleKeydown);
+    return () => document.removeEventListener("keydown", handleKeydown);
+  }, [toggleOpen]);
 
   const isSingleUser = users.length <= 1;
 
@@ -110,41 +141,67 @@ const OnlineUsers = () => {
           if (!newOpen) setShowUserList(false)
         }}
       >
-        <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            className={cn(
-              "mr-4 h-11 w-12 shadow-lg transition-all duration-300 z-50 p-0",
-              "bg-background/20 hover:bg-background/80 backdrop-blur-sm border-2 border-white/30 rounded-lg",
-              !isOpen && unreads > 0 && "animate-pulse border-green-500/50"
+        <div className="flex items-center gap-2">
+          {/* Feature 4: "N people here" label */}
+          <AnimatePresence>
+            {users.length >= 2 && !isOpen && (
+              <motion.span
+                initial={{ opacity: 0, x: 5 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 5 }}
+                className={cn("text-xs font-medium whitespace-nowrap select-none", THEME.text.secondary)}
+              >
+                {users.length} people here
+              </motion.span>
             )}
-          >
-            <div className="relative flex items-center justify-center w-full h-full">
-              <div className="relative">
-                <motion.div
-                  initial={{ scale: 0.5, opacity: 1 }}
-                  animate={{ scale: [0.1, 2], opacity: [1, 0] }}
-                  transition={{
-                    duration: .4,
-                    delay: 0,
-                    ease: "easeOut",
-                    repeat: Infinity,
-                    repeatDelay: 2,
-                  }}
-                  className={cn("absolute -inset-1 rounded-full", unreads > 0 ? "bg-green-500/40" : "bg-transparent")}
-                />
-                <Users2 className="w-6 h-6" />
-              </div>
+          </AnimatePresence>
 
-              <span className={cn(
-                "absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold transition-colors",
-                unreads > 0 ? "bg-green-500 text-white" : "bg-red-500 text-white"
-              )}>
-                {unreads > 0 ? unreads : users.length}
-              </span>
-            </div>
-          </Button>
-        </PopoverTrigger>
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={cn(
+                      "mr-4 h-11 w-12 shadow-lg transition-all duration-300 z-50 p-0",
+                      "bg-background/20 hover:bg-background/80 backdrop-blur-sm border-2 border-white/30 rounded-lg",
+                      !isOpen && unreads > 0 && "animate-pulse border-green-500/50"
+                    )}
+                  >
+                    <div className="relative flex items-center justify-center w-full h-full">
+                      <div className="relative">
+                        <motion.div
+                          initial={{ scale: 0.5, opacity: 1 }}
+                          animate={{ scale: [0.1, 2], opacity: [1, 0] }}
+                          transition={{
+                            duration: .4,
+                            delay: 0,
+                            ease: "easeOut",
+                            repeat: Infinity,
+                            repeatDelay: 2,
+                          }}
+                          className={cn("absolute -inset-1 rounded-full", unreads > 0 ? "bg-green-500/40" : "bg-transparent")}
+                        />
+                        <Users2 className="w-6 h-6" />
+                      </div>
+
+                      <span className={cn(
+                        "absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold transition-colors",
+                        unreads > 0 ? "bg-green-500 text-white" : "bg-red-500 text-white"
+                      )}>
+                        {unreads > 0 ? unreads : users.length}
+                      </span>
+                    </div>
+                  </Button>
+                </PopoverTrigger>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                <p>Chat <kbd className="ml-1 text-[10px] opacity-60">Ctrl+/</kbd></p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+
         <PopoverContent
           className={cn(
             "w-80 min-h-[400px] sm:w-96 p-0 border-none shadow-2xl overflow-hidden rounded-xl mr-4 mb-4 flex flex-col",
@@ -159,6 +216,20 @@ const OnlineUsers = () => {
             <div className={cn("flex items-center gap-2 font-semibold", THEME.text.header)}>
               <Hash className={cn("w-5 h-5", THEME.text.secondary)} />
               <span>general</span>
+              {/* Feature 2: Connection status indicator */}
+              <div className="flex items-center gap-1.5">
+                <div className={cn(
+                  "w-2 h-2 rounded-full",
+                  connectionStatus === "connected" && "bg-green-500",
+                  connectionStatus === "connecting" && "bg-yellow-500 animate-pulse",
+                  connectionStatus === "disconnected" && "bg-red-500",
+                )} />
+                {connectionStatus !== "connected" && (
+                  <span className={cn("text-[10px] font-normal", THEME.text.secondary)}>
+                    {connectionStatus === "connecting" ? "Connecting..." : "Disconnected"}
+                  </span>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-2">
               {currentUser && (
