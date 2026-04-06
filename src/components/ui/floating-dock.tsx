@@ -5,7 +5,6 @@
  **/
 
 import { cn } from "@/lib/utils";
-// import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
 import {
   AnimatePresence,
   MotionValue,
@@ -15,9 +14,7 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { opacity } from "../header/anim";
 
 export const FloatingDock = ({
   items,
@@ -31,7 +28,6 @@ export const FloatingDock = ({
   return (
     <>
       <FloatingDockDesktop items={items} className={desktopClassName} />
-      {/* <FloatingDockMobile items={items} className={mobileClassName} /> */}
     </>
   );
 };
@@ -80,12 +76,6 @@ const FloatingDockMobile = ({
           </motion.div>
         )}
       </AnimatePresence>
-      {/* <button
-        onClick={() => setOpen(!open)}
-        className="h-10 w-10 rounded-full bg-gray-50 dark:bg-neutral-800 flex items-center justify-center"
-      >
-        <IconLayoutNavbarCollapse className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
-      </button> */}
     </div>
   );
 };
@@ -132,10 +122,8 @@ const FloatingDockDesktop = ({
         }}
         onMouseLeave={() => mouseX.set(Infinity)}
         className={cn(
-          // "hidden md:flex",
           "flex gap-2 md:gap-4",
           "mx-auto h-16 items-end  rounded-2xl bg-gray-50 dark:bg-neutral-900 px-4 pb-3",
-          // "blur-sm brightness-50",
           className
         )}
       >
@@ -149,10 +137,7 @@ const FloatingDockDesktop = ({
           onMouseEnter={() => setShowHint(false)}
         >
           <div
-            className={cn(
-              "relative w-full h-full flex items-center justify-center"
-              // "backdrop-blur-md"
-            )}
+            className="relative w-full h-full flex items-center justify-center"
           >
             <motion.div
               className={cn(
