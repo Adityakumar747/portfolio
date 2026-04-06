@@ -46,7 +46,6 @@ function Preloader({ children, disabled = false }: PreloaderProps) {
     loadingTween.current?.progress(0.99).kill();
     setLoadingPercent(100);
     setIsLoading(false);
-    // console.log("killed", loadingTween.current);
   };
   const loadingPercentRef = useRef<{ value: number }>({ value: 0 });
   useEffect(() => {
@@ -59,8 +58,6 @@ function Preloader({ children, disabled = false }: PreloaderProps) {
       },
       onComplete: () => {
         setIsLoading(false);
-        // observe: this change has not been observed for errors.
-        // window.scrollTo(0, 0);
       },
     });
   }, []);
