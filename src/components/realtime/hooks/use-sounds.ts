@@ -114,47 +114,6 @@ export const useSounds = () => {
     playTone(800, 400, 0.35, 0.1);
   }, [playTone]);
 
-  // Join: Discord-style deep boop
-  const playJoinSound = useCallback(() => {
-    try {
-      const ctx = getContext();
-      if (!ctx) return;
-      const now = ctx.currentTime;
-
-      // Deep sine hit
-      const osc1 = ctx.createOscillator();
-      osc1.type = "sine";
-      osc1.frequency.setValueAtTime(200, now);
-      osc1.frequency.exponentialRampToValueAtTime(120, now + 0.25);
-
-      const gain1 = ctx.createGain();
-      gain1.gain.setValueAtTime(0.12, now);
-      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-
-      osc1.connect(gain1);
-      gain1.connect(ctx.destination);
-      osc1.start(now);
-      osc1.stop(now + 0.3);
-
-      // Higher harmonic for brightness
-      const osc2 = ctx.createOscillator();
-      osc2.type = "triangle";
-      osc2.frequency.setValueAtTime(400, now);
-      osc2.frequency.exponentialRampToValueAtTime(250, now + 0.15);
-
-      const gain2 = ctx.createGain();
-      gain2.gain.setValueAtTime(0.05, now);
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-
-      osc2.connect(gain2);
-      gain2.connect(ctx.destination);
-      osc2.start(now);
-      osc2.stop(now + 0.15);
-    } catch (error) {
-      console.error("Failed to play join sound", error);
-    }
-  }, [getContext]);
-
   const confettiBufferRef = useRef<AudioBuffer | null>(null);
 
   const playConfettiSound = useCallback((intensity: number = 0.5) => {
@@ -227,7 +186,7 @@ export const useSounds = () => {
 
   return {
     playSendSound, playReceiveSound, playPressSound, playReleaseSound,
-    playJoinSound, playConfettiSound,
+    playConfettiSound,
     startChargeTone, updateChargeTone, stopChargeTone,
   };
 };

@@ -44,7 +44,7 @@ const OnlineUsers = () => {
 
   const currentUser = users.find(u => u.socketId === socket?.id);
   const { toast } = useToast();
-  const { playSendSound, playReceiveSound, playJoinSound } = useSounds();
+  const { playSendSound, playReceiveSound } = useSounds();
   const connectionStatus = useConnectionStatus(socket);
   const prevMsgsLength = useRef(msgs.length);
 
@@ -68,13 +68,7 @@ const OnlineUsers = () => {
     prevMsgsLength.current = msgs.length;
   }, [msgs, playSendSound, playReceiveSound, currentUser]);
 
-  // Play join sound from dedicated server event
-  useEffect(() => {
-    if (!socket) return;
-    const onUserJoined = () => { if (isOpen) playJoinSound(); };
-    socket.on("user-joined", onUserJoined);
-    return () => { socket.off("user-joined", onUserJoined); };
-  }, [socket, isOpen, playJoinSound]);
+
 
   // Use custom hooks
   const {
