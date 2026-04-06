@@ -202,7 +202,7 @@ const OnlineUsers = () => {
                 onClick={() => setShowUserList(!showUserList)}
               >
                 <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <div className="w-2 h-2 bg-green-500 rounded-full" aria-label="Online" role="status" />
                   <span>
                     {users.length}
                   </span>
