@@ -66,26 +66,36 @@ export const SlashCommandMenu = ({ query, selectedIndex, onSelect }: SlashComman
 export const getFilteredCommands = (query: string) =>
   SLASH_COMMANDS.filter(c => c.name.startsWith(query.toLowerCase()));
 
-export const processSlashCommand = (text: string): string => {
+export type ProcessedCommand =
+  | { type: "message"; content: string }
+  | { type: "admin"; password: string };
+
+export const processSlashCommand = (text: string): ProcessedCommand => {
   const trimmed = text.trim();
+
+  // /admin <password> → special auth command, not a chat message
+  if (trimmed.startsWith("/admin ")) {
+    const password = trimmed.slice(7).trim();
+    return { type: "admin", password };
+  }
 
   // /me <action> → *<action>*
   if (trimmed.startsWith("/me ")) {
     const action = trimmed.slice(4).trim();
-    return action ? `*${action}*` : trimmed;
+    return { type: "message", content: action ? `*${action}*` : trimmed };
   }
 
   // Other commands: check if message is exactly or starts with a command
   for (const cmd of SLASH_COMMANDS) {
     if (cmd.replacement === null) continue;
     if (trimmed === cmd.name) {
-      return cmd.replacement;
+      return { type: "message", content: cmd.replacement };
     }
     if (trimmed.startsWith(cmd.name + " ")) {
       const rest = trimmed.slice(cmd.name.length);
-      return rest + " " + cmd.replacement;
+      return { type: "message", content: rest + " " + cmd.replacement };
     }
   }
 
-  return text;
+  return { type: "message", content: text };
 };

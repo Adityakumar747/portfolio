@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "motion/react";
 
-import { SocketContext } from "@/contexts/socketio";
+import { SocketContext, Message } from "@/contexts/socketio";
 import { useToast } from "@/components/ui/use-toast";
 import { Users, Users2, Hash, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,7 @@ import { useSounds } from "./hooks/use-sounds";
 import { useConnectionStatus } from "./hooks/use-connection-status";
 import { ChatMessageList } from "./components/chat-message-list";
 import { ChatInput } from "./components/chat-input";
+import type { ProcessedCommand } from "./components/slash-command-menu";
 import { UserList } from "./components/user-list";
 import { EditProfileModal } from "./components/edit-profile-modal";
 import { THEME } from "./constants";
@@ -36,35 +37,41 @@ const OnlineUsers = () => {
   const [showUserList, setShowUserList] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [replyTarget, setReplyTarget] = useState<Message | null>(null);
 
   const currentUser = users.find(u => u.socketId === socket?.id);
   const { toast } = useToast();
-  const { playSendSound, playReceiveSound } = useSounds();
+  const { playSendSound, playReceiveSound, playJoinSound } = useSounds();
   const connectionStatus = useConnectionStatus(socket);
   const prevMsgsLength = useRef(msgs.length);
 
+  // Play send/receive sounds for regular messages
   useEffect(() => {
     if (msgs.length > prevMsgsLength.current) {
       const isSmallBatch = msgs.length - prevMsgsLength.current <= 2;
       const lastMsg = msgs[msgs.length - 1];
+      const isSystem = lastMsg && "type" in lastMsg && lastMsg.type === "system";
       let isRecent = true;
       if (lastMsg?.createdAt) {
         const msgTime = new Date(lastMsg.createdAt).getTime();
-        const now = Date.now();
-        // If message is older than 10 seconds, assume it's history
-        if (now - msgTime > 10000) isRecent = false;
+        if (Date.now() - msgTime > 10000) isRecent = false;
       }
 
-      if (isSmallBatch && isRecent && lastMsg) {
-        if (lastMsg.username === currentUser?.name) {
-          playSendSound();
-        } else {
-          playReceiveSound();
-        }
+      if (isSmallBatch && isRecent && lastMsg && !isSystem) {
+        if (lastMsg.username === currentUser?.name) playSendSound();
+        else playReceiveSound();
       }
     }
     prevMsgsLength.current = msgs.length;
   }, [msgs, playSendSound, playReceiveSound, currentUser]);
+
+  // Play join sound from dedicated server event
+  useEffect(() => {
+    if (!socket) return;
+    const onUserJoined = () => { if (isOpen) playJoinSound(); };
+    socket.on("user-joined", onUserJoined);
+    return () => { socket.off("user-joined", onUserJoined); };
+  }, [socket, isOpen, playJoinSound]);
 
   // Use custom hooks
   const {
@@ -91,10 +98,16 @@ const OnlineUsers = () => {
     isAtBottomRef
   );
 
-  const sendMessage = (msg: string) => {
+  const handleCommand = (cmd: ProcessedCommand) => {
+    if (cmd.type === "admin") {
+      socket?.emit("admin-auth", { password: cmd.password });
+      return;
+    }
     socket?.emit("msg-send", {
-      content: msg,
+      content: cmd.content,
+      ...(replyTarget && { replyTo: replyTarget.id }),
     });
+    setReplyTarget(null);
   };
 
   const updateProfile = ({ name, avatar, color }: { name: string; avatar: string, color?: string }) => {
@@ -295,12 +308,15 @@ const OnlineUsers = () => {
               isSingleUser={isSingleUser}
               typingUsers={typingUsers}
               getTypingText={getTypingText}
+              onReply={setReplyTarget}
             />
 
             <ChatInput
-              onSendMessage={sendMessage}
+              onSendMessage={handleCommand}
               onTyping={handleTyping}
               placeholder="Message #general"
+              replyTarget={replyTarget}
+              onCancelReply={() => setReplyTarget(null)}
             />
 
             <UserList

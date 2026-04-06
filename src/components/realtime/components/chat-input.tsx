@@ -1,25 +1,34 @@
-import React, { useRef, useCallback, useState } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { THEME } from "../constants";
 import { SlashCommandMenu, getFilteredCommands, processSlashCommand } from "./slash-command-menu";
+import type { ProcessedCommand } from "./slash-command-menu";
+import { ReplyPreview } from "./reply-preview";
 import type { SlashCommand } from "./slash-command-menu";
+import type { Message } from "@/contexts/socketio";
 
 interface ChatInputProps {
-  onSendMessage: (msg: string) => void;
+  onSendMessage: (cmd: ProcessedCommand) => void;
   onTyping: () => void;
   placeholder?: string;
+  replyTarget?: Message | null;
+  onCancelReply?: () => void;
 }
 
 const MAX_LENGTH = 500;
 const MAX_ROWS = 5;
 
-export const ChatInput = ({ onSendMessage, onTyping, placeholder = "Message" }: ChatInputProps) => {
+export const ChatInput = ({ onSendMessage, onTyping, placeholder = "Message", replyTarget, onCancelReply }: ChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showCommands, setShowCommands] = useState(false);
   const [commandQuery, setCommandQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    if (replyTarget) textareaRef.current?.focus();
+  }, [replyTarget]);
 
   const resizeTextarea = useCallback(() => {
     const el = textareaRef.current;
@@ -39,8 +48,7 @@ export const ChatInput = ({ onSendMessage, onTyping, placeholder = "Message" }: 
     resizeTextarea();
 
     if (raw === "") return;
-    const processed = processSlashCommand(raw);
-    onSendMessage(processed);
+    onSendMessage(processSlashCommand(raw));
   };
 
   const handleCommandSelect = (cmd: SlashCommand) => {
@@ -108,7 +116,14 @@ export const ChatInput = ({ onSendMessage, onTyping, placeholder = "Message" }: 
 
   return (
     <div className={cn("p-4 pt-0", THEME.bg.primary)}>
-      <div className={cn("relative rounded-lg p-2.5 flex items-center gap-2", THEME.bg.tertiary)}>
+      {replyTarget && onCancelReply && (
+        <ReplyPreview
+          username={replyTarget.username}
+          content={replyTarget.content}
+          onCancel={onCancelReply}
+        />
+      )}
+      <div className={cn("relative rounded-lg p-2.5 flex items-center gap-2", THEME.bg.tertiary, replyTarget && "rounded-t-none")}>
         {showCommands && (
           <SlashCommandMenu
             query={commandQuery}

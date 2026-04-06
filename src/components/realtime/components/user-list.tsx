@@ -9,6 +9,7 @@ import { SocketContext } from "@/contexts/socketio";
 import type { Socket } from "socket.io-client";
 import { THEME } from "../constants";
 import { getAvatarUrl } from "@/lib/avatar";
+import { AdminBadge } from "./admin-badge";
 
 interface UserListProps {
   users: User[];
@@ -125,6 +126,7 @@ const UserItem = ({
               >
                 {user.name}
               </span>
+              {user.isAdmin && <AdminBadge />}
               {isMe && <span className="bg-[#5865f2] text-white text-[10px] px-1 rounded font-bold">YOU</span>}
             </div>
             {isMe ? (
