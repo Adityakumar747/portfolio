@@ -32,7 +32,8 @@ export const RadialMenuPresentational = ({
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="absolute rounded-full -translate-x-1/2 -translate-y-1/2 bg-neutral-900/80 backdrop-blur-md border border-white/10 w-12 h-12 flex items-center justify-center shadow-2xl"
+            className="absolute rounded-full bg-neutral-900/80 backdrop-blur-md border border-white/10 w-12 h-12 flex items-center justify-center shadow-2xl"
+            style={{ left: -24, top: -24 }}
           >
             <div className="w-2 h-2 bg-white/50 rounded-full" />
           </motion.div>
@@ -44,28 +45,29 @@ export const RadialMenuPresentational = ({
             const angleDeg = (index * slice) - 90;
             const angleRad = (angleDeg * Math.PI) / 180;
 
-            const x = Math.cos(angleRad) * radius;
-            const y = Math.sin(angleRad) * radius;
+            const itemSize = 56; // w-14 = 56px
+            const x = Math.cos(angleRad) * radius - itemSize / 2;
+            const y = Math.sin(angleRad) * radius - itemSize / 2;
 
             const isActive = activeIndex === index;
 
             return (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                initial={{ opacity: 0, scale: 0, x: -itemSize / 2, y: -itemSize / 2 }}
                 animate={{
                   opacity: 1,
                   scale: isActive ? 1.2 : 1,
                   x,
                   y,
                 }}
-                exit={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                exit={{ opacity: 0, scale: 0, x: -itemSize / 2, y: -itemSize / 2 }}
                 transition={{
                   type: "spring",
                   stiffness: 300,
                   damping: 20
                 }}
-                className="absolute flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
+                className="absolute flex items-center justify-center"
               >
                 <div
                   className={`

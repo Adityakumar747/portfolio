@@ -18,6 +18,7 @@ const MENU_ITEMS: MenuItem[] = [
 
 const DEAD_ZONE = 20; // Radius where nothing is selected
 const HOLD_DELAY = 0; // ms to hold right click before opening menu
+const INTERACTIVE_SELECTOR = 'a, button, input, textarea, select, [contenteditable], img, video, audio, [data-radix-popper-content-wrapper], [data-radix-popper-content-wrapper] *';
 
 export default function RadialMenu() {
   const { socket } = useContext(SocketContext);
@@ -101,6 +102,11 @@ export default function RadialMenu() {
   const handleMouseDown = useCallback((e: MouseEvent) => {
     // Check for Right Click (button 2)
     if (e.button === 2) {
+      const target = e.target as HTMLElement;
+      // Allow native context menu on interactive elements
+      if (target.closest(INTERACTIVE_SELECTOR)) return;
+
+      suppressMenuRef.current = true;
       const pos = { x: e.clientX, y: e.clientY };
 
       // Start timer
@@ -108,7 +114,6 @@ export default function RadialMenu() {
         setMenuPos(pos);
         setIsOpen(true);
         setActiveIndex(null);
-        suppressMenuRef.current = true; // Mark as suppressing the context menu
       }, HOLD_DELAY);
     }
   }, []);
