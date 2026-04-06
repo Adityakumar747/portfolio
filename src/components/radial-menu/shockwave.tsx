@@ -7,14 +7,16 @@ export interface ShockwaveData {
   y: number;
   color: string;
   emoji: string;
+  intensity: number;
 }
 
-function cameraShake() {
+function cameraShake(intensity: number) {
   const el = document.body;
+  const m = 0.5 + intensity * 2; // multiplier: 0.5x at min, 2.5x at max
   const steps = [
-    { x: 1.2, y: -0.75 },
-    { x: -0.9, y: 0.6 },
-    { x: 0.45, y: -0.3 },
+    { x: 1.2 * m, y: -0.75 * m },
+    { x: -0.9 * m, y: 0.6 * m },
+    { x: 0.45 * m, y: -0.3 * m },
     { x: 0, y: 0 },
   ];
   const interval = 90;
@@ -31,8 +33,11 @@ function cameraShake() {
 }
 
 export function Shockwave({ data }: { data: ShockwaveData }) {
+  const int = data.intensity;
+  const s = 0.4 + int * 0.8; // size scale: 0.4x–1.2x
+
   useEffect(() => {
-    cameraShake();
+    cameraShake(int);
   }, []);
 
   return (
@@ -40,37 +45,37 @@ export function Shockwave({ data }: { data: ShockwaveData }) {
       className="fixed pointer-events-none z-[9998]"
       style={{ left: data.x, top: data.y }}
     >
-      {/* Outer ring — big and bold */}
+      {/* Outer ring */}
       <motion.div
         initial={{ width: 0, height: 0, opacity: 1 }}
-        animate={{ width: 300, height: 300, opacity: 0 }}
+        animate={{ width: 300 * s, height: 300 * s, opacity: 0 }}
         transition={{ duration: 1.4, ease: 'easeOut' }}
         className="absolute rounded-full"
         style={{
           borderWidth: 3,
           borderColor: data.color,
           transform: 'translate(-50%, -50%)',
-          boxShadow: `0 0 40px ${data.color}80, inset 0 0 40px ${data.color}30`,
+          boxShadow: `0 0 ${40 * s}px ${data.color}80, inset 0 0 ${40 * s}px ${data.color}30`,
         }}
       />
 
       {/* Mid ring */}
       <motion.div
         initial={{ width: 0, height: 0, opacity: 0.8 }}
-        animate={{ width: 200, height: 200, opacity: 0 }}
+        animate={{ width: 200 * s, height: 200 * s, opacity: 0 }}
         transition={{ duration: 1.1, ease: 'easeOut', delay: 0.1 }}
         className="absolute rounded-full border-2"
         style={{
           borderColor: data.color,
           transform: 'translate(-50%, -50%)',
-          boxShadow: `0 0 25px ${data.color}50`,
+          boxShadow: `0 0 ${25 * s}px ${data.color}50`,
         }}
       />
 
-      {/* Inner ring — fastest */}
+      {/* Inner ring */}
       <motion.div
         initial={{ width: 0, height: 0, opacity: 0.6 }}
-        animate={{ width: 120, height: 120, opacity: 0 }}
+        animate={{ width: 120 * s, height: 120 * s, opacity: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
         className="absolute rounded-full border"
         style={{
@@ -82,7 +87,7 @@ export function Shockwave({ data }: { data: ShockwaveData }) {
       {/* Center glow burst */}
       <motion.div
         initial={{ width: 0, height: 0, opacity: 0.6 }}
-        animate={{ width: 80, height: 80, opacity: 0 }}
+        animate={{ width: 80 * s, height: 80 * s, opacity: 0 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
         className="absolute rounded-full"
         style={{
@@ -95,7 +100,7 @@ export function Shockwave({ data }: { data: ShockwaveData }) {
       <div className="absolute left-0 top-0" style={{ transform: 'translate(-50%, -50%)' }}>
         <motion.div
           initial={{ scale: 0, opacity: 1 }}
-          animate={{ scale: 3, opacity: 0 }}
+          animate={{ scale: 2 + int * 2, opacity: 0 }}
           transition={{ duration: 1.2, ease: 'easeOut' }}
           className="text-4xl"
         >

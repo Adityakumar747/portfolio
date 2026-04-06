@@ -74,6 +74,11 @@ body {
   }
 }
 
+/* canvas-confetti injects a canvas with inline z-index */
+body > canvas {
+  pointer-events: none !important;
+}
+
 @layer utilities {
   .canvas-overlay-mode {
     pointer-events: none;

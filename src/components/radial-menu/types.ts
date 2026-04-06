@@ -9,3 +9,6 @@ export interface Position {
   x: number;
   y: number;
 }
+
+/** 0 = minimum pull, 1 = maximum pull */
+export type Intensity = number;
