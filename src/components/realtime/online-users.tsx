@@ -162,7 +162,7 @@ const OnlineUsers = () => {
                 initial={{ opacity: 0, x: 5 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 5 }}
-                className={cn("text-xs font-medium whitespace-nowrap select-none", THEME.text.secondary)}
+                className={cn("text-xs hidden md:block font-medium whitespace-nowrap select-none", THEME.text.secondary)}
               >
                 {users.length} people here
               </motion.span>

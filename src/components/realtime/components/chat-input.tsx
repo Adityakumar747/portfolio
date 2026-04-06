@@ -133,6 +133,7 @@ export const ChatInput = ({ onSendMessage, onTyping, placeholder = "Message", re
         )}
         <textarea
           ref={textareaRef}
+          autoFocus
           className={cn(
             "flex-1 bg-transparent border-none outline-none font-medium min-w-0 resize-none leading-5 overflow-hidden p-0 h-5",
             THEME.text.primary, THEME.text.placeholder

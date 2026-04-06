@@ -15,7 +15,7 @@ export const SystemMessageRow = ({ users }: SystemMessageProps) => {
       <span className="text-xs shrink-0">
         {users.length <= 3
           ? <>{users.map(u => `${u.username} ${u.flag}`).join(", ")} joined</>
-          : <>{users.length} people joined from {flags}</>
+          : <>{users.length} people visited from {flags}</>
         }
       </span>
       <div className={cn("flex-1 h-px", "bg-black/10 dark:bg-white/10")} />
