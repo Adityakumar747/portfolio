@@ -41,7 +41,6 @@ type SocketContextType = {
   users: User[];
   setUsers: Dispatch<SetStateAction<User[]>>;
   msgs: Message[];
-  isCurrentUser: boolean;
   focusedCursorId: string | null;
   setFocusedCursorId: Dispatch<SetStateAction<string | null>>;
 };
@@ -51,7 +50,6 @@ const INITIAL_STATE: SocketContextType = {
   users: [],
   setUsers: () => { },
   msgs: [],
-  isCurrentUser: false,
   focusedCursorId: null,
   setFocusedCursorId: () => { },
 };
@@ -64,7 +62,6 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [msgs, setMsgs] = useState<Message[]>([]);
-  const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [focusedCursorId, setFocusedCursorId] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -82,7 +79,9 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
       console.error("Socket connection error:", err.message);
     });
     newSocket.on("disconnect", (reason) => {
-      if (reason === "io server disconnect") {
+      // Reconnect on server-initiated disconnect and network drops.
+      // "io client disconnect" means the user explicitly called .disconnect(), so skip that.
+      if (reason !== "io client disconnect") {
         newSocket.connect();
       }
     });
@@ -105,18 +104,17 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
       });
     });
 
-    newSocket.on("msg-delete", (data: { id: number }) => {
-      setMsgs((prev) => prev.filter((m) => Number(m.id) !== data.id));
+    newSocket.on("msg-delete", (data: { id: string | number }) => {
+      setMsgs((prev) => prev.filter((m) => String(m.id) !== String(data.id)));
     });
     return () => {
       newSocket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const currentUser = users.find(u => u.socketId === socket?.id);
 
   return (
-    <SocketContext.Provider value={{ socket: socket, users, setUsers, msgs, isCurrentUser, focusedCursorId, setFocusedCursorId }}>
+    <SocketContext.Provider value={{ socket, users, setUsers, msgs, focusedCursorId, setFocusedCursorId }}>
       {children}
     </SocketContext.Provider>
   );
