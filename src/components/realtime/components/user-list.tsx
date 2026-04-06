@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Users, Edit } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -13,19 +13,18 @@ import { getAvatarUrl } from "@/lib/avatar";
 interface UserListProps {
   users: User[];
   socket: Socket | null;
-  updateProfile: (data: { name: string; avatar: string; color: string }) => void;
   showUserList: boolean;
   onClose: () => void;
   onEditProfile: () => void;
 }
 
-export const UserList = ({ users, socket, updateProfile, showUserList, onClose, onEditProfile }: UserListProps) => {
+export const UserList = ({ users, socket, showUserList, onClose, onEditProfile }: UserListProps) => {
   const { setFocusedCursorId } = useContext(SocketContext);
-  const sortedUsers = [...users].sort((a, b) => {
+  const sortedUsers = useMemo(() => [...users].sort((a, b) => {
     if (a.socketId === socket?.id) return -1;
     if (b.socketId === socket?.id) return 1;
     return 0;
-  });
+  }), [users, socket?.id]);
 
   return (
     <AnimatePresence>

@@ -78,7 +78,7 @@ const OnlineUsers = () => {
     socket,
     currentUser,
     scrollToBottom,
-    isAtBottomRef.current
+    isAtBottomRef
   );
 
   const sendMessage = (msg: string) => {
@@ -235,7 +235,6 @@ const OnlineUsers = () => {
             <UserList
               users={users}
               socket={socket}
-              updateProfile={updateProfile}
               showUserList={showUserList}
               onClose={() => setShowUserList(false)}
               onEditProfile={() => setIsEditingProfile(true)}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -37,6 +37,7 @@ export const EditProfileModal = ({
   const [name, setName] = useState(user.name);
   const [avatarSeed, setAvatarSeed] = useState(user.avatar);
   const [color, setColor] = useState(user.color || COLORS[0]);
+  const avatarSeeds = useMemo(() => Array.from({ length: 100 }, (_, i) => (i + 1).toString()), []);
 
   // Reset state when opening
   useEffect(() => {
@@ -120,7 +121,7 @@ export const EditProfileModal = ({
           </div>
           <ScrollArea className="flex-1 w-full rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-black/20" data-lenis-prevent>
             <div className="grid grid-cols-5 gap-1.5 p-2" data-lenis-prevent>
-              {Array.from({ length: 100 }, (_, i) => (i + 1).toString()).map((seed) => (
+              {avatarSeeds.map((seed) => (
                 <button
                   key={seed}
                   className={cn(

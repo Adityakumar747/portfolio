@@ -29,6 +29,7 @@ export const ChatInput = ({ onSendMessage, onTyping, placeholder = "Message" }: 
           ref={inputRef}
           className={cn("flex-1 bg-transparent border-none outline-none font-medium min-w-0", THEME.text.primary, THEME.text.placeholder)}
           placeholder={placeholder}
+          aria-label={placeholder}
           onChange={onTyping}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           autoComplete="off"
