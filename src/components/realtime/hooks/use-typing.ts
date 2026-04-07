@@ -11,9 +11,21 @@ export const useTyping = (socket: Socket | null, currentUser: { name: string } |
   useEffect(() => {
     if (!socket) return;
 
-    const handleTypingReceive = (data: { socketId: string, username: string }) => {
+    const handleTypingReceive = (data: { socketId: string, username: string, isTyping: boolean }) => {
       // Don't show typing for self
       if (data.socketId === socket.id) return;
+
+      if (!data.isTyping) {
+        setTypingUsers(prev => {
+          const newMap = new Map(prev);
+          if (newMap.has(data.socketId)) {
+            clearTimeout(newMap.get(data.socketId)!.timeout);
+            newMap.delete(data.socketId);
+          }
+          return newMap;
+        });
+        return;
+      }
 
       setTypingUsers(prev => {
         const newMap = new Map(prev);
