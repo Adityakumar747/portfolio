@@ -2,18 +2,17 @@
 import Image from "next/image";
 import React from "react";
 import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalTrigger,
-} from "../ui/animated-modal";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogTrigger,
+} from "../ui/responsive-dialog";
 import { FloatingDock } from "../ui/floating-dock";
+import { ScrollArea } from "../ui/scroll-area";
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { motion } from "motion/react";
 
-import SmoothScroll from "../smooth-scroll";
 import projects, { Project } from "@/data/projects";
-import { cn } from "@/lib/utils";
 import { SectionHeader } from "./section-header";
 
 import SectionWrapper from "../ui/section-wrapper";
@@ -21,20 +20,21 @@ import SectionWrapper from "../ui/section-wrapper";
 const ProjectsSection = () => {
   return (
     <SectionWrapper id="projects" className="max-w-7xl mx-auto md:h-[130vh]">
-      <SectionHeader id='projects' title="Projects" />
+      <SectionHeader id="projects" title="Projects" />
       <div className="grid grid-cols-1 md:grid-cols-3">
-        {projects.map((project, index) => (
-          <Modall key={project.src} project={project} />
+        {projects.map((project) => (
+          <ProjectCard key={project.id} project={project} />
         ))}
       </div>
     </SectionWrapper>
   );
 };
-const Modall = ({ project }: { project: Project }) => {
+
+const ProjectCard = ({ project }: { project: Project }) => {
   return (
     <div className="flex items-center justify-center">
-      <Modal>
-        <ModalTrigger className="bg-transparent flex justify-center group/modal-btn">
+      <ResponsiveDialog>
+        <ResponsiveDialogTrigger className="bg-transparent flex justify-center">
           <div
             className="relative w-[400px] h-auto rounded-lg overflow-hidden"
             style={{ aspectRatio: "3/2" }}
@@ -46,93 +46,95 @@ const Modall = ({ project }: { project: Project }) => {
               width={300}
               height={300}
             />
-            <div className="absolute w-full h-1/2 bottom-0 left-0 bg-gradient-to-t from-black via-black/85 to-transparent pointer-events-none">
+            <div className="absolute w-full h-1/2 bottom-0 left-0 bg-gradient-to-t from-background via-background/85 to-transparent pointer-events-none">
               <div className="flex flex-col h-full items-start justify-end p-6">
                 <div className="text-lg text-left">{project.title}</div>
-                <div className="text-xs bg-white text-black rounded-lg w-fit px-2">
+                <div className="text-xs bg-primary text-primary-foreground rounded-lg w-fit px-2">
                   {project.category}
                 </div>
               </div>
             </div>
           </div>
-        </ModalTrigger>
-        <ModalBody className="md:max-w-4xl md:max-h-[80%] overflow-auto">
-          <SmoothScroll isInsideModal={true}>
-            <ModalContent>
-              <ProjectContents project={project} />
-            </ModalContent>
-          </SmoothScroll>
-          <ModalFooter className="gap-4">
-            <button className="px-2 py-1 bg-gray-200 text-black dark:bg-black dark:border-black dark:text-white border border-gray-300 rounded-md text-sm w-28">
-              Cancel
-            </button>
-            <Link href={project.live} target="_blank">
-              <button className="bg-black text-white dark:bg-white dark:text-black text-sm px-2 py-1 rounded-md border border-black w-28">
-                Visit
-              </button>
-            </Link>
-          </ModalFooter>
-        </ModalBody>
-      </Modal>
+        </ResponsiveDialogTrigger>
+
+        <ResponsiveDialogContent className="md:max-w-4xl md:h-[85vh] md:!flex md:flex-col md:overflow-hidden md:p-0 md:gap-0">
+          {/* Sticky header */}
+          <div className="shrink-0 border-b border-border bg-background/80 backdrop-blur-sm px-8 py-5">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4 min-w-0">
+                <h4 className="font-display text-xl md:text-2xl font-bold text-foreground tracking-tight truncate">
+                  {project.title}
+                </h4>
+                <span className="shrink-0 text-[11px] uppercase tracking-widest text-muted-foreground border border-border rounded-full px-3 py-0.5">
+                  {project.category}
+                </span>
+              </div>
+              <div className="shrink-0 flex items-center gap-4">
+                {project.github && (
+                  <Link
+                    href={project.github}
+                    target="_blank"
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+                  >
+                    Source
+                  </Link>
+                )}
+                <Link href={project.live} target="_blank">
+                  <button className="group flex items-center gap-2 bg-primary text-primary-foreground text-sm font-medium px-4 py-1.5 rounded-full hover:bg-primary/80 transition-colors">
+                    Visit
+                    <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Scrollable content */}
+          <ScrollArea className="flex-1" type="always" data-lenis-prevent>
+            <div className="px-8 py-8">
+              {/* Tech stack */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="flex flex-col md:flex-row gap-6 md:gap-10 mb-10"
+              >
+                {project.skills.frontend?.length > 0 && (
+                  <div className="flex flex-col items-center md:items-start gap-2">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">
+                      Frontend
+                    </span>
+                    <FloatingDock items={project.skills.frontend} />
+                  </div>
+                )}
+                {project.skills.backend?.length > 0 && (
+                  <div className="flex flex-col items-center md:items-start gap-2">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">
+                      Backend
+                    </span>
+                    <FloatingDock items={project.skills.backend} />
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Divider */}
+              <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-10" />
+
+              {/* Project content */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                {project.content}
+              </motion.div>
+            </div>
+          </ScrollArea>
+
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
     </div>
   );
 };
-export default ProjectsSection;
 
-const ProjectContents = ({ project }: { project: Project }) => {
-  return (
-    <>
-      <h4 className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-100 font-bold text-center mb-8">
-        {project.title}
-      </h4>
-      <div className="flex flex-col md:flex-row md:justify-evenly max-w-screen overflow-hidden md:overflow-visible">
-        <div className="flex flex-row md:flex-col-reverse justify-center items-center gap-2 text-3xl mb-8">
-          <p className="text-sm mt-1 text-neutral-600 dark:text-neutral-500">
-            Frontend
-          </p>
-          {project.skills.frontend?.length > 0 && (
-            <FloatingDock items={project.skills.frontend} />
-          )}
-        </div>
-        {project.skills.backend?.length > 0 && (
-          <div className="flex flex-row md:flex-col-reverse justify-center items-center gap-2 text-3xl mb-8">
-            <p className="text-sm mt-1 text-neutral-600 dark:text-neutral-500">
-              Backend
-            </p>
-            <FloatingDock items={project.skills.backend} />
-          </div>
-        )}
-      </div>
-      {/* <div className="flex justify-center items-center">
-        {project.screenshots.map((image, idx) => (
-          <motion.div
-            key={"images" + idx}
-            style={{
-              rotate: Math.random() * 20 - 10,
-            }}
-            whileHover={{
-              scale: 1.1,
-              rotate: 0,
-              zIndex: 100,
-            }}
-            whileTap={{
-              scale: 1.1,
-              rotate: 0,
-              zIndex: 100,
-            }}
-            className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 flex-shrink-0 overflow-hidden"
-          >
-            <Image
-              src={`${project.src.split("1.png")[0]}${image}`}
-              alt="screenshots"
-              width="500"
-              height="500"
-              className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover flex-shrink-0"
-            />
-          </motion.div>
-        ))}
-      </div> */}
-      {project.content}
-    </>
-  );
-};
+export default ProjectsSection;
