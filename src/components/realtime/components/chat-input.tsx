@@ -17,13 +17,14 @@ interface ChatInputProps {
   onCancelReply?: () => void;
   editTarget?: Message | null;
   onCancelEdit?: () => void;
+  onEditLastMessage?: () => void;
   rateLimitedUntil?: number | null;
 }
 
 const MAX_LENGTH = 500;
 const MAX_ROWS = 5;
 
-export const ChatInput = ({ onSendMessage, onTyping, placeholder = "Message", replyTarget, onCancelReply, editTarget, onCancelEdit, rateLimitedUntil }: ChatInputProps) => {
+export const ChatInput = ({ onSendMessage, onTyping, placeholder = "Message", replyTarget, onCancelReply, editTarget, onCancelEdit, onEditLastMessage, rateLimitedUntil }: ChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showCommands, setShowCommands] = useState(false);
   const [commandQuery, setCommandQuery] = useState("");
@@ -155,9 +156,21 @@ export const ChatInput = ({ onSendMessage, onTyping, placeholder = "Message", re
       }
     }
 
-    if (e.key === "Escape" && editTarget) {
+    if (e.key === "Escape") {
       e.preventDefault();
-      cancelEdit();
+      e.stopPropagation();
+      if (editTarget) {
+        cancelEdit();
+      } else if (replyTarget && onCancelReply) {
+        onCancelReply();
+      }
+      return;
+    }
+
+    // Up arrow with empty input → edit last own message
+    if (e.key === "ArrowUp" && !textareaRef.current?.value && !editTarget && onEditLastMessage) {
+      e.preventDefault();
+      onEditLastMessage();
       return;
     }
 

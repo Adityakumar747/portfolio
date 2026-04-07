@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "motion/react";
 
-import { SocketContext, Message } from "@/contexts/socketio";
+import { SocketContext, Message, ChatItem } from "@/contexts/socketio";
 import { useToast } from "@/components/ui/use-toast";
 import { Users, Users2, Hash, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -111,6 +111,20 @@ const OnlineUsers = () => {
     scrollToBottom,
     isAtBottomRef
   );
+
+  const handleEditLastMessage = useCallback(() => {
+    if (!currentUser) return;
+    const fiveMinAgo = Date.now() - 5 * 60 * 1000;
+    for (let i = msgs.length - 1; i >= 0; i--) {
+      const item = msgs[i];
+      if ("type" in item && item.type === "system") continue;
+      const msg = item as Message;
+      if (msg.sessionId !== currentUser.id) continue;
+      if (new Date(msg.createdAt).getTime() < fiveMinAgo) break;
+      setEditTarget(msg);
+      return;
+    }
+  }, [msgs, currentUser]);
 
   const handleCommand = (cmd: ProcessedCommand) => {
     if (cmd.type === "admin") {
@@ -244,6 +258,7 @@ const OnlineUsers = () => {
           )}
           side="top"
           data-no-custom-cursor="true"
+          onEscapeKeyDown={(e) => e.preventDefault()}
         >
           {/* Header */}
           <div className={cn("h-12 flex items-center justify-between px-4 shadow-sm border-b shrink-0", THEME.bg.secondary, THEME.border.primary)}>
@@ -344,6 +359,7 @@ const OnlineUsers = () => {
               onCancelReply={() => setReplyTarget(null)}
               editTarget={editTarget}
               onCancelEdit={() => setEditTarget(null)}
+              onEditLastMessage={handleEditLastMessage}
               rateLimitedUntil={rateLimitedUntil}
             />
 
