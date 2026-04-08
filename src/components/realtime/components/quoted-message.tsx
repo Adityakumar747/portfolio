@@ -19,7 +19,7 @@ export const QuotedMessage = ({ username, content, color, avatar, onClickQuote }
       type="button"
       onClick={onClickQuote}
       className={cn(
-        "flex items-center gap-1 text-left pl-3 py-0.5 mb-0.5 cursor-pointer",
+        "flex items-center gap-1 text-left pl-3 py-0.5 mb-0.5 cursor-pointer max-w-full overflow-hidden",
         "border-l-2 border-black/20 dark:border-white/15",
         "hover:border-black/40 dark:hover:border-white/30 transition-colors"
       )}
