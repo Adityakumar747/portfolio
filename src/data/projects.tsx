@@ -359,7 +359,7 @@ const projects: Project[] = [
         PROJECT_SKILLS.docker,
       ],
     },
-    get content(): JSX.Element {
+    get content(): React.JSX.Element {
       return (
         <div>
           <TypographyP className="font-mono ">

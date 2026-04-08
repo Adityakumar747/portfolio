@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         fullName: zodData.fullName,
         email: zodData.email,
         message: zodData.message,
-      }),
+      }) as React.ReactElement,
     });
 
     if (resendError) {

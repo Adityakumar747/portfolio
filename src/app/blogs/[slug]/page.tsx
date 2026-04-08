@@ -14,8 +14,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = getBlogPost(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = getBlogPost(slug);
   return {
     title: `${post.metadata.title} | Portfolio`,
     description: post.metadata.summary,
@@ -109,8 +110,9 @@ const components = {
   ),
 };
 
-export default function BlogPost({ params }: { params: { slug: string } }) {
-  const post = getBlogPost(params.slug);
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = getBlogPost(slug);
   const readTime = estimateReadTime(post.content);
 
   return (
