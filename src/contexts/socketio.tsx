@@ -70,6 +70,8 @@ type SocketContextType = {
   hasMoreMessages: boolean;
   loadingHistory: boolean;
   fetchOlderMessages: () => void;
+  initStatus: "idle" | "loading" | "loaded";
+  fetchInitialMessages: () => void;
 };
 
 const INITIAL_STATE: SocketContextType = {
@@ -85,6 +87,8 @@ const INITIAL_STATE: SocketContextType = {
   hasMoreMessages: true,
   loadingHistory: false,
   fetchOlderMessages: () => { },
+  initStatus: "idle",
+  fetchInitialMessages: () => { },
 };
 
 export const SocketContext = createContext<SocketContextType>(INITIAL_STATE);
@@ -101,7 +105,18 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const [focusedCursorId, setFocusedCursorId] = useState<string | null>(null);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [initStatus, setInitStatus] = useState<"idle" | "loading" | "loaded">("idle");
   const socketRef = useRef<Socket | null>(null);
+  const initStatusRef = useRef<"idle" | "loading" | "loaded">("idle");
+
+  const fetchInitialMessages = useCallback(() => {
+    if (initStatusRef.current !== "idle") return;
+    const s = socketRef.current;
+    if (!s) return;
+    initStatusRef.current = "loading";
+    setInitStatus("loading");
+    s.emit("msgs-fetch-init");
+  }, []);
 
   const fetchOlderMessages = useCallback(() => {
     const s = socketRef.current;
@@ -163,6 +178,8 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
     newSocket.on("msgs-receive-init", (msgs) => {
       setMsgs(msgs);
       setHasMoreMessages(true);
+      initStatusRef.current = "loaded";
+      setInitStatus("loaded");
     });
     newSocket.on("msgs-receive-history", (data: { messages: ChatItem[]; hasMore: boolean; reactions: Record<string, Reaction[]> }) => {
       setMsgs(prev => [...data.messages, ...prev]);
@@ -184,6 +201,9 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
     });
 
     newSocket.on("msg-receive", (msgs) => {
+      // Drop live messages until the popover is opened and init has been fetched.
+      // The init fetch returns the latest 50 user messages anyway, so nothing is lost.
+      if (initStatusRef.current !== "loaded") return;
       setMsgs((p) => [...p, msgs]);
     });
 
@@ -227,7 +247,7 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <SocketContext.Provider value={{ socket, users, setUsers, msgs, reactions, profileMap, cursorPositions, focusedCursorId, setFocusedCursorId, hasMoreMessages, loadingHistory, fetchOlderMessages }}>
+    <SocketContext.Provider value={{ socket, users, setUsers, msgs, reactions, profileMap, cursorPositions, focusedCursorId, setFocusedCursorId, hasMoreMessages, loadingHistory, fetchOlderMessages, initStatus, fetchInitialMessages }}>
       {children}
     </SocketContext.Provider>
   );

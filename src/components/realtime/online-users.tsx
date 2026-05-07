@@ -33,7 +33,7 @@ import { THEME } from "./constants";
 import { getAvatarUrl } from "@/lib/avatar";
 
 const OnlineUsers = () => {
-  const { socket, users: _users, msgs, hasMoreMessages, loadingHistory, fetchOlderMessages } = useContext(SocketContext);
+  const { socket, users: _users, msgs, hasMoreMessages, loadingHistory, fetchOlderMessages, initStatus, fetchInitialMessages } = useContext(SocketContext);
   const users = Array.from(_users.values());
   const [showUserList, setShowUserList] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -161,9 +161,10 @@ const OnlineUsers = () => {
   const toggleOpen = useCallback(() => {
     setIsOpen(prev => {
       if (prev) setShowUserList(false);
+      else fetchInitialMessages();
       return !prev;
     });
-  }, []);
+  }, [fetchInitialMessages]);
 
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
@@ -186,6 +187,7 @@ const OnlineUsers = () => {
           // Prevent popover from closing while the profile modal is open (clicks outside)
           if (!newOpen && isEditingProfile) return;
           setIsOpen(newOpen);
+          if (newOpen) fetchInitialMessages();
           if (!newOpen) setShowUserList(false)
         }}
       >
@@ -349,6 +351,7 @@ const OnlineUsers = () => {
               hasMoreMessages={hasMoreMessages}
               loadingHistory={loadingHistory}
               onLoadMore={fetchOlderMessages}
+              initStatus={initStatus}
             />
 
             <ChatInput

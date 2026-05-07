@@ -80,7 +80,40 @@ interface ChatMessageListProps {
   hasMoreMessages: boolean;
   loadingHistory: boolean;
   onLoadMore: () => void;
+  initStatus: "idle" | "loading" | "loaded";
 }
+
+const MessageListSkeleton = () => {
+  const widths = [["60%", "85%"], ["75%", "50%", "65%"], ["55%", "70%"], ["80%"], ["45%", "60%", "55%"]];
+  return (
+    <div className="space-y-5 py-2" aria-busy="true" aria-live="polite">
+      {widths.map((lines, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.05, duration: 0.25 }}
+          className="flex gap-3"
+        >
+          <div className={cn("w-10 h-10 rounded-full shrink-0 animate-pulse", "bg-black/10 dark:bg-white/10")} />
+          <div className="flex-1 space-y-2 min-w-0">
+            <div className="flex items-center gap-2">
+              <div className={cn("h-3 w-20 rounded animate-pulse", "bg-black/10 dark:bg-white/10")} />
+              <div className={cn("h-2.5 w-12 rounded animate-pulse", "bg-black/[0.06] dark:bg-white/[0.06]")} />
+            </div>
+            {lines.map((w, j) => (
+              <div
+                key={j}
+                className={cn("h-3 rounded animate-pulse", "bg-black/[0.07] dark:bg-white/[0.07]")}
+                style={{ width: w }}
+              />
+            ))}
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+};
 
 export const ChatMessageList = ({
   msgs,
@@ -98,6 +131,7 @@ export const ChatMessageList = ({
   hasMoreMessages,
   loadingHistory,
   onLoadMore,
+  initStatus,
 }: ChatMessageListProps) => {
   const { setFocusedCursorId, socket, reactions, profileMap } = useContext(SocketContext);
   const [pickerOpenFor, setPickerOpenFor] = useState<string | null>(null);
@@ -151,7 +185,11 @@ export const ChatMessageList = ({
             </div>
           )}
 
-          {msgs.length === 0 && (
+          {initStatus !== "loaded" && msgs.length === 0 && (
+            <MessageListSkeleton />
+          )}
+
+          {initStatus === "loaded" && msgs.length === 0 && (
             <div className="h-full flex flex-col items-center justify-center text-center space-y-3 opacity-70 mt-10">
               <div className={cn("w-16 h-16 rounded-full flex items-center justify-center mb-2", THEME.bg.welcome)}>
                 <Hash className={cn("w-10 h-10", THEME.text.header)} />
