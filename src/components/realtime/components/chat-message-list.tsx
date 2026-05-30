@@ -158,7 +158,7 @@ export const ChatMessageList = ({
 
   return (
     <div className="flex-1 relative overflow-hidden flex flex-col">
-      <ScrollArea className="h-[400px]" data-lenis-prevent ref={chatContainerRef} type="always">
+      <ScrollArea className="h-[400px] chat-scroll-area" data-lenis-prevent ref={chatContainerRef} type="always">
         <div className="p-4 space-y-0">
           {msgs.length > 0 && hasMoreMessages && (
             <div className="flex justify-center pb-3">

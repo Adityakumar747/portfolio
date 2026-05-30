@@ -103,3 +103,13 @@ body > canvas {
     pointer-events: auto;
   }
 }
+
+/* Radix ScrollArea wraps its children in a `display: table; min-width: 100%`
+   element that shrink-wraps to its widest child. A nowrap node (e.g. a quoted
+   reply with `truncate`) makes that table grow past the viewport, so every
+   `min-w-0`/`truncate`/`break-words` below it measures against the inflated
+   width and never wraps. Forcing the wrapper to `block` pins the message
+   column to the viewport width so truncation/wrapping can take effect. */
+.chat-scroll-area [data-radix-scroll-area-viewport] > div {
+  display: block !important;
+}
