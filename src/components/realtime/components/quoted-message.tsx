@@ -12,14 +12,12 @@ interface QuotedMessageProps {
 }
 
 export const QuotedMessage = ({ username, content, color, avatar, onClickQuote }: QuotedMessageProps) => {
-  const truncated = content.length > 60 ? content.slice(0, 60) + "…" : content;
-
   return (
     <button
       type="button"
       onClick={onClickQuote}
       className={cn(
-        "flex items-center gap-1 text-left pl-3 py-0.5 mb-0.5 cursor-pointer max-w-full overflow-hidden",
+        "flex items-center gap-1 text-left pl-3 py-0.5 mb-0.5 cursor-pointer w-full max-w-full overflow-hidden",
         "border-l-2 border-black/20 dark:border-white/15",
         "hover:border-black/40 dark:hover:border-white/30 transition-colors"
       )}
@@ -35,7 +33,7 @@ export const QuotedMessage = ({ username, content, color, avatar, onClickQuote }
       <span className="text-xs font-semibold shrink-0 hover:underline" style={{ color: color || undefined }}>
         @{username}
       </span>
-      <span className={cn("text-xs truncate", THEME.text.secondary)}>{truncated}</span>
+      <span className={cn("text-xs truncate min-w-0 flex-1", THEME.text.secondary)}>{content}</span>
     </button>
   );
 };
