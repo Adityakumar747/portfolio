@@ -133,7 +133,7 @@ export const ChatMessageList = ({
   onLoadMore,
   initStatus,
 }: ChatMessageListProps) => {
-  const { setFocusedCursorId, socket, reactions, profileMap } = useContext(SocketContext);
+  const { setFollowingId, socket, reactions, profileMap } = useContext(SocketContext);
   const [pickerOpenFor, setPickerOpenFor] = useState<string | null>(null);
 
   const grouped = useMemo(() => groupChatItems(msgs), [msgs]);
@@ -269,7 +269,7 @@ export const ChatMessageList = ({
                       )}
                       onClick={() => {
                         if (!isMe && user?.socketId) {
-                          setFocusedCursorId(user.socketId);
+                          setFollowingId(user.socketId);
                         }
                       }}
                     >
@@ -298,7 +298,7 @@ export const ChatMessageList = ({
                           className={cn("flex items-center gap-2", !isMe && user?.socketId && "cursor-pointer group/name")}
                           onClick={() => {
                             if (!isMe && user?.socketId) {
-                              setFocusedCursorId(user.socketId);
+                              setFollowingId(user.socketId);
                             }
                           }}
                         >

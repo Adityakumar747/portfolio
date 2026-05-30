@@ -65,8 +65,8 @@ type SocketContextType = {
   reactions: Map<string, Reaction[]>;
   profileMap: Map<string, UserProfile>;
   cursorPositions: Map<string, CursorPosition>;
-  focusedCursorId: string | null;
-  setFocusedCursorId: Dispatch<SetStateAction<string | null>>;
+  followingId: string | null;
+  setFollowingId: Dispatch<SetStateAction<string | null>>;
   hasMoreMessages: boolean;
   loadingHistory: boolean;
   fetchOlderMessages: () => void;
@@ -82,8 +82,8 @@ const INITIAL_STATE: SocketContextType = {
   reactions: new Map(),
   profileMap: new Map(),
   cursorPositions: new Map(),
-  focusedCursorId: null,
-  setFocusedCursorId: () => { },
+  followingId: null,
+  setFollowingId: () => { },
   hasMoreMessages: true,
   loadingHistory: false,
   fetchOlderMessages: () => { },
@@ -102,7 +102,7 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const [reactions, setReactions] = useState<Map<string, Reaction[]>>(new Map());
   const [profileMap, setProfileMap] = useState<Map<string, UserProfile>>(new Map());
   const [cursorPositions, setCursorPositions] = useState<Map<string, CursorPosition>>(new Map());
-  const [focusedCursorId, setFocusedCursorId] = useState<string | null>(null);
+  const [followingId, setFollowingId] = useState<string | null>(null);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [initStatus, setInitStatus] = useState<"idle" | "loading" | "loaded">("idle");
@@ -247,7 +247,7 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <SocketContext.Provider value={{ socket, users, setUsers, msgs, reactions, profileMap, cursorPositions, focusedCursorId, setFocusedCursorId, hasMoreMessages, loadingHistory, fetchOlderMessages, initStatus, fetchInitialMessages }}>
+    <SocketContext.Provider value={{ socket, users, setUsers, msgs, reactions, profileMap, cursorPositions, followingId, setFollowingId, hasMoreMessages, loadingHistory, fetchOlderMessages, initStatus, fetchInitialMessages }}>
       {children}
     </SocketContext.Provider>
   );

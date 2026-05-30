@@ -3,17 +3,22 @@ import { SocketContext } from "@/contexts/socketio";
 import { useMouse } from "@/hooks/use-mouse";
 import { useThrottle } from "@/hooks/use-throttle";
 import { getAvatarUrl } from "@/lib/avatar";
-import { MousePointer2 } from "lucide-react";
+import { MousePointer2, X } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useLenis } from "@/lib/lenis";
 
 // TODO: add clicking animation
 // TODO: listen to socket disconnect
 const RemoteCursors = () => {
-  const { socket, users: _users, cursorPositions, focusedCursorId, setFocusedCursorId } = useContext(SocketContext);
+  const { socket, users: _users, cursorPositions, followingId, setFollowingId } = useContext(SocketContext);
   const isMobile = useMediaQuery("(max-width: 768px)");
+  // Root Lenis instance — resolved via the global store even though this lives
+  // outside the <ReactLenis> provider. Driving the follow through Lenis instead
+  // of window.scrollTo keeps both on the same RAF loop, so it doesn't stutter.
+  const lenis = useLenis();
   const { x, y } = useMouse({ allowPage: true });
   const handleMouseMove = useThrottle((x, y) => {
     socket?.emit("cursor-change", {
@@ -27,56 +32,126 @@ const RemoteCursors = () => {
   }, [x, y, isMobile]);
 
   const users = Array.from(_users.values());
+  const followedUser = followingId ? users.find((u) => u.socketId === followingId) : null;
 
-  // Handle scroll to focused cursor
+  // Figma-style follow: continuously keep the followed cursor centered as it moves.
+  // Re-runs on every cursor update because cursorPositions is a fresh Map each time.
+  // Each call retargets Lenis' in-flight tween, producing a smooth chase rather
+  // than the jerky restart you get from firing native `scrollTo({behavior:'smooth'})`
+  // every ~200ms while Lenis is also animating the same scroll position.
   useEffect(() => {
-    if (!focusedCursorId || isMobile) return;
+    if (!followingId || isMobile) return;
 
-    const pos = cursorPositions.get(focusedCursorId);
+    const pos = cursorPositions.get(followingId);
     if (!pos) return;
 
-    const targetX = pos.x - window.innerWidth / 2;
-    const targetY = pos.y - window.innerHeight / 2;
+    const top = Math.max(0, pos.y - window.innerHeight / 2);
+    if (lenis) {
+      // force: true so it still scrolls while Lenis is stopped (see effect below).
+      lenis.scrollTo(top, { duration: 1, force: true });
+    } else {
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, [followingId, cursorPositions, isMobile, lenis]);
 
-    window.scrollTo({
-      left: Math.max(0, targetX),
-      top: Math.max(0, targetY),
-      behavior: 'smooth'
-    });
+  // Stop Lenis while following so its inertia/virtual-scroll doesn't fight our
+  // programmatic follow. We're the sole scroll driver here; Lenis resumes on exit.
+  useEffect(() => {
+    if (!lenis || !followingId || isMobile) return;
+    lenis.stop();
+    return () => lenis.start();
+  }, [lenis, followingId, isMobile]);
 
-    // Clear focus after animation completes
-    const timeout = setTimeout(() => {
-      setFocusedCursorId(null);
-    }, 2000);
+  // Exit follow mode on any manual navigation (wheel / touch / Escape).
+  // Programmatic scrollTo above doesn't emit wheel/touch events, so this only
+  // fires when the user deliberately takes back control — just like Figma.
+  useEffect(() => {
+    if (!followingId) return;
+    const stop = () => setFollowingId(null);
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") stop(); };
+    window.addEventListener("wheel", stop, { passive: true });
+    window.addEventListener("touchmove", stop, { passive: true });
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("wheel", stop);
+      window.removeEventListener("touchmove", stop);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [followingId, setFollowingId]);
 
-    return () => clearTimeout(timeout);
-  }, [focusedCursorId, cursorPositions, isMobile, setFocusedCursorId]);
+  // Stop following if the target leaves the room.
+  useEffect(() => {
+    if (followingId && !cursorPositions.has(followingId) && !users.some((u) => u.socketId === followingId)) {
+      setFollowingId(null);
+    }
+  }, [followingId, users, cursorPositions, setFollowingId]);
 
+  const followColor = followedUser?.color || "#60a5fa";
 
   return (
-    <div
-      //  className="h-0 z-10 relative "
-      className="absolute top-0 left-0 w-full h-full z-10 animate-fade-in pointer-events-none overflow-visible"
-      style={{ minHeight: '100vh' }}
-    >
-      {users
-        .filter((user) => user.socketId !== socket?.id && cursorPositions.has(user.socketId))
-        .map((user) => {
-          const pos = cursorPositions.get(user.socketId)!;
-          return (
-            <Cursor
-              key={user.socketId}
-              x={pos.x}
-              y={pos.y}
-              color={user.color}
-              socketId={user.socketId}
-              avatar={user.avatar}
-              headerText={`${user.location} ${user.flag}`}
-              isFocused={focusedCursorId === user.socketId}
-            />
-          );
-        })}
-    </div>
+    <>
+      <div
+        className="absolute top-0 left-0 w-full h-full z-10 animate-fade-in pointer-events-none overflow-visible"
+        style={{ minHeight: '100vh' }}
+      >
+        {users
+          .filter((user) => user.socketId !== socket?.id && cursorPositions.has(user.socketId))
+          .map((user) => {
+            const pos = cursorPositions.get(user.socketId)!;
+            return (
+              <Cursor
+                key={user.socketId}
+                x={pos.x}
+                y={pos.y}
+                color={user.color}
+                socketId={user.socketId}
+                avatar={user.avatar}
+                headerText={`${user.location} ${user.flag}`}
+                isFocused={followingId === user.socketId}
+              />
+            );
+          })}
+      </div>
+
+      {/* Figma-style follow overlay: viewport border + "Following" banner */}
+      <AnimatePresence>
+        {followedUser && (
+          <motion.div
+            key="follow-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[9999998] pointer-events-none"
+            style={{ boxShadow: `inset 0 0 0 3px ${followColor}` }}
+          >
+            <motion.button
+              type="button"
+              onClick={() => setFollowingId(null)}
+              initial={{ x: "-50%", y: 16, opacity: 0 }}
+              animate={{ x: "-50%", y: 0, opacity: 1 }}
+              exit={{ x: "-50%", y: 16, opacity: 0 }}
+              transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
+              className="pointer-events-auto absolute bottom-4 left-1/2 flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full shadow-lg text-white text-sm font-medium group"
+              style={{ backgroundColor: followColor }}
+            >
+              <img
+                src={getAvatarUrl(followedUser.avatar)}
+                alt=""
+                className="w-6 h-6 rounded-full ring-2 ring-white/40 flex-shrink-0"
+              />
+              <span className="whitespace-nowrap">
+                Following <span className="font-semibold">{followedUser.name}</span>
+              </span>
+              <span className="ml-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white/20 group-hover:bg-white/35 transition-colors">
+                <X className="w-3 h-3" strokeWidth={3} />
+              </span>
+              <span className="hidden sm:inline text-[10px] opacity-70 ml-0.5">Esc</span>
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

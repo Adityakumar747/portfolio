@@ -20,7 +20,7 @@ interface UserListProps {
 }
 
 export const UserList = ({ users, socket, showUserList, onClose, onEditProfile }: UserListProps) => {
-  const { setFocusedCursorId } = useContext(SocketContext);
+  const { setFollowingId } = useContext(SocketContext);
   const sortedUsers = useMemo(() => [...users].sort((a, b) => {
     if (a.socketId === socket?.id) return -1;
     if (b.socketId === socket?.id) return 1;
@@ -60,7 +60,7 @@ export const UserList = ({ users, socket, showUserList, onClose, onEditProfile }
                     user={user}
                     socket={socket}
                     onEditProfile={onEditProfile}
-                    onScrollToCursor={setFocusedCursorId}
+                    onScrollToCursor={setFollowingId}
                   />
                 ))}
               </div>
