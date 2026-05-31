@@ -9,7 +9,6 @@ import { sleep } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { usePreloader } from "./preloader";
 import { useTheme } from "next-themes";
-import { useRouter } from "next/navigation";
 import { Section, getKeyboardState } from "./animated-background-config";
 import { useSounds } from "./realtime/hooks/use-sounds";
 
@@ -33,7 +32,6 @@ const AnimatedBackground = () => {
   const keycapAnimationsRef = useRef<{ start: () => void; stop: () => void }>(null);
 
   const [keyboardRevealed, setKeyboardRevealed] = useState(false);
-  const router = useRouter();
 
   // --- Event Handlers ---
 
@@ -417,8 +415,14 @@ const AnimatedBackground = () => {
 
   // Reveal keyboard on load/route change
   useEffect(() => {
-    const hash = activeSection === "hero" ? "#" : `#${activeSection}`;
-    router.push("/" + hash, { scroll: false });
+    // Rebuild the URL from the current pathname so the hash is always *replaced*
+    // rather than appended. Using router.push("/" + hash) stacked fragments on
+    // refresh (e.g. "/#skills#skills#skills") because the existing hash in the
+    // address bar was never stripped first. replaceState also avoids polluting
+    // browser history with an entry per scrolled-through section.
+    const hash = activeSection === "hero" ? "" : `#${activeSection}`;
+    const url = window.location.pathname + window.location.search + hash;
+    window.history.replaceState(window.history.state, "", url);
 
     if (!splineApp || isLoading || keyboardRevealed) return;
     updateKeyboardTransform();
