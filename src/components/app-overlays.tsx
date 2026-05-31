@@ -8,7 +8,10 @@ import ElasticCursor from "@/components/ui/ElasticCursor";
 import RadialMenu from "@/components/radial-menu/index";
 
 export default function AppOverlays() {
-  const isHome = usePathname() === "/";
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  // The résumé route disables the elastic cursor (keeps the particle bg).
+  const isResume = pathname?.startsWith("/resume") ?? false;
 
   return (
     <>
@@ -18,7 +21,7 @@ export default function AppOverlays() {
       />
       {isHome && <RemoteCursors />}
       <EasterEggs />
-      <ElasticCursor />
+      {!isResume && <ElasticCursor />}
       {isHome && <RadialMenu />}
     </>
   );
