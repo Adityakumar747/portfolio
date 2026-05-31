@@ -113,3 +113,18 @@ body > canvas {
 .chat-scroll-area [data-radix-scroll-area-viewport] > div {
   display: block !important;
 }
+
+/* Accessibility + low-end escape hatch: when the OS requests reduced motion,
+   neutralize CSS animations/transitions globally. The heavy JS/WebGL effects
+   (Spline scene, particle canvas, elastic cursor) are gated separately in
+   use-perf-profile.ts; this covers the long tail of decorative CSS motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

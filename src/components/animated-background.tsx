@@ -11,6 +11,7 @@ import { usePreloader } from "./preloader";
 import { useTheme } from "next-themes";
 import { Section, getKeyboardState } from "./animated-background-config";
 import { useSounds } from "./realtime/hooks/use-sounds";
+import { usePerfProfile } from "@/hooks/use-perf-profile";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,6 +19,7 @@ const AnimatedBackground = () => {
   const { isLoading, bypassLoading } = usePreloader();
   const { theme } = useTheme();
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const { disable3D, maxDpr, ready: perfReady } = usePerfProfile();
   const splineContainer = useRef<HTMLDivElement>(null);
   const [splineApp, setSplineApp] = useState<Application>();
   const selectedSkillRef = useRef<Skill | null>(null);
@@ -428,6 +430,16 @@ const AnimatedBackground = () => {
     updateKeyboardTransform();
   }, [splineApp, isLoading, activeSection]);
 
+  // On low-end hardware or when the user prefers reduced motion, skip the WebGL
+  // scene entirely — it's the single heaviest thing on the page. Don't mount
+  // Spline until device detection has run, either: a mount-then-unmount would
+  // still fetch the heavy runtime chunk + scene (a "flash mount"). Waiting one
+  // tick keeps the 3D off low-end devices for real; the page keeps its own
+  // background, and the Preloader bypasses its splash when 3D is disabled.
+  if (!perfReady || disable3D) {
+    return null;
+  }
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Spline
@@ -435,6 +447,7 @@ const AnimatedBackground = () => {
         ref={splineContainer}
         onLoad={(app: Application) => {
           setSplineApp(app);
+          capSplinePixelRatio(app, maxDpr);
           bypassLoading();
         }}
         scene="/assets/skills-keyboard.spline"
@@ -442,5 +455,27 @@ const AnimatedBackground = () => {
     </Suspense>
   );
 };
+
+/**
+ * Cap the Spline/Three.js renderer's pixel ratio. The scene is published with
+ * pixelRatio=0 ("device"), so on a 2–3x screen it renders 4–9x the pixels of a
+ * 1x canvas — a huge GPU cost. We clamp it and reapply on resize, since Spline
+ * re-reads devicePixelRatio when the canvas resizes.
+ */
+function capSplinePixelRatio(app: Application, maxDpr: number) {
+  const apply = () => {
+    try {
+      const renderer = (app as unknown as { _renderer?: { setPixelRatio?: (n: number) => void } })
+        ._renderer;
+      if (renderer?.setPixelRatio) {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxDpr));
+      }
+    } catch {
+      /* internal API moved — fail silent, scene still renders */
+    }
+  };
+  apply();
+  window.addEventListener("resize", apply, { passive: true });
+}
 
 export default AnimatedBackground;

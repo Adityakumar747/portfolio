@@ -11,6 +11,8 @@ interface ParticlesProps {
   staticity?: number;
   ease?: number;
   refresh?: boolean;
+  /** Device-pixel-ratio ceiling — caps fill cost on high-DPI / low-end screens. */
+  maxDpr?: number;
 }
 
 type Circle = {
@@ -32,6 +34,7 @@ export default function Particles({
   staticity = 50,
   ease = 50,
   refresh = false,
+  maxDpr = 2,
 }: ParticlesProps) {
   const pathname = usePathname();
   const isBlogPost = pathname.startsWith("/blogs/") && pathname !== "/blogs";
@@ -43,10 +46,13 @@ export default function Particles({
   const mousePosition = useMousePosition();
   const mouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
-  const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
+  const rafId = useRef<number>(0);
+  // Cap the device-pixel-ratio: a 3x screen otherwise triples the fill cost.
+  const dpr =
+    typeof window !== "undefined" ? Math.min(window.devicePixelRatio, maxDpr) : 1;
 
   useEffect(() => {
-    if (isBlogPost) return
+    if (isBlogPost) return;
     if (canvasRef.current) {
       context.current = canvasRef.current.getContext("2d");
     }
@@ -54,8 +60,22 @@ export default function Particles({
     animate();
     window.addEventListener("resize", initCanvas);
 
+    // Pause the render loop while the tab is hidden — no point burning frames
+    // (and battery) drawing to a canvas nobody can see.
+    const onVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(rafId.current);
+      } else {
+        cancelAnimationFrame(rafId.current);
+        animate();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
+      cancelAnimationFrame(rafId.current);
       window.removeEventListener("resize", initCanvas);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [isBlogPost]);
 
@@ -229,7 +249,7 @@ export default function Particles({
         );
       }
     });
-    window.requestAnimationFrame(animate);
+    rafId.current = window.requestAnimationFrame(animate);
   };
 
   if (isBlogPost) return null;
