@@ -12,9 +12,25 @@ import { useLenis } from "@/lib/lenis";
 
 // TODO: add clicking animation
 // TODO: listen to socket disconnect
+
+// Space (px) to keep clear at the right edge so a clamped cursor's pointer
+// glyph and avatar pill (which extend right of x) stay on-screen.
+const CURSOR_EDGE_RESERVE = 56;
+
 const RemoteCursors = () => {
   const { socket, users: _users, cursorPositions, followingId, setFollowingId } = useContext(SocketContext);
   const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // Track viewport width so we can clamp incoming (desktop-coordinate) cursor
+  // positions into the visible range on narrow screens. 0 until mounted so SSR
+  // and first paint leave x untouched.
+  const [viewport, setViewport] = useState({ w: 0 });
+  useEffect(() => {
+    const update = () => setViewport({ w: window.innerWidth });
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
   // Root Lenis instance — resolved via the global store even though this lives
   // outside the <ReactLenis> provider. Driving the follow through Lenis instead
   // of window.scrollTo keeps both on the same RAF loop, so it doesn't stutter.
@@ -90,18 +106,30 @@ const RemoteCursors = () => {
 
   return (
     <>
+      {/* overflow-x-clip (not -hidden): an expanded cursor pill has a dynamic
+          width that the x-clamp below can't account for, so clip anything past
+          the right edge to stop it widening the page. `clip` avoids turning
+          this into a scroll container or forcing overflow-y to auto, so cursors
+          further down the page still render. */}
       <div
-        className="absolute top-0 left-0 w-full h-full z-10 animate-fade-in pointer-events-none overflow-visible"
+        className="absolute top-0 left-0 w-full h-full z-10 animate-fade-in pointer-events-none overflow-x-clip"
         style={{ minHeight: '100vh' }}
       >
         {users
           .filter((user) => user.socketId !== socket?.id && cursorPositions.has(user.socketId))
           .map((user) => {
             const pos = cursorPositions.get(user.socketId)!;
+            // Cursors are positioned at absolute coordinates broadcast by other
+            // (mostly desktop) users. On a narrow viewport an x like 1500 spills
+            // past the right edge and creates horizontal overflow, so clamp x
+            // into the visible range — cursors bunch up at the edge instead of
+            // pushing the page wider. CURSOR_EDGE_RESERVE leaves room for the
+            // cursor glyph + avatar pill that extend to the right of x.
+            const x = viewport.w ? Math.min(pos.x, viewport.w - CURSOR_EDGE_RESERVE) : pos.x;
             return (
               <Cursor
                 key={user.socketId}
-                x={pos.x}
+                x={x}
                 y={pos.y}
                 color={user.color}
                 socketId={user.socketId}
