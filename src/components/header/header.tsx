@@ -96,6 +96,7 @@ const Header = ({ loader }: HeaderProps) => {
         variants={background}
         initial="initial"
         animate={isActive ? "open" : "closed"}
+        onClick={() => setIsActive(false)}
         className={styles.background}
       ></motion.div>
       <AnimatePresence mode="wait">

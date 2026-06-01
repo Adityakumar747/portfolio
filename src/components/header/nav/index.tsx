@@ -30,6 +30,9 @@ const Index: React.FC<IndexProps> = ({ setIsActive }) => {
       initial="initial"
       animate="enter"
       exit="exit"
+      // Clicking the empty overlay area (anything that isn't a link/control)
+      // closes the menu.
+      onClick={() => setIsActive(false)}
       className={cn(styles.nav, "relative")}
     >
       <div className={cn(styles.wrapper, 'flex justify-end sm:justify-start')}>
@@ -46,12 +49,14 @@ const Index: React.FC<IndexProps> = ({ setIsActive }) => {
           isActive={selectedLink.isActive}
         />
       </div>
-      {/* Subtle reduced-motion control, tucked into the bottom-right of the menu. */}
+      {/* Subtle reduced-motion control, tucked into the bottom-right of the menu.
+          Stop propagation so toggling motion doesn't also close the menu. */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ delay: 0.5, duration: 0.4 }}
+        onClick={(e) => e.stopPropagation()}
         className="absolute bottom-0 right-0"
       >
         <MotionToggle />
