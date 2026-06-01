@@ -62,7 +62,7 @@ export type PerfProfile = {
   motionEnabled: boolean;
   /** Small viewport (phone-sized). */
   isMobile: boolean;
-  /** Weak CPU / little RAM / data-saver — a low-end device. */
+  /** Conserve mode: Data Saver is on (explicit request to minimize data/effects). */
   lowEnd: boolean;
   /** Drop the WebGL 3D scene entirely (show a static fallback). */
   disable3D: boolean;
@@ -76,26 +76,27 @@ export type PerfProfile = {
   ready: boolean;
 };
 
-function detectLowEnd(): boolean {
+/**
+ * Data Saver — an explicit, reliable signal that the user wants to conserve.
+ *
+ * We deliberately do NOT use `navigator.hardwareConcurrency` / `deviceMemory`
+ * here: browsers clamp them unpredictably (the same capable machine has been
+ * observed reporting 12, 8, and 2 cores across sessions), so gating the 3D
+ * scene on them dropped it for plenty of perfectly capable devices. Capability
+ * is too noisy to decide whether the headline feature renders.
+ */
+function detectSaveData(): boolean {
   if (typeof navigator === "undefined") return false;
-  const cores = navigator.hardwareConcurrency ?? 8;
-  // deviceMemory is non-standard but widely supported on Chromium/Android.
-  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
-  const saveData =
-    (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData ?? false;
-
-  // deviceMemory is bucketed and capped at 8, and core counts get clamped, so
-  // these numbers drift even on the same machine. Only drop 3D when both look
-  // modest, or one is clearly tiny. saveData means the user opted in.
-  if (saveData) return true;
-  return (cores <= 4 && memory <= 4) || cores <= 2 || memory <= 2;
+  return (
+    (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData ?? false
+  );
 }
 
 export function usePerfProfile(): PerfProfile {
   const [state, setState] = React.useState({
     reducedMotion: false,
     isMobile: false,
-    lowEnd: false,
+    saveData: false,
     ready: false,
   });
 
@@ -107,7 +108,7 @@ export function usePerfProfile(): PerfProfile {
       setState({
         reducedMotion: motionMq.matches,
         isMobile: mobileMq.matches,
-        lowEnd: detectLowEnd(),
+        saveData: detectSaveData(),
         ready: true,
       });
 
@@ -120,7 +121,7 @@ export function usePerfProfile(): PerfProfile {
     };
   }, []);
 
-  const { reducedMotion: rawReducedMotion, isMobile, lowEnd, ready } = state;
+  const { reducedMotion: rawReducedMotion, isMobile, saveData, ready } = state;
   const motionEnabled = React.useSyncExternalStore(
     subscribeMotion,
     getMotionSnapshot,
@@ -128,13 +129,15 @@ export function usePerfProfile(): PerfProfile {
   );
 
   return React.useMemo<PerfProfile>(() => {
-    // The opt-in only overrides the motion *preference* — it never re-enables
-    // heavy effects on genuinely low-end hardware.
     const reducedMotion = rawReducedMotion && !motionEnabled;
-    const disable3D = reducedMotion || lowEnd;
+    // Only explicit, reliable intent disables the 3D scene: reduced-motion or
+    // Data Saver. Viewport size (a real media query) just scales quality down;
+    // it never removes the scene. No capability heuristics — see detectSaveData.
+    const lowEnd = saveData;
+    const disable3D = reducedMotion || saveData;
     const disableDecorative = reducedMotion;
-    const particleCount = disableDecorative ? 0 : isMobile || lowEnd ? 30 : 100;
-    const maxDpr = isMobile || lowEnd ? 1.5 : 2;
+    const particleCount = disableDecorative ? 0 : isMobile ? 30 : 100;
+    const maxDpr = isMobile ? 1.5 : 2;
     return {
       reducedMotion,
       rawReducedMotion,
@@ -147,5 +150,5 @@ export function usePerfProfile(): PerfProfile {
       maxDpr,
       ready,
     };
-  }, [rawReducedMotion, motionEnabled, isMobile, lowEnd, ready]);
+  }, [rawReducedMotion, motionEnabled, isMobile, saveData, ready]);
 }
