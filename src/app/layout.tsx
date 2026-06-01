@@ -60,6 +60,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={[inter.variable, archivoBlack.variable, "font-display"].join(" ")} suppressHydrationWarning>
       <head>
+        {/* The Spline runtime lazy-loads its wasm from unpkg; warm the
+            connection early so the 3D scene starts faster. */}
+        <link rel="preconnect" href="https://unpkg.com" crossOrigin="anonymous" />
         <Script
           defer
           src={process.env.UMAMI_DOMAIN}
