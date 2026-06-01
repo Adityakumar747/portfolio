@@ -83,7 +83,12 @@ function detectLowEnd(): boolean {
   const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
   const saveData =
     (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData ?? false;
-  return cores <= 4 || memory <= 4 || saveData;
+
+  // deviceMemory is bucketed and capped at 8, and core counts get clamped, so
+  // these numbers drift even on the same machine. Only drop 3D when both look
+  // modest, or one is clearly tiny. saveData means the user opted in.
+  if (saveData) return true;
+  return (cores <= 4 && memory <= 4) || cores <= 2 || memory <= 2;
 }
 
 export function usePerfProfile(): PerfProfile {
