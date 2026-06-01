@@ -3,46 +3,60 @@
 import * as React from "react";
 
 /**
- * Cross-component override: lets a reduced-motion user opt back into the full
- * motion/3D experience. Every `usePerfProfile()` caller reads the same value
- * (module-level store + useSyncExternalStore), and the choice persists.
+ * Cross-component motion preference: an explicit user override of the OS
+ * `prefers-reduced-motion` setting, toggleable from the menu. Every
+ * `usePerfProfile()` caller reads the same value (module-level store +
+ * useSyncExternalStore) and the choice persists.
+ *
+ *   "on"  → force full motion / 3D
+ *   "off" → force reduced motion (drop the 3D scene & decorative effects)
+ *   null  → follow the OS preference
  */
-const MOTION_OVERRIDE_KEY = "portfolio:enable-motion";
-let motionOverride = false;
+export type MotionPref = "on" | "off" | null;
+
+const MOTION_PREF_KEY = "portfolio:motion-pref";
+let motionPref: MotionPref = null;
 let motionInitialized = false;
 const motionListeners = new Set<() => void>();
 
 function ensureMotionInit() {
   if (motionInitialized || typeof window === "undefined") return;
   try {
-    motionOverride = localStorage.getItem(MOTION_OVERRIDE_KEY) === "1";
+    const v = localStorage.getItem(MOTION_PREF_KEY);
+    motionPref = v === "on" || v === "off" ? v : null;
   } catch {
-    /* storage blocked — default off */
+    /* storage blocked — fall back to following the OS */
   }
   motionInitialized = true;
 }
 
-/** Opt back into full motion/3D despite `prefers-reduced-motion`. */
-export function enableMotion() {
-  motionOverride = true;
+/** Set the explicit motion preference, or pass null to follow the OS again. */
+export function setMotionPreference(pref: MotionPref) {
+  motionPref = pref;
   try {
-    localStorage.setItem(MOTION_OVERRIDE_KEY, "1");
+    if (pref) localStorage.setItem(MOTION_PREF_KEY, pref);
+    else localStorage.removeItem(MOTION_PREF_KEY);
   } catch {
     /* ignore */
   }
   motionListeners.forEach((l) => l());
 }
 
+/** Opt back into full motion/3D despite `prefers-reduced-motion` (the nudge). */
+export function enableMotion() {
+  setMotionPreference("on");
+}
+
 function subscribeMotion(listener: () => void) {
   motionListeners.add(listener);
   return () => motionListeners.delete(listener);
 }
-function getMotionSnapshot() {
+function getMotionSnapshot(): MotionPref {
   ensureMotionInit();
-  return motionOverride;
+  return motionPref;
 }
-function getMotionServerSnapshot() {
-  return false;
+function getMotionServerSnapshot(): MotionPref {
+  return null;
 }
 
 /**
@@ -122,14 +136,17 @@ export function usePerfProfile(): PerfProfile {
   }, []);
 
   const { reducedMotion: rawReducedMotion, isMobile, saveData, ready } = state;
-  const motionEnabled = React.useSyncExternalStore(
+  const motionPref = React.useSyncExternalStore(
     subscribeMotion,
     getMotionSnapshot,
     getMotionServerSnapshot
   );
 
   return React.useMemo<PerfProfile>(() => {
-    const reducedMotion = rawReducedMotion && !motionEnabled;
+    // Explicit preference wins; otherwise follow the OS.
+    const reducedMotion =
+      motionPref === "on" ? false : motionPref === "off" ? true : rawReducedMotion;
+    const motionEnabled = motionPref === "on";
     // Only explicit, reliable intent disables the 3D scene: reduced-motion or
     // Data Saver. Viewport size (a real media query) just scales quality down;
     // it never removes the scene. No capability heuristics — see detectSaveData.
@@ -150,5 +167,5 @@ export function usePerfProfile(): PerfProfile {
       maxDpr,
       ready,
     };
-  }, [rawReducedMotion, motionEnabled, isMobile, saveData, ready]);
+  }, [rawReducedMotion, motionPref, isMobile, saveData, ready]);
 }
