@@ -2,7 +2,7 @@
 
 import { Zap, ZapOff } from "lucide-react";
 import { setMotionPreference, usePerfProfile } from "@/hooks/use-perf-profile";
-import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 /**
  * Menu control to toggle reduced motion. Flips the effective motion state to an
@@ -17,27 +17,22 @@ export default function MotionToggle({ className }: { className?: string }) {
   const Icon = motionOn ? Zap : ZapOff;
 
   return (
-    <button
-      type="button"
+    <Button
       onClick={() => setMotionPreference(reducedMotion ? "on" : "off")}
       aria-pressed={reducedMotion}
       aria-label={motionOn ? "Reduce motion and disable 3D" : "Enable motion and 3D"}
-      className={cn(
-        "group flex items-center gap-3 rounded-xl border border-border/40 bg-secondary/10 px-3.5 py-2.5",
-        "text-left backdrop-blur-sm transition-colors duration-300",
-        "hover:border-border/80 hover:bg-secondary/20",
-        className
-      )}
+      className={'bg-transparent gap-2 flex text-muted group hover:bg-transparent border-2 text-xs'}
+      size={'sm'}
     >
       <Icon className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
       <span className="flex flex-col leading-tight">
         <span className="text-xs font-medium text-foreground/70 transition-colors group-hover:text-foreground">
           {motionOn ? "Reduce motion" : "Enable motion"}
         </span>
-        <span className="text-[11px] text-muted-foreground/70">
-          {motionOn ? "Turn off 3D & animations" : "Turn on 3D & animations"}
-        </span>
+        {/* <span className="text-[11px] text-muted-foreground/70"> */}
+        {/* {motionOn ? "Turn off 3D & animations" : "Turn on 3D & animations"} */}
+        {/* </span> */}
       </span>
-    </button>
+    </Button>
   );
 }
