@@ -14,6 +14,7 @@ export default function MotionToggle({ className }: { className?: string }) {
   const { ready, reducedMotion } = usePerfProfile();
   // Until client detection runs, render the stable "motion on" state to match SSR.
   const motionOn = ready ? !reducedMotion : true;
+  const Icon = motionOn ? Zap : ZapOff;
 
   return (
     <button
@@ -21,14 +22,22 @@ export default function MotionToggle({ className }: { className?: string }) {
       onClick={() => setMotionPreference(reducedMotion ? "on" : "off")}
       aria-pressed={reducedMotion}
       aria-label={motionOn ? "Reduce motion and disable 3D" : "Enable motion and 3D"}
-      title={motionOn ? "Motion on — click to reduce" : "Reduced motion — click to enable"}
       className={cn(
-        "inline-flex items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground",
+        "group flex items-center gap-3 rounded-xl border border-border/40 bg-secondary/10 px-3.5 py-2.5",
+        "text-left backdrop-blur-sm transition-colors duration-300",
+        "hover:border-border/80 hover:bg-secondary/20",
         className
       )}
     >
-      {motionOn ? <Zap className="size-5" /> : <ZapOff className="size-5" />}
-      <span className="sr-only">{motionOn ? "Reduce motion" : "Enable motion"}</span>
+      <Icon className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
+      <span className="flex flex-col leading-tight">
+        <span className="text-xs font-medium text-foreground/70 transition-colors group-hover:text-foreground">
+          {motionOn ? "Reduce motion" : "Enable motion"}
+        </span>
+        <span className="text-[11px] text-muted-foreground/70">
+          {motionOn ? "Turn off 3D & animations" : "Turn on 3D & animations"}
+        </span>
+      </span>
     </button>
   );
 }

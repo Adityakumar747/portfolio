@@ -4,6 +4,7 @@ import styles from "./style.module.scss";
 import { height } from "../anim";
 import Body from "./body/body";
 import Image from "./image/image";
+import MotionToggle from "@/components/motion-toggle";
 
 import { links } from "@/components/header/config";
 import { cn } from "@/lib/utils";
@@ -29,7 +30,7 @@ const Index: React.FC<IndexProps> = ({ setIsActive }) => {
       initial="initial"
       animate="enter"
       exit="exit"
-      className={styles.nav}
+      className={cn(styles.nav, "relative")}
     >
       <div className={cn(styles.wrapper, 'flex justify-end sm:justify-start')}>
         <div className={styles.container}>
@@ -45,6 +46,16 @@ const Index: React.FC<IndexProps> = ({ setIsActive }) => {
           isActive={selectedLink.isActive}
         />
       </div>
+      {/* Subtle reduced-motion control, tucked into the bottom-right of the menu. */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ delay: 0.5, duration: 0.4 }}
+        className="absolute bottom-0 right-0"
+      >
+        <MotionToggle />
+      </motion.div>
     </motion.div>
   );
 };
