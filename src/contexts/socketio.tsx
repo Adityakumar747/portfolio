@@ -151,17 +151,24 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
       auth: {
         sessionId: localStorage.getItem(SESSION_ID_KEY),
       },
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelayMax: 5000,
     });
     setSocket(newSocket);
     socketRef.current = newSocket;
-    newSocket.on("connect", () => { });
+    newSocket.on("connect", () => {
+      // Resync the latest history after a reconnect (e.g. waking from sleep)
+      if (initStatusRef.current === "loaded") {
+        newSocket.emit("msgs-fetch-init");
+      }
+    });
     newSocket.on("connect_error", (err) => {
       console.error("Socket connection error:", err.message);
     });
     newSocket.on("disconnect", (reason) => {
-      // Reconnect on server-initiated disconnect and network drops.
-      // "io client disconnect" means the user explicitly called .disconnect(), so skip that.
-      if (reason !== "io client disconnect") {
+      // Transport drops auto-reconnect; only a server disconnect needs a manual nudge
+      if (reason === "io server disconnect") {
         newSocket.connect();
       }
     });
@@ -239,7 +246,21 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
       });
     });
 
+    // Kick a reconnect on wake/refocus/network-return; backoff timers can stall through sleep
+    const ensureConnected = () => {
+      if (!newSocket.connected) newSocket.connect();
+    };
+    const onVisible = () => {
+      if (document.visibilityState === "visible") ensureConnected();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("online", ensureConnected);
+    window.addEventListener("focus", ensureConnected);
+
     return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("online", ensureConnected);
+      window.removeEventListener("focus", ensureConnected);
       newSocket.disconnect();
       socketRef.current = null;
     };
