@@ -15,11 +15,10 @@ import { usePerfProfile } from "@/hooks/use-perf-profile";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const AnimatedBackground = () => {
+const KeyboardScene = ({ maxDpr }: { maxDpr: number }) => {
   const { isLoading, bypassLoading } = usePreloader();
   const { theme } = useTheme();
   const isMobile = useMediaQuery("(max-width: 767px)");
-  const { disable3D, maxDpr, ready: perfReady } = usePerfProfile();
   const splineContainer = useRef<HTMLDivElement>(null);
   const [splineApp, setSplineApp] = useState<Application>();
   const selectedSkillRef = useRef<Skill | null>(null);
@@ -107,7 +106,7 @@ const AnimatedBackground = () => {
     const kbd = splineApp.findObjectByName("keyboard");
     if (!kbd) return;
 
-    gsap.timeline({
+    return gsap.timeline({
       scrollTrigger: {
         trigger: triggerId,
         start,
@@ -131,10 +130,10 @@ const AnimatedBackground = () => {
     });
   };
 
-  const setupScrollAnimations = () => {
-    if (!splineApp || !splineContainer.current) return;
+  const setupScrollAnimations = (): gsap.core.Timeline[] => {
+    if (!splineApp || !splineContainer.current) return [];
     const kbd = splineApp.findObjectByName("keyboard");
-    if (!kbd) return;
+    if (!kbd) return [];
 
     // Initial state
     const heroState = getKeyboardState({ section: "hero", isMobile });
@@ -142,9 +141,11 @@ const AnimatedBackground = () => {
     gsap.set(kbd.position, heroState.position);
 
     // Section transitions
-    createSectionTimeline("#skills", "skills", "hero");
-    createSectionTimeline("#projects", "projects", "skills", "top 70%");
-    createSectionTimeline("#contact", "contact", "projects", "top 30%");
+    return [
+      createSectionTimeline("#skills", "skills", "hero"),
+      createSectionTimeline("#projects", "projects", "skills", "top 70%"),
+      createSectionTimeline("#contact", "contact", "projects", "top 30%"),
+    ].filter(Boolean) as gsap.core.Timeline[];
   };
 
   const getBongoAnimation = () => {
@@ -280,12 +281,18 @@ const AnimatedBackground = () => {
   useEffect(() => {
     if (!splineApp) return;
     handleSplineInteractions();
-    setupScrollAnimations();
+    const timelines = setupScrollAnimations();
     bongoAnimationRef.current = getBongoAnimation();
     keycapAnimationsRef.current = getKeycapsAnimation();
     return () => {
       bongoAnimationRef.current?.stop()
       keycapAnimationsRef.current?.stop()
+      // Kill the section ScrollTriggers so they don't orphan when the scene
+      // unmounts (e.g. toggling reduced motion) and fire on the disposed app.
+      timelines.forEach((tl) => {
+        tl.scrollTrigger?.kill();
+        tl.kill();
+      });
     }
 
   }, [splineApp, isMobile]);
@@ -452,16 +459,6 @@ const AnimatedBackground = () => {
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, [splineApp]);
 
-  // On low-end hardware or when the user prefers reduced motion, skip the WebGL
-  // scene entirely — it's the single heaviest thing on the page. Don't mount
-  // Spline until device detection has run, either: a mount-then-unmount would
-  // still fetch the heavy runtime chunk + scene (a "flash mount"). Waiting one
-  // tick keeps the 3D off low-end devices for real; the page keeps its own
-  // background, and the Preloader bypasses its splash when 3D is disabled.
-  if (!perfReady || disable3D) {
-    return null;
-  }
-
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Spline
@@ -475,6 +472,26 @@ const AnimatedBackground = () => {
       />
     </Suspense>
   );
+};
+
+/**
+ * Gate the heavy WebGL scene behind device/preference detection.
+ *
+ * The gate lives here in the parent (not inside KeyboardScene) on purpose: when
+ * 3D is disabled — e.g. the user toggles reduced motion — KeyboardScene fully
+ * UNMOUNTS, tearing down its Spline app, GSAP tweens, ScrollTriggers and reveal
+ * state. Re-enabling remounts it from a clean slate. (Gating with an internal
+ * early-return instead kept the component mounted, so it came back with stale
+ * `keyboardRevealed` state and never re-initialised the keycaps.)
+ *
+ * Waiting for `ready` also avoids a flash-mount that would fetch the heavy
+ * runtime chunk + scene before detection has run; the Preloader bypasses its
+ * splash when 3D is disabled.
+ */
+const AnimatedBackground = () => {
+  const { disable3D, maxDpr, ready } = usePerfProfile();
+  if (!ready || disable3D) return null;
+  return <KeyboardScene maxDpr={maxDpr} />;
 };
 
 /**
