@@ -430,6 +430,28 @@ const AnimatedBackground = () => {
     updateKeyboardTransform();
   }, [splineApp, isLoading, activeSection]);
 
+  // Cap the renderer's pixel ratio once the scene is ready, and clean up the
+  // resize listener on unmount / DPR change (previously added in onLoad and
+  // never removed).
+  useEffect(() => {
+    if (!splineApp) return;
+    return capSplinePixelRatio(splineApp, maxDpr);
+  }, [splineApp, maxDpr]);
+
+  // Pause the entire WebGL render loop (and the keyboard's infinite tweens /
+  // bongo-cat interval, which are only visible through it) while the tab is
+  // hidden. Spline keeps rendering at full tilt in a background tab otherwise —
+  // a pointless, continuous GPU/battery drain.
+  useEffect(() => {
+    if (!splineApp) return;
+    const onVisibility = () => {
+      if (document.hidden) splineApp.stop();
+      else splineApp.play();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [splineApp]);
+
   // On low-end hardware or when the user prefers reduced motion, skip the WebGL
   // scene entirely — it's the single heaviest thing on the page. Don't mount
   // Spline until device detection has run, either: a mount-then-unmount would
@@ -447,7 +469,6 @@ const AnimatedBackground = () => {
         ref={splineContainer}
         onLoad={(app: Application) => {
           setSplineApp(app);
-          capSplinePixelRatio(app, maxDpr);
           bypassLoading();
         }}
         scene="/assets/skills-keyboard.spline"
@@ -460,7 +481,8 @@ const AnimatedBackground = () => {
  * Cap the Spline/Three.js renderer's pixel ratio. The scene is published with
  * pixelRatio=0 ("device"), so on a 2–3x screen it renders 4–9x the pixels of a
  * 1x canvas — a huge GPU cost. We clamp it and reapply on resize, since Spline
- * re-reads devicePixelRatio when the canvas resizes.
+ * re-reads devicePixelRatio when the canvas resizes. Returns a disposer that
+ * removes the resize listener (so it isn't leaked across reloads/unmounts).
  */
 function capSplinePixelRatio(app: Application, maxDpr: number) {
   const apply = () => {
@@ -476,6 +498,7 @@ function capSplinePixelRatio(app: Application, maxDpr: number) {
   };
   apply();
   window.addEventListener("resize", apply, { passive: true });
+  return () => window.removeEventListener("resize", apply);
 }
 
 export default AnimatedBackground;
