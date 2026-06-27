@@ -1,14 +1,27 @@
 import type { Metadata } from "next";
-import { Inter, Archivo_Black } from "next/font/google";
+import { Space_Grotesk, Unbounded } from "next/font/google";
 import "./globals.css";
 import { config } from "@/data/config";
 
-import Header from "@/components/header/header";
-import Footer from "@/components/footer/footer";
 import Script from "next/script";
-import AppOverlays from "@/components/app-overlays";
+import SiteFrame from "@/components/site-frame";
 import { Providers } from "@/components/providers";
 import { GoogleAnalytics } from "@next/third-parties/google";
+
+/* Body/base font — Space Grotesk, bound to --font-sans (applied as `font-sans`
+ * on <html>). Everything that isn't a heading inherits this. */
+const spaceGroteskSans = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+/* Heading font — Unbounded, bound to --font-display and applied to h1–h6. */
+const unbounded = Unbounded({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: config.title,
@@ -41,24 +54,21 @@ export const metadata: Metadata = {
   },
 };
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
-const archivoBlack = Archivo_Black({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-display",
-});
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={[inter.variable, archivoBlack.variable, "font-display"].join(" ")} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={[
+        spaceGroteskSans.variable,
+        unbounded.variable,
+        "font-sans",
+      ].join(" ")}
+      suppressHydrationWarning
+    >
       <head>
         {/* The Spline runtime lazy-loads its wasm from unpkg; warm the
             connection early so the 3D scene starts faster. */}
@@ -71,10 +81,7 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>
-          <Header />
-          {children}
-          <Footer />
-          <AppOverlays />
+          <SiteFrame>{children}</SiteFrame>
         </Providers>
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
