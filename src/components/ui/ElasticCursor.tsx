@@ -55,7 +55,9 @@ const WRAP_RADIUS = 12; // corner radius while wrapped
 const WRAP_EASE = 0.2; // how fast the cursor snaps to/from a target
 const TARGET_PULL = 0.35; // fraction of pointer offset the target travels
 const TARGET_EASE = 0.25; // how fast the target follows the pointer
+const TARGET_MAX_PULL = 12; // px cap so wide targets nudge instead of sliding far
 const CURSOR_PARALLAX = 0.12; // extra lead of the cursor toward the pointer
+const CURSOR_MAX_LEAD = 10; // px cap on that lead, independent of target size
 
 // Magnetic feel: the cursor morphs to hug the hovered element, and the element
 // is pulled toward the pointer. Flip either flag for a cursor-only/target-only
@@ -167,23 +169,41 @@ function ElasticCursor() {
     const moveTarget = !!el && movesTarget;
     const hidden = isHiddenRef.current;
 
-    // Pull the hovered element toward the pointer (magnetic button).
+    // Pull the hovered element toward the pointer (magnetic button), capped to an
+    // absolute distance. Driven via gsap so its transform cache stays in sync with
+    // the release spring-back — a raw style.transform write makes the spring instant.
     if (moveTarget && el && active.base) {
       const b = active.base;
-      const px = clamp(pointer.x - b.cx, -b.width / 2, b.width / 2);
-      const py = clamp(pointer.y - b.cy, -b.height / 2, b.height / 2);
-      active.offX = lerp(active.offX, px * TARGET_PULL, TARGET_EASE);
-      active.offY = lerp(active.offY, py * TARGET_PULL, TARGET_EASE);
-      el.style.transform = `translate(${active.offX}px, ${active.offY}px)`;
+      const pullX = clamp(
+        (pointer.x - b.cx) * TARGET_PULL,
+        -TARGET_MAX_PULL,
+        TARGET_MAX_PULL
+      );
+      const pullY = clamp(
+        (pointer.y - b.cy) * TARGET_PULL,
+        -TARGET_MAX_PULL,
+        TARGET_MAX_PULL
+      );
+      active.offX = lerp(active.offX, pullX, TARGET_EASE);
+      active.offY = lerp(active.offY, pullY, TARGET_EASE);
+      gsap.set(el, { x: active.offX, y: active.offY });
     }
 
     if (wrapping && active.base) {
       // Cursor snaps to hug the target (and follows it if it's also moving).
       const b = active.base;
-      const px = clamp(pointer.x - b.cx, -b.width / 2, b.width / 2);
-      const py = clamp(pointer.y - b.cy, -b.height / 2, b.height / 2);
-      const tx = b.cx + active.offX + px * CURSOR_PARALLAX;
-      const ty = b.cy + active.offY + py * CURSOR_PARALLAX;
+      const leadX = clamp(
+        (pointer.x - b.cx) * CURSOR_PARALLAX,
+        -CURSOR_MAX_LEAD,
+        CURSOR_MAX_LEAD
+      );
+      const leadY = clamp(
+        (pointer.y - b.cy) * CURSOR_PARALLAX,
+        -CURSOR_MAX_LEAD,
+        CURSOR_MAX_LEAD
+      );
+      const tx = b.cx + active.offX + leadX;
+      const ty = b.cy + active.offY + leadY;
       jelly.x = lerp(jelly.x, tx, WRAP_EASE);
       jelly.y = lerp(jelly.y, ty, WRAP_EASE);
       jelly.w = lerp(jelly.w, b.width + WRAP_PADDING * 2, WRAP_EASE);
