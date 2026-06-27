@@ -6,45 +6,50 @@ import { ArrowUpRight, ExternalLink, Link2, MoveUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
-import { RiNextjsFill, RiNodejsFill, RiReactjsFill } from "react-icons/ri";
-import {
-  SiChakraui,
-  SiDocker,
-  SiExpress,
-  SiFirebase,
-  SiJavascript,
-  SiMongodb,
-  SiPostgresql,
-  SiPrisma,
-  SiPython,
-  SiReactquery,
-  SiSanity,
-  SiShadcnui,
-  SiSocketdotio,
-  SiSupabase,
-  SiTailwindcss,
-  SiThreedotjs,
-  SiTypescript,
-  SiVuedotjs,
-} from "react-icons/si";
-import { TbBrandFramerMotion } from "react-icons/tb";
+// Spline has no thesvg entry — keep the Three.js mark as its stand-in.
+import { SiThreedotjs } from "react-icons/si";
 const BASE_PATH = "/assets/projects-screenshots";
 
-const ProjectsLinks = ({ live, repo }: { live: string; repo?: string }) => {
+// Renders a brand SVG from /public as a monochrome glyph that inherits the
+// surrounding text color (the skill dock styles every icon via currentColor),
+// so full-color marks like Mistral flatten to match the rest of the set.
+const MaskIcon = ({ src, title }: { src: string; title?: string }) => (
+  <span
+    role="img"
+    aria-label={title}
+    className="block bg-current"
+    style={{
+      width: "1em",
+      height: "1em",
+      WebkitMaskImage: `url(${src})`,
+      maskImage: `url(${src})`,
+      WebkitMaskRepeat: "no-repeat",
+      maskRepeat: "no-repeat",
+      WebkitMaskPosition: "center",
+      maskPosition: "center",
+      WebkitMaskSize: "contain",
+      maskSize: "contain",
+    }}
+  />
+);
+
+const ProjectsLinks = ({ live, repo }: { live?: string; repo?: string }) => {
   return (
     <div className="flex flex-col md:flex-row items-center justify-start gap-3 my-3 mb-8">
-      <Link
-        className="font-mono underline flex gap-2"
-        rel="noopener"
-        target="_new"
-        href={live}
-      >
-        <Button variant={"default"} size={"sm"}>
-          Visit Website
-          <ArrowUpRight className="ml-3 w-5 h-5" />
-        </Button>
-      </Link>
-      {repo && (
+      {live && live !== "#" && (
+        <Link
+          className="font-mono underline flex gap-2"
+          rel="noopener"
+          target="_new"
+          href={live}
+        >
+          <Button variant={"default"} size={"sm"}>
+            Visit Website
+            <ArrowUpRight className="ml-3 w-5 h-5" />
+          </Button>
+        </Link>
+      )}
+      {repo && repo !== "#" && (
         <Link
           className="font-mono underline flex gap-2"
           rel="noopener"
@@ -67,85 +72,35 @@ export type Skill = {
   fg: string;
   icon: ReactNode;
 };
+// Brand chips sourced from thesvg CLI mono SVGs in /public/assets/logos,
+// rendered via MaskIcon so each one inherits the dock's currentColor.
+const brand = (title: string, file: string): Skill => ({
+  title,
+  bg: "black",
+  fg: "white",
+  icon: <MaskIcon src={`/assets/logos/${file}`} title={title} />,
+});
 const PROJECT_SKILLS = {
-  next: {
-    title: "Next.js",
-    bg: "black",
-    fg: "white",
-    icon: <RiNextjsFill />,
-  },
-  chakra: {
-    title: "Chakra UI",
-    bg: "black",
-    fg: "white",
-    icon: <SiChakraui />,
-  },
-  node: {
-    title: "Node.js",
-    bg: "black",
-    fg: "white",
-    icon: <RiNodejsFill />,
-  },
-  python: {
-    title: "Python",
-    bg: "black",
-    fg: "white",
-    icon: <SiPython />,
-  },
-  prisma: {
-    title: "prisma",
-    bg: "black",
-    fg: "white",
-    icon: <SiPrisma />,
-  },
-  postgres: {
-    title: "PostgreSQL",
-    bg: "black",
-    fg: "white",
-    icon: <SiPostgresql />,
-  },
-  mongo: {
-    title: "MongoDB",
-    bg: "black",
-    fg: "white",
-    icon: <SiMongodb />,
-  },
-  express: {
-    title: "Express",
-    bg: "black",
-    fg: "white",
-    icon: <SiExpress />,
-  },
-  reactQuery: {
-    title: "React Query",
-    bg: "black",
-    fg: "white",
-    icon: <SiReactquery />,
-  },
-  shadcn: {
-    title: "ShanCN UI",
-    bg: "black",
-    fg: "white",
-    icon: <SiShadcnui />,
-  },
+  next: brand("Next.js", "nextdotjs-mono.svg"),
+  chakra: brand("Chakra UI", "chakra-ui-mono.svg"),
+  node: brand("Node.js", "nodedotjs-mono.svg"),
+  python: brand("Python", "python-mono.svg"),
+  prisma: brand("Prisma", "prisma-mono.svg"),
+  postgres: brand("PostgreSQL", "postgresql-mono.svg"),
+  mongo: brand("MongoDB", "mongodb-mono.svg"),
+  express: brand("Express", "express-mono.svg"),
+  reactQuery: brand("React Query", "react-query-mono.svg"),
+  shadcn: brand("shadcn/ui", "shadcn-ui-mono.svg"),
+  // Not in the thesvg registry — keep the existing custom logo.
   aceternity: {
     title: "Aceternity",
     bg: "black",
     fg: "white",
     icon: <AceTernityLogo />,
   },
-  tailwind: {
-    title: "Tailwind",
-    bg: "black",
-    fg: "white",
-    icon: <SiTailwindcss />,
-  },
-  docker: {
-    title: "Docker",
-    bg: "black",
-    fg: "white",
-    icon: <SiDocker />,
-  },
+  tailwind: brand("Tailwind", "tailwind-css-mono.svg"),
+  docker: brand("Docker", "docker-mono.svg"),
+  // Not in the thesvg registry — keep the text mark.
   yjs: {
     title: "Y.js",
     bg: "black",
@@ -156,71 +111,66 @@ const PROJECT_SKILLS = {
       </span>
     ),
   },
-  firebase: {
-    title: "Firebase",
-    bg: "black",
-    fg: "white",
-    icon: <SiFirebase />,
-  },
-  sockerio: {
-    title: "Socket.io",
-    bg: "black",
-    fg: "white",
-    icon: <SiSocketdotio />,
-  },
-  js: {
-    title: "JavaScript",
-    bg: "black",
-    fg: "white",
-    icon: <SiJavascript />,
-  },
-  ts: {
-    title: "TypeScript",
-    bg: "black",
-    fg: "white",
-    icon: <SiTypescript />,
-  },
-  vue: {
-    title: "Vue.js",
-    bg: "black",
-    fg: "white",
-    icon: <SiVuedotjs />,
-  },
-  react: {
-    title: "React.js",
-    bg: "black",
-    fg: "white",
-    icon: <RiReactjsFill />,
-  },
-  sanity: {
-    title: "Sanity",
-    bg: "black",
-    fg: "white",
-    icon: <SiSanity />,
-  },
+  firebase: brand("Firebase", "firebase-mono.svg"),
+  sockerio: brand("Socket.io", "socketdotio-mono.svg"),
+  js: brand("JavaScript", "javascript-mono.svg"),
+  ts: brand("TypeScript", "typescript-mono.svg"),
+  vue: brand("Vue.js", "vuedotjs-mono.svg"),
+  react: brand("React.js", "react-mono.svg"),
+  sanity: brand("Sanity", "sanity-mono.svg"),
+  // Not in the thesvg registry — keep the Three.js stand-in.
   spline: {
     title: "Spline",
     bg: "black",
     fg: "white",
     icon: <SiThreedotjs />,
   },
-  gsap: {
-    title: "GSAP",
+  gsap: brand("GSAP", "gsap-mono.svg"),
+  framerMotion: brand("Motion", "motion.svg"),
+  supabase: brand("Supabase", "supabase-mono.svg"),
+  trpc: brand("tRPC", "trpc-mono.svg"),
+  drizzle: brand("Drizzle ORM", "drizzle-mono.svg"),
+  hono: brand("Hono", "hono-mono.svg"),
+  redis: brand("Redis / BullMQ", "redis-mono.svg"),
+  cloudflare: brand("Cloudflare", "cloudflare-mono.svg"),
+  // React Native reuses the React mark.
+  reactNative: brand("React Native", "react-mono.svg"),
+  betterAuth: brand("Better Auth", "better-auth-mono.svg"),
+  // Not in the thesvg registry — keep the text marks.
+  zustand: {
+    title: "Zustand",
     bg: "black",
     fg: "white",
-    icon: "",
+    icon: <span className="text-xs font-bold">Zu</span>,
   },
-  framerMotion: {
-    title: "Framer Motion",
+  partykit: {
+    title: "PartyKit",
     bg: "black",
     fg: "white",
-    icon: <TbBrandFramerMotion />,
+    icon: <span className="text-base">🎈</span>,
   },
-  supabase: {
-    title: "Supabase",
+  hocuspocus: {
+    title: "Hocuspocus",
     bg: "black",
     fg: "white",
-    icon: <SiSupabase />,
+    icon: <span className="text-xs font-bold">Hp</span>,
+  },
+  // React Flow ships under the xyflow brand.
+  reactFlow: brand("React Flow", "xyflow-mono.svg"),
+  codemirror: brand("CodeMirror", "codemirror-mono.svg"),
+  // "Satori / sharp" — uses the sharp mark.
+  satori: brand("Satori / sharp", "sharp-mono.svg"),
+  turborepo: brand("Turborepo", "turborepo-mono.svg"),
+  // Vercel AI SDK uses the Vercel mark.
+  aiSDK: brand("Vercel AI SDK", "vercel-mono.svg"),
+  anthropic: brand("Anthropic Claude", "anthropic-mono.svg"),
+  mistral: brand("Mistral AI", "mistral-ai-mono.svg"),
+  // Not in the thesvg registry — keep the text mark.
+  nextIntl: {
+    title: "next-intl",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">i18n</span>,
   },
 };
 export type Project = {
@@ -236,8 +186,101 @@ export type Project = {
 };
 const projects: Project[] = [
   {
+    id: "storekit",
+    category: "Commerce platform",
+    title: "StoreKit",
+    src: "/assets/projects-screenshots/storekit/landing.png",
+    screenshots: ["landing.png"],
+    skills: {
+      frontend: [
+        PROJECT_SKILLS.ts,
+        PROJECT_SKILLS.next,
+        PROJECT_SKILLS.react,
+        PROJECT_SKILLS.reactNative,
+        PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.shadcn,
+        PROJECT_SKILLS.zustand,
+        PROJECT_SKILLS.reactQuery,
+      ],
+      backend: [
+        PROJECT_SKILLS.hono,
+        PROJECT_SKILLS.trpc,
+        PROJECT_SKILLS.drizzle,
+        PROJECT_SKILLS.postgres,
+        PROJECT_SKILLS.redis,
+        PROJECT_SKILLS.betterAuth,
+        PROJECT_SKILLS.cloudflare,
+        PROJECT_SKILLS.docker,
+      ],
+    },
+    // TODO: add the public live URL if shareable; leave "#" for a screenshots-only card
+    live: "#",
+    // Private repo (commercial product) — intentionally no public source link
+    get content() {
+      return (
+        <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            A production-grade, multi-tenant commerce platform — Shopify-class,
+            built solo.
+          </TypographyP>
+          <TypographyP className="font-mono ">
+            Architected and built end-to-end as a single engineer: a
+            pnpm/Turborepo monorepo spanning 6 applications and 11 shared
+            packages — merchant dashboard, customer storefront, headless REST
+            API, and two React Native apps (customer + POS) — with a shared
+            type-safe core (54-table Drizzle/Postgres schema, 33 tRPC v11
+            routers, end-to-end inference). ~238K lines of TypeScript powering 4
+            storefront verticals: e-commerce, food delivery, quick-commerce, and
+            digital goods.
+          </TypographyP>
+          <ProjectsLinks live={this.live} repo={this.github} />
+
+          <TypographyH3 className="my-4 mt-8">Payments &amp; reliability</TypographyH3>
+          <p className="font-mono mb-2">
+            A PhonePe payment integration with OAuth2 token exchange, Redis-cached
+            per-store tokens, and idempotency keys on orders/transactions/refunds
+            so checkout survives refreshes and duplicate webhooks without
+            double-charging. Payment credentials are encrypted at rest and webhook
+            signatures verified to prevent tampering, with a BullMQ/Redis async
+            layer (5 retries, exponential backoff) driving notifications and order
+            jobs — every webhook event logged for replay.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/storekit/dashboard.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">AI storefront generation</TypographyH3>
+          <p className="font-mono mb-2">
+            <em>In progress.</em> An agentic generator where an LLM writes real
+            storefront code inside isolated container sandboxes, gated by a
+            type-check + lint pass so broken code never lands — then deploys each
+            store programmatically as its own Cloudflare Worker through a
+            queue-driven pipeline, with a fleet health monitor that auto-rolls-back
+            failing deployments within minutes.
+          </p>
+
+          <TypographyH3 className="my-4 mt-8">Domain modeling &amp; breadth</TypographyH3>
+          <p className="font-mono mb-2">
+            An explicit order state-machine spans the 4 verticals with
+            illegal-transition guards, fronted by a typed event bus and a
+            per-store plugin registry for pluggable lifecycle behavior without
+            touching core code. The merchant dashboard ships a visual theme
+            builder, analytics, inventory, coupons, abandoned-cart recovery, and
+            Pixie — an in-product AI agent that manages the store via tool-calling
+            over live data. The POS app does Bluetooth ESC/POS thermal printing,
+            mDNS/TCP printer discovery, and barcode scanning.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/storekit/storefront.png`,
+              `${BASE_PATH}/storekit/pos.png`,
+            ]}
+          />
+        </div>
+      );
+    },
+  },
+  {
     id: "codingducks",
-    category: "Coding platform",
+    category: "Real-time coding platform",
     title: "Coding Ducks",
     src: "/assets/projects-screenshots/codingducks/landing.png",
     screenshots: ["landing.png"],
@@ -245,17 +288,22 @@ const projects: Project[] = [
       frontend: [
         PROJECT_SKILLS.ts,
         PROJECT_SKILLS.next,
-        PROJECT_SKILLS.chakra,
-        PROJECT_SKILLS.reactQuery,
-        PROJECT_SKILLS.firebase,
+        PROJECT_SKILLS.react,
+        PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.shadcn,
+        PROJECT_SKILLS.codemirror,
+        PROJECT_SKILLS.reactFlow,
+        PROJECT_SKILLS.zustand,
       ],
       backend: [
         PROJECT_SKILLS.node,
-        PROJECT_SKILLS.express,
-        PROJECT_SKILLS.prisma,
-        PROJECT_SKILLS.python,
+        PROJECT_SKILLS.trpc,
+        PROJECT_SKILLS.drizzle,
         PROJECT_SKILLS.postgres,
-        PROJECT_SKILLS.sockerio,
+        PROJECT_SKILLS.yjs,
+        PROJECT_SKILLS.hocuspocus,
+        PROJECT_SKILLS.betterAuth,
+        PROJECT_SKILLS.docker,
       ],
     },
     live: "https://www.codingducks.xyz/",
@@ -264,30 +312,32 @@ const projects: Project[] = [
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            Coding ducks = LeetCode + CodePen + CSS Battles
+            A multi-language judge, a CRDT collaborative editor, and a
+            system-design simulation game — in one platform.
           </TypographyP>
           <TypographyP className="font-mono ">
-            Coding Ducks is your coding dojo — where you level up your skills,
-            battle in real-time code duels, and earn badges like a true code
-            warrior. Track your progress, flex your brain, and climb the
-            leaderboard. Ready to quack the code?
+            Coding Ducks is a full-stack, real-time coding platform built as a
+            production-grade Turborepo monorepo (2 apps, 7 shared packages) in
+            strict TypeScript — Next.js 16 / React 19, a tRPC v11 type-safe API,
+            PostgreSQL + Drizzle ORM (18 tables), and a standalone real-time
+            Node service, with enforced one-way apps → packages dependency
+            boundaries.
           </TypographyP>
           <ProjectsLinks live={this.live} repo={this.github} />
-          <TypographyH3 className="my-4 mt-8">Problems </TypographyH3>
+
+          <TypographyH3 className="my-4 mt-8">
+            Ducklets — real-time collaborative editor
+          </TypographyH3>
           <p className="font-mono mb-2">
-            Solve coding problems similar to LeetCode, enhancing your
-            problem-solving skills across various languages.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/codingducks/problems.png`,
-              `${BASE_PATH}/codingducks/problem.png`,
-            ]}
-          />
-          <TypographyH3 className="my-4 mt-8">Ducklets</TypographyH3>
-          <p className="font-mono mb-2">
-            Collaborate in real-time with others in a multiplayer coding
-            environment, just like CodePen but with a social twist.
+            A multiplayer code editor built on Y.js CRDTs and a standalone
+            Hocuspocus WebSocket server — concurrent editing, live cursor
+            presence, and conflict-free merging persisted to Postgres as
+            versioned binary state. Secured by a custom HMAC-SHA256 signed-token
+            scheme (constant-time verification, 1-hour TTL) with owner / editor
+            / viewer RBAC re-verified live against the DB so permission
+            revocation takes effect mid-session. Includes room forking,
+            point-in-time snapshots, idempotent chat, and throttled live
+            previews (Puppeteer + Cloudflare R2, coalesced to ≤1 render/60s).
           </p>
           <SlideShow
             images={[
@@ -296,200 +346,316 @@ const projects: Project[] = [
               `${BASE_PATH}/codingducks/ducklet2.png`,
             ]}
           />
-          <TypographyH3 className="my-4 mt-8">UI Battles </TypographyH3>
 
+          <TypographyH3 className="my-4 mt-8">
+            CD Judge — in-house code execution engine
+          </TypographyH3>
           <p className="font-mono mb-2">
-            Challenge yourself to create UI components with HTML/CSS/JS, and get
-            instant feedback with an automated similarity scoring.
+            A free, self-hostable, Judge0-class execution engine supporting 10
+            languages (Python, JS, TS, Java, C, C++, Rust, Go, Ruby, PHP) with per-language
+            driver/harness generation that injects test cases, parses typed
+            arguments, and redacts hidden-test output. An asynchronous submit →
+            poll → verdict pipeline uses an optimistic-locking finalizer
+            (UPDATE … WHERE status=&apos;running&apos;) to guarantee exactly-once
+            streak/scoring under concurrent polling, plus &quot;beats X%&quot;
+            runtime-percentile ranking via SQL window aggregates.
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/codingducks/css-battles.png`,
-              `${BASE_PATH}/codingducks/css-battle.png`,
-              `${BASE_PATH}/codingducks/css-battle2.png`,
+              `${BASE_PATH}/codingducks/problems.png`,
+              `${BASE_PATH}/codingducks/problem.png`,
+              `${BASE_PATH}/codingducks/playground.png`,
             ]}
           />
-          <TypographyH3 className="my-4 mt-8">Contests </TypographyH3>
-          <p className="font-mono mb-2">
-            Organize or participate in coding competitions. Successfully used to
-            host three contests during college.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/codingducks/contests.png`]} />
-          <TypographyH3 className="my-4 mt-8">Playground </TypographyH3>
-          <p className="font-mono mb-2">
-            Test and execute your code instantly in my versatile online code
-            runner.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/codingducks/playground.png`]} />
-          <TypographyH3 className="my-4 mt-8">Users</TypographyH3>
 
+          <TypographyH3 className="my-4 mt-8">
+            System Design — simulation game
+          </TypographyH3>
           <p className="font-mono mb-2">
-            Track your progress, earn badges, and climb the rankings with
-            detailed user profiles and activity tracking.
+            An interactive puzzle game where users assemble architectures from
+            16 typed building blocks on a React Flow canvas, then run them
+            through a pure-TypeScript, client-side traffic-simulation engine —
+            topological propagation, capacity/latency modeling, cache-warmth
+            EMA, SPOF detection, and DDoS &amp; chaos-fault injection. A 3-star
+            scoring model across reliability / performance / efficiency spans 10
+            progressively harder levels, guarded by a calibration suite
+            (node&nbsp;--test) that runs reference designs 15× through the real
+            engine to assert each level stays beatable-but-hard (optimal ⇒ 3★,
+            naive ⇒ ≤2★, broken ⇒ fail).
           </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/codingducks/users.png`,
-              `${BASE_PATH}/codingducks/user.png`,
-            ]}
-          />
         </div>
       );
     },
   },
   {
-    id: "couponluxury",
-    category: "Coupon site",
-    title: "Coupon Luxury",
-    src: "/assets/projects-screenshots/couponluxury/landing.png",
-    screenshots: ["1.png", "2.png", "3.png", "4.png", "5.png"],
-    live: "https://www.couponluxury.com/",
-    skills: {
-      frontend: [
-        PROJECT_SKILLS.js,
-        PROJECT_SKILLS.next,
-        PROJECT_SKILLS.chakra,
-        PROJECT_SKILLS.vue,
-      ],
-      backend: [
-        PROJECT_SKILLS.node,
-        PROJECT_SKILLS.express,
-        PROJECT_SKILLS.prisma,
-        PROJECT_SKILLS.postgres,
-        PROJECT_SKILLS.docker,
-      ],
-    },
-    get content(): React.JSX.Element {
-      return (
-        <div>
-          <TypographyP className="font-mono ">
-            CouponLuxury is your go-to destination for snagging the best deals
-            without lifting a finger. Whether you&apos;re hunting for the latest
-            discounts or trying to save a buck at your favorite stores,
-            CouponLuxury&apos;s got you covered.
-          </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          <p className="font-mono mb-2 mt-4">
-            As soon as you land, boom! You&apos;re greeted with the freshest
-            coupons and top-tier deals that&apos;ll make your wallet happy.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/couponluxury/landing.png`]} />
-          <TypographyH3 className="my-4 ">Stores</TypographyH3>
-          <p className="font-mono mb-2">
-            Dive into a comprehensive list of stores, each packed with exclusive
-            deals and discounts. It&apos;s like having a VIP pass to every sale
-            in town.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/couponluxury/stores.png`,
-              `${BASE_PATH}/couponluxury/store.png`,
-            ]}
-          />
-          <TypographyH3 className="my-4 mt-8">Categories</TypographyH3>
-
-          <p className="font-mono mb-2">
-            Whatever you&apos;re into—fashion, tech, food—you&apos;ll find it
-            neatly organized here. No more endless scrolling; just pick a
-            category and get the best offers instantly.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/couponluxury/categories.png`]} />
-          <TypographyH3 className="my-4 mt-8">Custom CMS </TypographyH3>
-          <p className="font-mono mb-2">
-            Powered by Vue.js, this bad boy allows us to keep the content
-            dynamic and up-to-date. From flash sales to limited-time offers, my
-            CMS ensures everything&apos;s live and relevant.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/couponluxury/cms-1.png`,
-              `${BASE_PATH}/couponluxury/cms-2.png`,
-            ]}
-          />
-          <p className="font-mono mb-2 mt-5">
-            Plus, I&apos;ve sprinkled in some extra magic like personalized
-            deal recommendations, user-friendly search features, and a sleek,
-            responsive design that works like a charm on any device.
-          </p>
-          <p className="font-mono mb-2">
-            CouponLuxury isn&apos;t just a website; it&apos;s your personal deal-hunting
-            assistant, ensuring you never miss out on a bargain!
-          </p>
-          {/* <TypographyP className="my-4 mt-8">
-          <strong>Misc:</strong>
-          Hosted not one, not two, but THREE coding contests (Codemacha) during
-          college. Safe to say, Coding Ducks passed the vibe check.
-        </TypographyP>
-        <TypographyP className="my-4 mt-8">
-          <strong>Target Audience:</strong>
-          For all the novice coders out there ready to make their mark.
-        </TypographyP> */}
-        </div>
-      );
-    },
-  },
-  {
-    id: "the-booking-desk",
-    category: "Travel",
-    title: "The Booking Desk",
-    src: "/assets/projects-screenshots/the-booking-desk/landing.png",
-    screenshots: ["1.png"],
-    live: "https://thebookingdesk.com/",
+    id: "gumbalup",
+    category: "Real-time quiz platform",
+    title: "Gumbalup",
+    src: "/assets/projects-screenshots/gumbalup/landing.png",
+    screenshots: ["landing.png"],
     skills: {
       frontend: [
         PROJECT_SKILLS.ts,
         PROJECT_SKILLS.next,
-        PROJECT_SKILLS.aceternity,
+        PROJECT_SKILLS.react,
         PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.shadcn,
+        PROJECT_SKILLS.framerMotion,
+        PROJECT_SKILLS.zustand,
+        PROJECT_SKILLS.reactQuery,
       ],
-      backend: [PROJECT_SKILLS.sanity],
+      backend: [
+        PROJECT_SKILLS.trpc,
+        PROJECT_SKILLS.partykit,
+        PROJECT_SKILLS.drizzle,
+        PROJECT_SKILLS.postgres,
+        PROJECT_SKILLS.betterAuth,
+        PROJECT_SKILLS.cloudflare,
+        PROJECT_SKILLS.docker,
+      ],
     },
+    // TODO: add the public live URL if shareable; leave "#" for a screenshots-only card
+    live: "#",
+    // Private repo (commercial product) — intentionally no public source link
     get content() {
       return (
         <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            A live, interactive quiz &amp; audience-engagement platform — built
+            solo, end-to-end.
+          </TypographyP>
           <TypographyP className="font-mono ">
-            The Booking Desk is your ultimate travel consultation hub, designed
-            to turn your wanderlust dreams into reality. With a focus on smooth
-            and visually captivating animations, navigating the site feels like
-            a breeze—it&apos;s almost as if the destinations are calling you.
+            A production-grade, multi-tenant SaaS where organizations build
+            quizzes (manually or with AI) and run live, host-driven games —
+            players join from any device via room code / QR and compete on a
+            real-time, server-authoritative leaderboard. Also supports async
+            self-paced quizzes, team mode, anti-cheat monitoring, analytics,
+            billing, and white-labeling. ~43.5K lines of TypeScript across 257
+            files.
           </TypographyP>
           <ProjectsLinks live={this.live} repo={this.github} />
-          <p className="font-mono mb-2 mt-8">
-            A sleek, modern interface greets you, featuring the latest travel
-            tips, deals, and must-visit spots around the globe.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/the-booking-desk/landing.png`]} />
-          <TypographyH3 className="my-4 mt-8">Blogs</TypographyH3>
-          <p className="font-mono mb-2">
-            Dive into the curated articles written by travel experts. Whether
-            you&apos;re looking for hidden gems or travel hacks, our blog section has
-            you covered.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/the-booking-desk/blogs.png`,
-              `${BASE_PATH}/the-booking-desk/blog.png`,
-            ]}
-          />
-          <TypographyH3 className="my-4 mt-8">Sanity CMS</TypographyH3>
 
+          <TypographyH3 className="my-4 mt-8">
+            Server-authoritative game engine
+          </TypographyH3>
           <p className="font-mono mb-2">
-            Keeping everything fresh and up-to-date, I&apos;ve integrated Sanity CMS
-            to manage all the content with ease, ensuring you always get the
-            latest and greatest information.
+            A real-time game engine on PartyKit (Cloudflare Durable Objects +
+            WebSockets): a per-room in-memory state machine with an authoritative
+            1-second timer, speed-rank + streak scoring, deterministic
+            tie-broken leaderboards, team mode, and graceful reconnect/replay —
+            ~2,800 lines of game logic behind a typed message protocol (42
+            discriminated-union variants). Correctness is never sent to clients
+            during an active question, so players can&apos;t sniff answers or
+            game the clock.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/gumbalup/live-game.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">
+            Edge-to-DB security boundary &amp; AI authoring
+          </TypographyH3>
+          <p className="font-mono mb-2">
+            The edge worker never connects to Postgres directly — it proxies all
+            persistence through a shared-secret internal HTTPS API on Next.js,
+            keeping the database unreachable from the public internet while the
+            worker stays stateless and edge-deployed. A fully type-safe layer (17
+            tRPC routers, 5 authorization tiers, Zod) backs it, with LLM-powered
+            quiz authoring (Groq / Llama) from topics or uploaded PDFs, quota-
+            metered per org, plus analytics with CSV/Excel/PDF export.
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/the-booking-desk/cms-1.png`,
-              `${BASE_PATH}/the-booking-desk/cms-2.png`,
+              `${BASE_PATH}/gumbalup/host.png`,
+              `${BASE_PATH}/gumbalup/analytics.png`,
             ]}
           />
-          <p className="font-mono mb-2 my-8">
-            With a stunning 100% score on Lighthouse, The Booking Desk isn&apos;t
-            just beautiful—it&apos;s built to perform. Whether you&apos;re planning your
-            next adventure or just daydreaming, our site delivers a top-notch
-            experience that&apos;s both informative and enjoyable.
+        </div>
+      );
+    },
+  },
+  {
+    id: "waku",
+    category: "Image rendering platform",
+    title: "Waku",
+    src: "/assets/projects-screenshots/waku/landing.png",
+    screenshots: ["landing.png"],
+    skills: {
+      frontend: [
+        PROJECT_SKILLS.ts,
+        PROJECT_SKILLS.next,
+        PROJECT_SKILLS.react,
+        PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.zustand,
+        PROJECT_SKILLS.reactQuery,
+      ],
+      backend: [
+        PROJECT_SKILLS.trpc,
+        PROJECT_SKILLS.drizzle,
+        PROJECT_SKILLS.postgres,
+        PROJECT_SKILLS.satori,
+        PROJECT_SKILLS.betterAuth,
+        PROJECT_SKILLS.cloudflare,
+        PROJECT_SKILLS.turborepo,
+        PROJECT_SKILLS.docker,
+      ],
+    },
+    live: "https://waku.nareshkhatri.site",
+    github: "https://github.com/Naresh-Khatri/waku",
+    get content() {
+      return (
+        <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            An on-demand dynamic image-generation service — &quot;design once,
+            ship a typed URL endpoint.&quot;
+          </TypographyP>
+          <TypographyP className="font-mono ">
+            Design a template once in a Canva-like editor, then get a typed URL
+            that renders images with live, dynamic data on demand (currently
+            focused on OG images). Built as a 7-package Turborepo monorepo
+            (Next.js 15 / React 19 / TypeScript) — a visual editor, an edge render
+            service, a 3-stage rendering engine, typed SDKs, and shared DB/font
+            packages. 25K+ LOC, MIT-licensed and self-hostable via
+            docker-compose.
+          </TypographyP>
+          <ProjectsLinks live={this.live} repo={this.github} />
+
+          <TypographyH3 className="my-4 mt-8">
+            Deterministic render pipeline &amp; URL contract
+          </TypographyH3>
+          <p className="font-mono mb-2">
+            A deterministic pipeline (TemplateDocument → Satori → Resvg → sharp)
+            compiles a flat node IR to SVG and rasterizes to PNG/WebP/JPEG with
+            HTTP Accept-based format negotiation, dynamic font subsetting from a
+            CDN (25 families, Latin unicode-range parsing), and retina-aware
+            transcoding — served behind an immutable Cache-Control: max-age=1y URL
+            contract. Query params are sorted before encoding so any input order
+            maps to one cache key; versioned URLs are immutable while published
+            URLs 302-redirect to a numbered version, so edits never break
+            previously-shared links.
           </p>
+          <SlideShow images={[`${BASE_PATH}/waku/render.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">
+            Canva-like editor &amp; AI template generation
+          </TypographyH3>
+          <p className="font-mono mb-2">
+            A visual editor built from scratch (no Figma/tldraw/Fabric) on raw
+            pointer events + a Zustand store: edge/center snap guides,
+            scroll-anchored + pinch zoom (5%–800%), a 100-entry coalesced
+            undo/redo stack, and a parameter-binding system that turns any field
+            into a typed URL param. An AI agent generates full templates from a
+            prompt, validated against a Zod document schema. The public image
+            proxy is also SSRF-hardened (private-IP/CIDR blocking, redirect
+            re-validation, streaming size caps, and per-user/IP rate limiting).
+          </p>
+          <SlideShow images={[`${BASE_PATH}/waku/editor.png`]} />
+        </div>
+      );
+    },
+  },
+  {
+    id: "peakposts",
+    category: "AI social SaaS",
+    title: "PeakPosts",
+    src: "/assets/projects-screenshots/peakposts/landing.png",
+    screenshots: ["landing.png"],
+    skills: {
+      frontend: [
+        PROJECT_SKILLS.ts,
+        PROJECT_SKILLS.next,
+        PROJECT_SKILLS.react,
+        PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.shadcn,
+        PROJECT_SKILLS.framerMotion,
+        PROJECT_SKILLS.zustand,
+        PROJECT_SKILLS.reactQuery,
+        PROJECT_SKILLS.nextIntl,
+      ],
+      backend: [
+        PROJECT_SKILLS.trpc,
+        PROJECT_SKILLS.drizzle,
+        PROJECT_SKILLS.postgres,
+        PROJECT_SKILLS.betterAuth,
+        PROJECT_SKILLS.aiSDK,
+        PROJECT_SKILLS.anthropic,
+        PROJECT_SKILLS.mistral,
+        PROJECT_SKILLS.cloudflare,
+      ],
+    },
+    // Private repo (commercial product) — intentionally no public source link
+    live: "#",
+    get content() {
+      return (
+        <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            A multi-tenant SaaS that turns QR-scanned diner reviews into
+            AI-generated, multi-language social posts — built solo, end-to-end.
+          </TypographyP>
+          <TypographyP className="font-mono ">
+            A production-grade, multi-tenant SaaS (~50K lines of TypeScript) on
+            the Next.js 15 App Router with end-to-end type safety from PostgreSQL
+            → Drizzle ORM → tRPC v11 → React, serving five distinct audiences —
+            diners, brand owners, counter staff, platform admins, and public
+            marketing — from a single application. 208 React components, 14 tRPC
+            routers, a normalized 19-table schema, and 5 AI subsystems across 5
+            languages.
+          </TypographyP>
+          <ProjectsLinks live={this.live} repo={this.github} />
+
+          <TypographyH3 className="my-4 mt-8">
+            Peakie — agentic AI analytics assistant
+          </TypographyH3>
+          <p className="font-mono mb-2">
+            A hand-rolled tool-calling loop on the Vercel AI SDK (Mistral) over 10
+            brand-scoped tools — no agent framework — hardened against
+            small-model failure modes: spin-detection, hallucinated-tool-name
+            repair, per-tool and total over-fetch caps, exact-call de-duplication,
+            a token-budget history trimmer, and forced tool-choice on the final
+            step to guarantee termination within 6 steps. A terminal{" "}
+            <code>present_actions</code> tool forces structured, deep-linkable
+            answers, and every AI-produced link is re-validated against the
+            user&apos;s accessible scope so a hallucinated or out-of-scope
+            resource ID can never leak across tenant boundaries.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/peakposts/peakie.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">
+            AI content-generation pipeline
+          </TypographyH3>
+          <p className="font-mono mb-2">
+            An Anthropic Claude pipeline converts a star rating + photo + note
+            into platform-tailored social captions across 6 platforms and 5
+            languages using Zod-schema-enforced structured output, brand-voice
+            configuration, content moderation, and deterministic fallbacks so
+            generation never hard-fails. The diner&apos;s locale does double duty
+            — selecting both the UI catalog and the language the AI writes in
+            (e.g. picking Chinese yields a Xiaohongshu-style caption). A
+            retrieval-augmented help center pairs Mistral embeddings + cosine
+            similarity with a weighted-TF lexical fallback for API outages.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/peakposts/generate.png`,
+              `${BASE_PATH}/peakposts/analytics.png`,
+            ]}
+          />
+
+          <TypographyH3 className="my-4 mt-8">
+            In-browser video editor &amp; multi-tenant security
+          </TypographyH3>
+          <p className="font-mono mb-2">
+            Diners generate H.264 MP4 video and images entirely client-side via
+            the WebCodecs <code>VideoEncoder</code> + mp4-muxer and Canvas 2D,
+            inside a direct-manipulation post editor (pinch/rotate/drag gestures,
+            caption presets, CJK font subsetting) — zero server-side render cost.
+            The multi-step diner flow persists to IndexedDB via a custom Zustand
+            adapter, with client-side image compression and presigned
+            direct-to-R2 uploads. Underneath sits a five-tier tRPC authorization
+            layer with brand- vs. outlet-scoped grants, existence-masking
+            (<code>NOT_FOUND</code> over <code>FORBIDDEN</code>), and two-factor
+            counter auth — a hashed device token plus per-staff PIN with
+            brute-force lockout.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/peakposts/editor.png`]} />
         </div>
       );
     },
@@ -556,143 +722,6 @@ const projects: Project[] = [
           <p className="font-mono mb-2 mt-8 text-center">
             This site&apos;s not just a portfolio — it&apos;s a whole vibe.
           </p>
-        </div>
-      );
-    },
-  },
-  {
-    id: "ghostchat",
-    category: "Anonymous chat",
-    title: "GhostChat",
-    src: "/assets/projects-screenshots/ghostchat/1.png",
-    screenshots: ["1.png", "2.png", "3.png", "4.png"],
-    live: "https://ghostchat.vercel.app",
-    github:"https://github.com/Naresh-Khatri/GhostChat",
-    skills: {
-      frontend: [PROJECT_SKILLS.js, PROJECT_SKILLS.next, PROJECT_SKILLS.chakra],
-      backend: [PROJECT_SKILLS.supabase],
-    },
-    get content() {
-      return (
-        <div>
-          <TypographyP className="font-mono ">
-            Ghostchat is your go-to spot for sending anonymous messages without
-            leaving a trace. Powered by Supabase, it&apos;s all about keeping things
-            low-key and secure. Whether you&apos;re sharing secrets, giving feedback,
-            or just having some fun, Ghostchat ensures your identity stays
-            hidden, while your voice is heard. Say what you want, without the
-            worry.
-          </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          <SlideShow
-            images={[
-              `${BASE_PATH}/ghostchat/1.png`,
-              `${BASE_PATH}/ghostchat/2.png`,
-              `${BASE_PATH}/ghostchat/3.png`,
-              `${BASE_PATH}/ghostchat/4.png`,
-            ]}
-          />
-        </div>
-      );
-    },
-  },
-  {
-    id: "jra",
-    category: "Result analyzer",
-    title: "JNTUA Results Analyzer",
-    src: "/assets/projects-screenshots/jra/1.png",
-    screenshots: ["1.png"],
-    live: "https://naresh-khatri.github.io/JNTUA-result-analyser-spa/#/",
-    skills: {
-      frontend: [PROJECT_SKILLS.js, PROJECT_SKILLS.vue],
-      backend: [
-        PROJECT_SKILLS.node,
-        PROJECT_SKILLS.mongo,
-        PROJECT_SKILLS.express,
-        PROJECT_SKILLS.docker,
-      ],
-    },
-    get content() {
-      return (
-        <div>
-          <TypographyP className="font-mono ">
-            JNTUA Results Analyzer was a revolutionary tool designed to simplify
-            and enhance the experience of accessing academic results. It served
-            as a powerful proxy between the JNTUA university results website and
-            its users, offering a range of features that made result analysis
-            faster and more efficient. Here&apos;s what made it stand out:
-          </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          <SlideShow images={[`${BASE_PATH}/jra/1.png`]} />
-          <TypographyH3 className="my-4 mt-8">
-            Effortless Results Retrieval
-          </TypographyH3>
-          {/* Effortless Results Retrieval: */}
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              Search all your results using a single roll number, eliminating
-              the tedious task of sifting through thousands of rows on the
-              official site.
-            </li>
-          </ul>
-          <TypographyH3 className="my-4 mt-8">Class-Wise Results:</TypographyH3>
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              class-wise results effortlessly by entering a roll number range.
-              No more manual searches or filtering.
-            </li>
-          </ul>
-          <TypographyH3 className="my-4 mt-8">Faculty Features:</TypographyH3>
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              Faculty members could download batch results in Excel format,
-              making administrative tasks a breeze.
-            </li>
-          </ul>
-          <TypographyH3 className="my-4 mt-8">
-            Enhanced Data Insights:
-          </TypographyH3>
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              Each result came with additional features including:
-              <ul className="list-disc font-mono ml-6">
-                <li>
-                  <strong>CGPA Calculations: </strong>Easily track your
-                  cumulative grade point average.
-                </li>
-                <li>
-                  <strong>Charts:</strong> Visualize your academic performance
-                  with comprehensive charts.
-                </li>
-                <li>
-                  <strong>Future Projections:</strong> Get insights into
-                  potential future outcomes based on current performance.
-                </li>
-                <li>
-                  <strong> Backlog Counts: </strong>Keep track of your backlog
-                  subjects at a glance.
-                </li>
-              </ul>
-            </li>
-          </ul>
-          <TypographyH3 className="my-4 mt-8">Performance:</TypographyH3>
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              The application was significantly faster and more efficient than
-              the official site, providing a smoother user experience.
-            </li>
-          </ul>
-          <TypographyH3 className="my-4 mt-8">Downfall:</TypographyH3>
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              Unfortunately, as of May 2022, the tool stopped working due to the
-              introduction of CAPTCHA on the official JNTUA results site, which
-              disrupted the seamless functionality of the app. JNTUA Results
-              Analyzer transformed the way students and faculty interacted with
-              academic results, making it a must-have tool until its unexpected
-              shutdown.
-            </li>
-          </ul>
         </div>
       );
     },
