@@ -345,7 +345,7 @@ export const ChatMessageList = ({
                       />
                     )}
 
-                    <p className={cn("whitespace-pre-wrap break-words leading-[1.375rem] text-sm font-light", THEME.text.primary)}>
+                    <p className={cn("whitespace-pre-wrap break-words leading-[1.375rem] text-sm font-medium", THEME.text.primary)}>
                       {msg.content}
                       {msg.editedAt && (
                         <span className={cn("text-[10px] ml-1.5 opacity-50 select-none", THEME.text.secondary)}>(edited)</span>
