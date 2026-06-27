@@ -191,7 +191,7 @@ const OnlineUsers = () => {
           if (!newOpen) setShowUserList(false)
         }}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" data-no-custom-cursor="true">
           {/* Feature 4: "N people here" label */}
           <AnimatePresence>
             {users.length >= 2 && !isOpen && (
