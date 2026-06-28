@@ -223,8 +223,7 @@ const projects: Project[] = [
         PROJECT_SKILLS.docker,
       ],
     },
-    // TODO: add the public live URL if shareable; leave "#" for a screenshots-only card
-    live: "#",
+    live: "https://storekit.app/",
     // Private repo (commercial product) — intentionally no public source link
     get content() {
       return (
@@ -424,8 +423,7 @@ const projects: Project[] = [
         PROJECT_SKILLS.docker,
       ],
     },
-    // TODO: add the public live URL if shareable; leave "#" for a screenshots-only card
-    live: "#",
+    live: "https://gumbalup.com/",
     // Private repo (commercial product) — intentionally no public source link
     get content() {
       return (
@@ -592,7 +590,7 @@ const projects: Project[] = [
       ],
     },
     // Private repo (commercial product) — intentionally no public source link
-    live: "#",
+    live: "https://peakposts.ai/",
     get content() {
       return (
         <div>
@@ -690,9 +688,8 @@ const projects: Project[] = [
         PROJECT_SKILLS.docker,
       ],
     },
-    // TODO: add the public live URL if shareable; leave "#" for a screenshots-only card
-    live: "#",
-    // TODO: add the public repo link here if open-sourced
+    live: "https://kanbi.nareshkhatri.site",
+    github: "https://github.com/naresh-Khatri/kanbi",
     get content() {
       return (
         <div>
