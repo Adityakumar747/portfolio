@@ -20,11 +20,9 @@ import {
 const spring = { type: "spring", stiffness: 320, damping: 30 } as const;
 
 /**
- * A single screenshot, rendered full-bleed at its natural aspect ratio — no
- * matte, no letterbox, no padding. The carousel uses Splide's `autoHeight`, so
- * the track resizes to whichever slide is active; that removes the dead vertical
- * space shorter images used to inherit from a taller sibling, without forcing
- * every image into a uniform frame.
+ * Full-bleed screenshot at its natural aspect ratio. The carousel's `autoHeight`
+ * resizes the track to the active slide, so shorter images don't inherit dead
+ * space from a taller sibling — no matte or uniform frame needed.
  */
 const Frame = ({
   image,

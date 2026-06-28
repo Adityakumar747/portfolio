@@ -150,9 +150,8 @@ body > canvas {
   display: block !important;
 }
 
-/* SlideShow (Splide) — monochrome ink theming. Scoped to `.portfolio-slider`
-   so it never leaks into any other carousel. Arrows reveal on hover/focus;
-   pagination is a row of ink dots with a pill for the active page. */
+/* SlideShow (Splide) — monochrome ink theming, scoped to `.portfolio-slider`
+   so it never leaks into any other carousel. */
 .portfolio-slider {
   --slider-ctrl: hsl(var(--foreground));
 }
