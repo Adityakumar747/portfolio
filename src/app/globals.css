@@ -106,6 +106,15 @@ body > canvas {
   pointer-events: none !important;
 }
 
+/* Project card scroll-preview: subtle zoom of the floating screenshot on hover.
+   (Tailwind's `group-hover:scale-*` isn't emitted in this config, so it's here.) */
+.sp-shot {
+  transition: transform 0.5s ease-out;
+}
+.group:hover .sp-shot {
+  transform: scale(1.02);
+}
+
 @layer utilities {
   .canvas-overlay-mode {
     pointer-events: none;
@@ -139,6 +148,85 @@ body > canvas {
    column to the viewport width so truncation/wrapping can take effect. */
 .chat-scroll-area [data-radix-scroll-area-viewport] > div {
   display: block !important;
+}
+
+/* SlideShow (Splide) — monochrome ink theming. Scoped to `.portfolio-slider`
+   so it never leaks into any other carousel. Arrows reveal on hover/focus;
+   pagination is a row of ink dots with a pill for the active page. */
+.portfolio-slider {
+  --slider-ctrl: hsl(var(--foreground));
+}
+.portfolio-slider .splide__arrow {
+  width: 2.25rem;
+  height: 2.25rem;
+  background: hsl(var(--background) / 0.72);
+  border: 1px solid hsl(var(--border));
+  border-radius: 9999px;
+  color: var(--slider-ctrl);
+  opacity: 0;
+  box-shadow: 0 6px 18px -8px rgb(0 0 0 / 0.35),
+    inset 0 1px 0 hsl(var(--foreground) / 0.06);
+  backdrop-filter: blur(10px);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.2s ease;
+}
+.portfolio-slider:hover .splide__arrow,
+.portfolio-slider:focus-within .splide__arrow {
+  opacity: 1;
+}
+.portfolio-slider .splide__arrow:hover {
+  background: hsl(var(--background) / 0.95);
+  transform: scale(1.07);
+}
+.portfolio-slider .splide__arrow:active {
+  transform: scale(0.94);
+}
+.portfolio-slider .splide__arrow:disabled {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+.portfolio-slider .splide__arrow svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+}
+.portfolio-slider .splide__arrow--prev {
+  left: 0.75rem;
+}
+.portfolio-slider .splide__arrow--next {
+  right: 0.75rem;
+}
+
+.portfolio-slider .splide__pagination {
+  position: static;
+  margin-top: 0.9rem;
+  padding: 0;
+  gap: 0.4rem;
+}
+.portfolio-slider .splide__pagination__page {
+  width: 0.4rem;
+  height: 0.4rem;
+  margin: 0;
+  background: hsl(var(--muted-foreground) / 0.4);
+  border-radius: 9999px;
+  opacity: 1;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease;
+}
+.portfolio-slider .splide__pagination__page:hover {
+  background: hsl(var(--muted-foreground) / 0.7);
+}
+.portfolio-slider .splide__pagination__page.is-active {
+  width: 1.3rem;
+  background: hsl(var(--foreground));
+  transform: none;
+}
+
+/* Touch devices have no hover — keep arrows discoverable. */
+@media (hover: none) {
+  .portfolio-slider .splide__arrow {
+    opacity: 0.9;
+  }
 }
 
 /* Accessibility + low-end escape hatch: when the OS requests reduced motion,

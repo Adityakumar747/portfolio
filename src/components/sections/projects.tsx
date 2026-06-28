@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import React from "react";
 import {
   ResponsiveDialog,
@@ -16,12 +15,13 @@ import projects, { Project } from "@/data/projects";
 import { SectionHeader } from "./section-header";
 
 import SectionWrapper from "../ui/section-wrapper";
+import ScrollingPreview from "../scrolling-preview";
 
 const ProjectsSection = () => {
   return (
-    <SectionWrapper id="projects" className="max-w-7xl mx-auto md:h-[130vh]">
+    <SectionWrapper id="projects" className="max-w-7xl mx-auto md:min-h-[130vh] px-4">
       <SectionHeader id="projects" title="Projects" />
-      <div className="grid grid-cols-1 md:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {projects.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
@@ -34,21 +34,23 @@ const ProjectCard = ({ project }: { project: Project }) => {
   return (
     <div className="flex items-center justify-center">
       <ResponsiveDialog>
-        <ResponsiveDialogTrigger className="bg-transparent flex justify-center">
+        <ResponsiveDialogTrigger className="bg-transparent flex justify-center w-full">
           <div
-            className="relative w-[400px] h-auto rounded-lg overflow-hidden"
+            className="group relative w-full max-w-[400px] h-auto rounded-lg overflow-hidden ring-1 ring-white/5"
             style={{ aspectRatio: "3/2" }}
           >
-            <Image
-              className="absolute w-full h-full top-0 left-0 hover:scale-[1.05] transition-all"
+            {/* `src` can be any aspect ratio (tall pages pan, normal ones fit);
+                the wallpaper is an optional /assets/backgrounds/<id>.jpg. */}
+            <ScrollingPreview
               src={project.src}
               alt={project.title}
-              width={300}
-              height={300}
+              bg={`/assets/backgrounds/${project.id}.jpg`}
             />
-            <div className="absolute w-full h-1/2 bottom-0 left-0 bg-gradient-to-t from-background via-background/85 to-transparent pointer-events-none">
-              <div className="flex flex-col h-full items-start justify-end p-6">
-                <div className="text-lg text-left">{project.title}</div>
+            <div className="absolute w-full h-24 bottom-0 left-0 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none z-10">
+              <div className="flex flex-col h-full items-start justify-end p-4">
+                <div className="text-lg text-left [text-shadow:0_1px_4px_rgba(0,0,0,0.6)]">
+                  {project.title}
+                </div>
                 <div className="text-xs bg-primary text-primary-foreground rounded-lg w-fit px-2">
                   {project.category}
                 </div>
@@ -70,7 +72,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
                 </span>
               </div>
               <div className="shrink-0 flex items-center gap-4">
-                {project.github && (
+                {project.github && project.github !== "#" && (
                   <Link
                     href={project.github}
                     target="_blank"
@@ -79,12 +81,14 @@ const ProjectCard = ({ project }: { project: Project }) => {
                     Source
                   </Link>
                 )}
-                <Link href={project.live} target="_blank">
-                  <button className="group flex items-center gap-2 bg-primary text-primary-foreground text-sm font-medium px-4 py-1.5 rounded-full hover:bg-primary/80 transition-colors">
-                    Visit
-                    <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </button>
-                </Link>
+                {project.live && project.live !== "#" && (
+                  <Link href={project.live} target="_blank">
+                    <button className="group flex items-center gap-2 bg-primary text-primary-foreground text-sm font-medium px-4 py-1.5 rounded-full hover:bg-primary/80 transition-colors">
+                      Visit
+                      <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>

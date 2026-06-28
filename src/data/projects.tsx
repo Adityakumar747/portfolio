@@ -126,7 +126,7 @@ const PROJECT_SKILLS = {
     icon: <SiThreedotjs />,
   },
   gsap: brand("GSAP", "gsap-mono.svg"),
-  framerMotion: brand("Motion", "motion.svg"),
+  motion: brand("Motion", "motion.svg"),
   supabase: brand("Supabase", "supabase-mono.svg"),
   trpc: brand("tRPC", "trpc-mono.svg"),
   drizzle: brand("Drizzle ORM", "drizzle-mono.svg"),
@@ -172,6 +172,19 @@ const PROJECT_SKILLS = {
     fg: "white",
     icon: <span className="text-xs font-bold">i18n</span>,
   },
+  // Not in the thesvg registry — keep the text marks.
+  expo: {
+    title: "Expo",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Expo</span>,
+  },
+  mcp: {
+    title: "MCP",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">MCP</span>,
+  },
 };
 export type Project = {
   id: string;
@@ -198,9 +211,6 @@ const projects: Project[] = [
         PROJECT_SKILLS.react,
         PROJECT_SKILLS.reactNative,
         PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.shadcn,
-        PROJECT_SKILLS.zustand,
-        PROJECT_SKILLS.reactQuery,
       ],
       backend: [
         PROJECT_SKILLS.hono,
@@ -245,7 +255,12 @@ const projects: Project[] = [
             layer (5 retries, exponential backoff) driving notifications and order
             jobs — every webhook event logged for replay.
           </p>
-          <SlideShow images={[`${BASE_PATH}/storekit/dashboard.png`]} />
+          <SlideShow
+            images={[
+              `${BASE_PATH}/storekit/orders.png`,
+              `${BASE_PATH}/storekit/login.png`,
+            ]}
+          />
 
           <TypographyH3 className="my-4 mt-8">AI storefront generation</TypographyH3>
           <p className="font-mono mb-2">
@@ -271,7 +286,7 @@ const projects: Project[] = [
           <SlideShow
             images={[
               `${BASE_PATH}/storekit/storefront.png`,
-              `${BASE_PATH}/storekit/pos.png`,
+              `${BASE_PATH}/storekit/themes.png`,
             ]}
           />
         </div>
@@ -290,10 +305,8 @@ const projects: Project[] = [
         PROJECT_SKILLS.next,
         PROJECT_SKILLS.react,
         PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.shadcn,
         PROJECT_SKILLS.codemirror,
         PROJECT_SKILLS.reactFlow,
-        PROJECT_SKILLS.zustand,
       ],
       backend: [
         PROJECT_SKILLS.node,
@@ -341,9 +354,8 @@ const projects: Project[] = [
           </p>
           <SlideShow
             images={[
+              `${BASE_PATH}/codingducks/ducklets-editor.png`,
               `${BASE_PATH}/codingducks/ducklets.png`,
-              `${BASE_PATH}/codingducks/ducklet1.png`,
-              `${BASE_PATH}/codingducks/ducklet2.png`,
             ]}
           />
 
@@ -364,7 +376,7 @@ const projects: Project[] = [
             images={[
               `${BASE_PATH}/codingducks/problems.png`,
               `${BASE_PATH}/codingducks/problem.png`,
-              `${BASE_PATH}/codingducks/playground.png`,
+              `${BASE_PATH}/codingducks/machine-coding.png`,
             ]}
           />
 
@@ -383,6 +395,7 @@ const projects: Project[] = [
             engine to assert each level stays beatable-but-hard (optimal ⇒ 3★,
             naive ⇒ ≤2★, broken ⇒ fail).
           </p>
+          <SlideShow images={[`${BASE_PATH}/codingducks/sysdesign.png`]} />
         </div>
       );
     },
@@ -399,10 +412,7 @@ const projects: Project[] = [
         PROJECT_SKILLS.next,
         PROJECT_SKILLS.react,
         PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.shadcn,
-        PROJECT_SKILLS.framerMotion,
-        PROJECT_SKILLS.zustand,
-        PROJECT_SKILLS.reactQuery,
+        PROJECT_SKILLS.motion,
       ],
       backend: [
         PROJECT_SKILLS.trpc,
@@ -448,7 +458,7 @@ const projects: Project[] = [
             during an active question, so players can&apos;t sniff answers or
             game the clock.
           </p>
-          <SlideShow images={[`${BASE_PATH}/gumbalup/live-game.png`]} />
+          <SlideShow images={[`${BASE_PATH}/gumbalup/dashboard.png`]} />
 
           <TypographyH3 className="my-4 mt-8">
             Edge-to-DB security boundary &amp; AI authoring
@@ -464,8 +474,8 @@ const projects: Project[] = [
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/gumbalup/host.png`,
-              `${BASE_PATH}/gumbalup/analytics.png`,
+              `${BASE_PATH}/gumbalup/editor.png`,
+              `${BASE_PATH}/gumbalup/library.png`,
             ]}
           />
         </div>
@@ -484,8 +494,6 @@ const projects: Project[] = [
         PROJECT_SKILLS.next,
         PROJECT_SKILLS.react,
         PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.zustand,
-        PROJECT_SKILLS.reactQuery,
       ],
       backend: [
         PROJECT_SKILLS.trpc,
@@ -532,7 +540,7 @@ const projects: Project[] = [
             URLs 302-redirect to a numbered version, so edits never break
             previously-shared links.
           </p>
-          <SlideShow images={[`${BASE_PATH}/waku/render.png`]} />
+          <SlideShow images={[`${BASE_PATH}/waku/preview.png`]} />
 
           <TypographyH3 className="my-4 mt-8">
             Canva-like editor &amp; AI template generation
@@ -547,7 +555,12 @@ const projects: Project[] = [
             proxy is also SSRF-hardened (private-IP/CIDR blocking, redirect
             re-validation, streaming size caps, and per-user/IP rate limiting).
           </p>
-          <SlideShow images={[`${BASE_PATH}/waku/editor.png`]} />
+          <SlideShow
+            images={[
+              `${BASE_PATH}/waku/editor.png`,
+              `${BASE_PATH}/waku/ai.png`,
+            ]}
+          />
         </div>
       );
     },
@@ -564,10 +577,7 @@ const projects: Project[] = [
         PROJECT_SKILLS.next,
         PROJECT_SKILLS.react,
         PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.shadcn,
-        PROJECT_SKILLS.framerMotion,
-        PROJECT_SKILLS.zustand,
-        PROJECT_SKILLS.reactQuery,
+        PROJECT_SKILLS.motion,
         PROJECT_SKILLS.nextIntl,
       ],
       backend: [
@@ -616,7 +626,7 @@ const projects: Project[] = [
             user&apos;s accessible scope so a hallucinated or out-of-scope
             resource ID can never leak across tenant boundaries.
           </p>
-          <SlideShow images={[`${BASE_PATH}/peakposts/peakie.png`]} />
+          <SlideShow images={[`${BASE_PATH}/peakposts/dashboard.png`]} />
 
           <TypographyH3 className="my-4 mt-8">
             AI content-generation pipeline
@@ -632,12 +642,7 @@ const projects: Project[] = [
             retrieval-augmented help center pairs Mistral embeddings + cosine
             similarity with a weighted-TF lexical fallback for API outages.
           </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/peakposts/generate.png`,
-              `${BASE_PATH}/peakposts/analytics.png`,
-            ]}
-          />
+          <SlideShow images={[`${BASE_PATH}/peakposts/posts.png`]} />
 
           <TypographyH3 className="my-4 mt-8">
             In-browser video editor &amp; multi-tenant security
@@ -655,7 +660,117 @@ const projects: Project[] = [
             counter auth — a hashed device token plus per-staff PIN with
             brute-force lockout.
           </p>
-          <SlideShow images={[`${BASE_PATH}/peakposts/editor.png`]} />
+        </div>
+      );
+    },
+  },
+  {
+    id: "kanbi",
+    category: "Realtime project tracker",
+    title: "Kanbi",
+    src: "/assets/projects-screenshots/kanbi/landing.png",
+    screenshots: ["landing.png"],
+    skills: {
+      frontend: [
+        PROJECT_SKILLS.ts,
+        PROJECT_SKILLS.next,
+        PROJECT_SKILLS.react,
+        PROJECT_SKILLS.reactNative,
+        PROJECT_SKILLS.expo,
+        PROJECT_SKILLS.tailwind,
+      ],
+      backend: [
+        PROJECT_SKILLS.trpc,
+        PROJECT_SKILLS.drizzle,
+        PROJECT_SKILLS.postgres,
+        PROJECT_SKILLS.betterAuth,
+        PROJECT_SKILLS.mcp,
+        PROJECT_SKILLS.cloudflare,
+        PROJECT_SKILLS.turborepo,
+        PROJECT_SKILLS.docker,
+      ],
+    },
+    // TODO: add the public live URL if shareable; leave "#" for a screenshots-only card
+    live: "#",
+    // TODO: add the public repo link here if open-sourced
+    get content() {
+      return (
+        <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            A keyboard-first, realtime Kanban tracker — &quot;Linear, but small
+            enough to own.&quot;
+          </TypographyP>
+          <TypographyP className="font-mono ">
+            A full-stack TypeScript monorepo (pnpm + Turborepo) spanning three
+            deployable surfaces — a Next.js 15 web app, an OAuth-secured MCP
+            server for AI agents, and an Expo mobile companion — with end-to-end
+            type safety from Postgres → Drizzle → tRPC v11 → React, so a schema
+            change ripples to compile errors in the UI with zero codegen. ~21K
+            lines of TypeScript, 16 domain tRPC routers, a 25-table schema, and 8
+            scoped MCP agent tools.
+          </TypographyP>
+          <ProjectsLinks live={this.live} repo={this.github} />
+
+          <TypographyH3 className="my-4 mt-8">
+            Realtime collaboration &amp; fractional ordering
+          </TypographyH3>
+          <p className="font-mono mb-2">
+            Drag-and-drop boards with optimistic UI and live multi-user updates,
+            powered by tRPC subscriptions over Server-Sent Events. An in-process
+            event bus broadcasts <code>boardId</code>-scoped invalidation signals
+            that carry <em>no payload</em> — clients simply refetch through React
+            Query, keeping the realtime layer cheap and consistent. Mutations
+            snapshot-and-rollback (<code>onMutate</code>/<code>onError</code>/
+            <code>onSettled</code>) and deletes are undoable (6-second deferred
+            server call + toast). Columns and cards order via fractional indexing
+            — new items insert at the midpoint between neighbors, so a reorder
+            touches one row instead of re-sequencing the whole list, with collapse
+            detection and rebalancing.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/kanbi/board.png`,
+              `${BASE_PATH}/kanbi/dashboard.png`,
+            ]}
+          />
+
+          <TypographyH3 className="my-4 mt-8">
+            One auth model, three clients &amp; an MCP server for AI agents
+          </TypographyH3>
+          <p className="font-mono mb-2">
+            A layered, type-safe authorization model encodes access control at the
+            procedure level — <code>protectedProcedure</code> →{" "}
+            <code>projectProcedure</code> → <code>boardProcedure</code> →{" "}
+            <code>publicBoardProcedure</code> (share token, no auth) — with role
+            checks gating every mutation. The same model is reused across three
+            entry points so ACLs can&apos;t drift: browser cookies, hashed
+            per-device bearer tokens for mobile (SHA-256 at rest), and OAuth-2.1
+            JWTs for AI agents. The spec-compliant MCP server (Streamable HTTP)
+            exposes 8 read/write tools through a full OAuth 2.1 flow — dynamic
+            client registration, a consent screen, JWKS-verified JWTs — each tool a
+            thin wrapper over the existing tRPC procedures via a JWT→session
+            bridge, so permissions, validation, ordering, and the realtime bus are
+            all reused; agent-authored HTML is server-side sanitized.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/kanbi/profile.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">
+            Native Android dock dashboard &amp; AI task drafting
+          </TypographyH3>
+          <p className="font-mono mb-2">
+            A custom native Android Expo module written in Kotlin implements
+            Android&apos;s <code>DreamService</code> (the system daydream): dock
+            the phone and the OS launches a React Native root view rendering the
+            active task and a Pomodoro timer — a genuine focus dashboard, with{" "}
+            <code>showWhenLocked</code>, screen-on, and keyguard dismissal handled
+            natively. Devices pair by QR with secure token storage
+            (<code>expo-secure-store</code>). On the web, paste a raw client
+            message and a Groq-backed LLM extracts structured, actionable issues
+            (title, description, label, priority); rich-text descriptions use Tiptap
+            with <code>@mention</code> and <code>#ticket</code> cross-reference
+            extensions.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/kanbi/ai-draft.png`]} />
         </div>
       );
     },
@@ -672,10 +787,8 @@ const projects: Project[] = [
       frontend: [
         PROJECT_SKILLS.ts,
         PROJECT_SKILLS.next,
-        PROJECT_SKILLS.shadcn,
-        PROJECT_SKILLS.aceternity,
-        PROJECT_SKILLS.framerMotion,
         PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.motion,
         PROJECT_SKILLS.spline,
       ],
       backend: [],
