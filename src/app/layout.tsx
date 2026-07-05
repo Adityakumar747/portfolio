@@ -68,6 +68,7 @@ export default function RootLayout({
         "font-sans",
       ].join(" ")}
       suppressHydrationWarning
+      suppressContentEditableWarning
     >
       <head>
         {/* The Spline runtime lazy-loads its wasm from unpkg; warm the

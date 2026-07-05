@@ -1,45 +1,40 @@
 const config = {
-  title: "Naresh Khatri | Full-Stack Developer",
+  title: "Aditya Kumar | Full-Stack Developer",
   description: {
-    long: "Explore the portfolio of Naresh, a full-stack developer and creative technologist specializing in interactive web experiences, 3D animations, and innovative projects. Discover my latest work, including Coding Ducks, The Booking Desk, Ghostchat, and more. Let's build something amazing together!",
+    long: "Explore the portfolio of Aditya Kumar, a full-stack web developer specializing in React.js, Next.js, Node.js, and responsive design. Discover innovative projects including Salon Booking System, Melon Chat, and more. Let's build something amazing together!",
     short:
-      "Discover the portfolio of Naresh, a full-stack developer creating interactive web experiences and innovative projects.",
+      "Discover the portfolio of Aditya Kumar, a full-stack developer creating interactive web applications and innovative projects.",
   },
   keywords: [
-    "Naresh",
+    "Aditya Kumar",
     "portfolio",
     "full-stack developer",
-    "creative technologist",
     "web development",
-    "3D animations",
-    "interactive websites",
-    "Coding Ducks",
-    "The Booking Desk",
-    "Ghostchat",
-    "web design",
-    "GSAP",
-    "React",
+    "React.js",
     "Next.js",
-    "Spline",
-    "Framer Motion",
+    "Node.js",
+    "Salon Booking System",
+    "Melon Chat",
+    "web design",
+    "responsive design",
   ],
-  author: "Naresh Khatri",
-  email: "naresh.khatri2345@gmail.com",
-  site: "https://nareshkhatri.site",
+  author: "Aditya Kumar",
+  email: "adityakumar7463029@gmail.com",
+  site: "https://adityakumar.dev",
 
   // for github stars button
-  githubUsername: "naresh-khatri",
+  githubUsername: "Adityakumar747",
   githubRepo: "3d-portfolio",
 
   get ogImg() {
     return this.site + "/assets/seo/og-image.png";
   },
   social: {
-    twitter: "https://x.com/nothotchaddi",
-    linkedin: "https://www.linkedin.com/in/naresh-khatri/",
-    instagram: "https://www.instagram.com/hotchaddi",
-    facebook: "https://www.facebook.com/HotChaddi/",
-    github: "https://github.com/Naresh-Khatri",
+    twitter: "https://x.com/adityakumar747",
+    linkedin: "https://www.linkedin.com/in/aditya-kumar-087801525/",
+    instagram: "https://www.instagram.com/adityakumar747",
+    facebook: "https://www.facebook.com/adityakumar747",
+    github: "https://github.com/Adityakumar747",
   },
 };
 export { config };
