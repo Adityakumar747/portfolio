@@ -199,281 +199,57 @@ export type Project = {
 };
 const projects: Project[] = [
   {
-    id: "storekit",
-    category: "Commerce platform",
-    title: "StoreKit",
-    src: "/assets/projects-screenshots/storekit/landing.png",
-    screenshots: ["landing.png"],
+    id: "salon",
+    category: "Full-Stack Web App",
+    title: "Salon Booking App",
+    src: "/assets/projects-screenshots/salon/salon_landing.png",
+    screenshots: ["salon_landing.png"],
     skills: {
       frontend: [
         PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.next,
-        PROJECT_SKILLS.react,
-        PROJECT_SKILLS.reactNative,
-        PROJECT_SKILLS.tailwind,
-      ],
-      backend: [
-        PROJECT_SKILLS.hono,
-        PROJECT_SKILLS.trpc,
-        PROJECT_SKILLS.drizzle,
-        PROJECT_SKILLS.postgres,
-        PROJECT_SKILLS.redis,
-        PROJECT_SKILLS.betterAuth,
-        PROJECT_SKILLS.cloudflare,
-        PROJECT_SKILLS.docker,
-      ],
-    },
-    live: "https://storekit.app/",
-    // Private repo (commercial product) — intentionally no public source link
-    get content() {
-      return (
-        <div>
-          <TypographyP className="font-mono text-2xl text-center">
-            A production-grade, multi-tenant commerce platform — Shopify-class,
-            built solo.
-          </TypographyP>
-          <TypographyP className="font-mono ">
-            Architected and built end-to-end as a single engineer: a
-            pnpm/Turborepo monorepo spanning 6 applications and 11 shared
-            packages — merchant dashboard, customer storefront, headless REST
-            API, and two React Native apps (customer + POS) — with a shared
-            type-safe core (54-table Drizzle/Postgres schema, 33 tRPC v11
-            routers, end-to-end inference). ~238K lines of TypeScript powering 4
-            storefront verticals: e-commerce, food delivery, quick-commerce, and
-            digital goods.
-          </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-
-          <TypographyH3 className="my-4 mt-8">Payments &amp; reliability</TypographyH3>
-          <p className="font-mono mb-2">
-            A PhonePe payment integration with OAuth2 token exchange, Redis-cached
-            per-store tokens, and idempotency keys on orders/transactions/refunds
-            so checkout survives refreshes and duplicate webhooks without
-            double-charging. Payment credentials are encrypted at rest and webhook
-            signatures verified to prevent tampering, with a BullMQ/Redis async
-            layer (5 retries, exponential backoff) driving notifications and order
-            jobs — every webhook event logged for replay.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/storekit/orders.png`,
-              `${BASE_PATH}/storekit/login.png`,
-            ]}
-          />
-
-          <TypographyH3 className="my-4 mt-8">AI storefront generation</TypographyH3>
-          <p className="font-mono mb-2">
-            <em>In progress.</em> An agentic generator where an LLM writes real
-            storefront code inside isolated container sandboxes, gated by a
-            type-check + lint pass so broken code never lands — then deploys each
-            store programmatically as its own Cloudflare Worker through a
-            queue-driven pipeline, with a fleet health monitor that auto-rolls-back
-            failing deployments within minutes.
-          </p>
-
-          <TypographyH3 className="my-4 mt-8">Domain modeling &amp; breadth</TypographyH3>
-          <p className="font-mono mb-2">
-            An explicit order state-machine spans the 4 verticals with
-            illegal-transition guards, fronted by a typed event bus and a
-            per-store plugin registry for pluggable lifecycle behavior without
-            touching core code. The merchant dashboard ships a visual theme
-            builder, analytics, inventory, coupons, abandoned-cart recovery, and
-            Pixie — an in-product AI agent that manages the store via tool-calling
-            over live data. The POS app does Bluetooth ESC/POS thermal printing,
-            mDNS/TCP printer discovery, and barcode scanning.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/storekit/storefront.png`,
-              `${BASE_PATH}/storekit/themes.png`,
-            ]}
-          />
-        </div>
-      );
-    },
-  },
-  {
-    id: "codingducks",
-    category: "Real-time coding platform",
-    title: "Coding Ducks",
-    src: "/assets/projects-screenshots/codingducks/landing.png",
-    screenshots: ["landing.png"],
-    skills: {
-      frontend: [
-        PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.next,
         PROJECT_SKILLS.react,
         PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.codemirror,
-        PROJECT_SKILLS.reactFlow,
       ],
       backend: [
         PROJECT_SKILLS.node,
-        PROJECT_SKILLS.trpc,
-        PROJECT_SKILLS.drizzle,
-        PROJECT_SKILLS.postgres,
-        PROJECT_SKILLS.yjs,
-        PROJECT_SKILLS.hocuspocus,
-        PROJECT_SKILLS.betterAuth,
-        PROJECT_SKILLS.docker,
+        PROJECT_SKILLS.express,
+        PROJECT_SKILLS.mongo,
       ],
     },
-    live: "https://www.codingducks.xyz/",
-    github: "https://github.com/Adityakumar747/Coding-Ducks",
+    live: "https://github.com/Adityakumar747/salon-booking-fullstack",
+    github: "https://github.com/Adityakumar747/salon-booking-fullstack",
     get content() {
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            A multi-language judge, a CRDT collaborative editor, and a
-            system-design simulation game — in one platform.
+            A full-stack salon booking application built with the MERN stack.
           </TypographyP>
           <TypographyP className="font-mono ">
-            Coding Ducks is a full-stack, real-time coding platform built as a
-            production-grade Turborepo monorepo (2 apps, 7 shared packages) in
-            strict TypeScript — Next.js 16 / React 19, a tRPC v11 type-safe API,
-            PostgreSQL + Drizzle ORM (18 tables), and a standalone real-time
-            Node service, with enforced one-way apps → packages dependency
-            boundaries.
+            Features user authentication, service browsing, and appointment scheduling with a responsive UI. Designed to streamline operations for salon businesses while providing an intuitive booking experience for clients.
           </TypographyP>
           <ProjectsLinks live={this.live} repo={this.github} />
-
-          <TypographyH3 className="my-4 mt-8">
-            Ducklets — real-time collaborative editor
-          </TypographyH3>
+          
+          <TypographyH3 className="my-4 mt-8">Authentication &amp; User Flow</TypographyH3>
           <p className="font-mono mb-2">
-            A multiplayer code editor built on Y.js CRDTs and a standalone
-            Hocuspocus WebSocket server — concurrent editing, live cursor
-            presence, and conflict-free merging persisted to Postgres as
-            versioned binary state. Secured by a custom HMAC-SHA256 signed-token
-            scheme (constant-time verification, 1-hour TTL) with owner / editor
-            / viewer RBAC re-verified live against the DB so permission
-            revocation takes effect mid-session. Includes room forking,
-            point-in-time snapshots, idempotent chat, and throttled live
-            previews (Puppeteer + Cloudflare R2, coalesced to ≤1 render/60s).
+            Secure user authentication allowing clients to create accounts, manage profiles, and track their past and upcoming salon appointments seamlessly.
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/codingducks/ducklets-editor.png`,
-              `${BASE_PATH}/codingducks/ducklets.png`,
+              `${BASE_PATH}/salon/salon1.png`,
+              `${BASE_PATH}/salon/salon2.png`,
+              `${BASE_PATH}/salon/salon3.png`,
             ]}
           />
 
-          <TypographyH3 className="my-4 mt-8">
-            CD Judge — in-house code execution engine
-          </TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Service Management</TypographyH3>
           <p className="font-mono mb-2">
-            A free, self-hostable, Judge0-class execution engine supporting 10
-            languages (Python, JS, TS, Java, C, C++, Rust, Go, Ruby, PHP) with per-language
-            driver/harness generation that injects test cases, parses typed
-            arguments, and redacts hidden-test output. An asynchronous submit →
-            poll → verdict pipeline uses an optimistic-locking finalizer
-            (UPDATE … WHERE status=&apos;running&apos;) to guarantee exactly-once
-            streak/scoring under concurrent polling, plus &quot;beats X%&quot;
-            runtime-percentile ranking via SQL window aggregates.
+            Dynamic service catalog integration where administrators can update offerings, pricing, and availability in real-time, displayed with elegant styling.
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/codingducks/problems.png`,
-              `${BASE_PATH}/codingducks/problem.png`,
-              `${BASE_PATH}/codingducks/machine-coding.png`,
-            ]}
-          />
-
-          <TypographyH3 className="my-4 mt-8">
-            System Design — simulation game
-          </TypographyH3>
-          <p className="font-mono mb-2">
-            An interactive puzzle game where users assemble architectures from
-            16 typed building blocks on a React Flow canvas, then run them
-            through a pure-TypeScript, client-side traffic-simulation engine —
-            topological propagation, capacity/latency modeling, cache-warmth
-            EMA, SPOF detection, and DDoS &amp; chaos-fault injection. A 3-star
-            scoring model across reliability / performance / efficiency spans 10
-            progressively harder levels, guarded by a calibration suite
-            (node&nbsp;--test) that runs reference designs 15× through the real
-            engine to assert each level stays beatable-but-hard (optimal ⇒ 3★,
-            naive ⇒ ≤2★, broken ⇒ fail).
-          </p>
-          <SlideShow images={[`${BASE_PATH}/codingducks/sysdesign.png`]} />
-        </div>
-      );
-    },
-  },
-  {
-    id: "gumbalup",
-    category: "Real-time quiz platform",
-    title: "Gumbalup",
-    src: "/assets/projects-screenshots/gumbalup/landing.png",
-    screenshots: ["landing.png"],
-    skills: {
-      frontend: [
-        PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.next,
-        PROJECT_SKILLS.react,
-        PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.motion,
-      ],
-      backend: [
-        PROJECT_SKILLS.trpc,
-        PROJECT_SKILLS.partykit,
-        PROJECT_SKILLS.drizzle,
-        PROJECT_SKILLS.postgres,
-        PROJECT_SKILLS.betterAuth,
-        PROJECT_SKILLS.cloudflare,
-        PROJECT_SKILLS.docker,
-      ],
-    },
-    live: "https://gumbalup.com/",
-    // Private repo (commercial product) — intentionally no public source link
-    get content() {
-      return (
-        <div>
-          <TypographyP className="font-mono text-2xl text-center">
-            A live, interactive quiz &amp; audience-engagement platform — built
-            solo, end-to-end.
-          </TypographyP>
-          <TypographyP className="font-mono ">
-            A production-grade, multi-tenant SaaS where organizations build
-            quizzes (manually or with AI) and run live, host-driven games —
-            players join from any device via room code / QR and compete on a
-            real-time, server-authoritative leaderboard. Also supports async
-            self-paced quizzes, team mode, anti-cheat monitoring, analytics,
-            billing, and white-labeling. ~43.5K lines of TypeScript across 257
-            files.
-          </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-
-          <TypographyH3 className="my-4 mt-8">
-            Server-authoritative game engine
-          </TypographyH3>
-          <p className="font-mono mb-2">
-            A real-time game engine on PartyKit (Cloudflare Durable Objects +
-            WebSockets): a per-room in-memory state machine with an authoritative
-            1-second timer, speed-rank + streak scoring, deterministic
-            tie-broken leaderboards, team mode, and graceful reconnect/replay —
-            ~2,800 lines of game logic behind a typed message protocol (42
-            discriminated-union variants). Correctness is never sent to clients
-            during an active question, so players can&apos;t sniff answers or
-            game the clock.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/gumbalup/dashboard.png`]} />
-
-          <TypographyH3 className="my-4 mt-8">
-            Edge-to-DB security boundary &amp; AI authoring
-          </TypographyH3>
-          <p className="font-mono mb-2">
-            The edge worker never connects to Postgres directly — it proxies all
-            persistence through a shared-secret internal HTTPS API on Next.js,
-            keeping the database unreachable from the public internet while the
-            worker stays stateless and edge-deployed. A fully type-safe layer (17
-            tRPC routers, 5 authorization tiers, Zod) backs it, with LLM-powered
-            quiz authoring (Groq / Llama) from topics or uploaded PDFs, quota-
-            metered per org, plus analytics with CSV/Excel/PDF export.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/gumbalup/editor.png`,
-              `${BASE_PATH}/gumbalup/library.png`,
+              `${BASE_PATH}/salon/salon4.png`,
+              `${BASE_PATH}/salon/salon5.png`,
+              `${BASE_PATH}/salon/salon6.png`,
             ]}
           />
         </div>
@@ -481,11 +257,11 @@ const projects: Project[] = [
     },
   },
   {
-    id: "waku",
-    category: "Image rendering platform",
-    title: "Waku",
-    src: "/assets/projects-screenshots/waku/landing.png",
-    screenshots: ["landing.png"],
+    id: "melonchat",
+    category: "Real-time Chat App",
+    title: "Melonchat",
+    src: "/assets/projects-screenshots/melonchat/melonchat_landing.png",
+    screenshots: ["melonchat_landing.png"],
     skills: {
       frontend: [
         PROJECT_SKILLS.ts,
@@ -494,69 +270,43 @@ const projects: Project[] = [
         PROJECT_SKILLS.tailwind,
       ],
       backend: [
-        PROJECT_SKILLS.trpc,
-        PROJECT_SKILLS.drizzle,
-        PROJECT_SKILLS.postgres,
-        PROJECT_SKILLS.satori,
-        PROJECT_SKILLS.betterAuth,
-        PROJECT_SKILLS.cloudflare,
-        PROJECT_SKILLS.turborepo,
-        PROJECT_SKILLS.docker,
+        PROJECT_SKILLS.node,
       ],
     },
-    live: "https://waku.adityakumar.dev",
-    github: "https://github.com/Adityakumar747/waku",
+    live: "https://github.com/Adityakumar747/Melonchat",
+    github: "https://github.com/Adityakumar747/Melonchat",
     get content() {
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            An on-demand dynamic image-generation service — &quot;design once,
-            ship a typed URL endpoint.&quot;
+            Real-time community chat platform.
           </TypographyP>
           <TypographyP className="font-mono ">
-            Design a template once in a Canva-like editor, then get a typed URL
-            that renders images with live, dynamic data on demand (currently
-            focused on OG images). Built as a 7-package Turborepo monorepo
-            (Next.js 15 / React 19 / TypeScript) — a visual editor, an edge render
-            service, a 3-stage rendering engine, typed SDKs, and shared DB/font
-            packages. 25K+ LOC, MIT-licensed and self-hostable via
-            docker-compose.
+            Built with Next.js, Clerk authentication, and Stream Chat APIs. It allows users to connect, form communities, and engage in real-time conversations with a sleek and modern UI.
           </TypographyP>
           <ProjectsLinks live={this.live} repo={this.github} />
 
-          <TypographyH3 className="my-4 mt-8">
-            Deterministic render pipeline &amp; URL contract
-          </TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Real-time Messaging</TypographyH3>
           <p className="font-mono mb-2">
-            A deterministic pipeline (TemplateDocument → Satori → Resvg → sharp)
-            compiles a flat node IR to SVG and rasterizes to PNG/WebP/JPEG with
-            HTTP Accept-based format negotiation, dynamic font subsetting from a
-            CDN (25 families, Latin unicode-range parsing), and retina-aware
-            transcoding — served behind an immutable Cache-Control: max-age=1y URL
-            contract. Query params are sorted before encoding so any input order
-            maps to one cache key; versioned URLs are immutable while published
-            URLs 302-redirect to a numbered version, so edits never break
-            previously-shared links.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/waku/preview.png`]} />
-
-          <TypographyH3 className="my-4 mt-8">
-            Canva-like editor &amp; AI template generation
-          </TypographyH3>
-          <p className="font-mono mb-2">
-            A visual editor built from scratch (no Figma/tldraw/Fabric) on raw
-            pointer events + a Zustand store: edge/center snap guides,
-            scroll-anchored + pinch zoom (5%–800%), a 100-entry coalesced
-            undo/redo stack, and a parameter-binding system that turns any field
-            into a typed URL param. An AI agent generates full templates from a
-            prompt, validated against a Zod document schema. The public image
-            proxy is also SSRF-hardened (private-IP/CIDR blocking, redirect
-            re-validation, streaming size caps, and per-user/IP rate limiting).
+            Instant message delivery, typing indicators, and online presence features powered by Stream Chat APIs to provide a robust and engaging chat experience.
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/waku/editor.png`,
-              `${BASE_PATH}/waku/ai.png`,
+              `${BASE_PATH}/melonchat/melonchat1.png`,
+              `${BASE_PATH}/melonchat/melonchat2.png`,
+              `${BASE_PATH}/melonchat/melonchat3.png`,
+            ]}
+          />
+
+          <TypographyH3 className="my-4 mt-8">Community &amp; Channels</TypographyH3>
+          <p className="font-mono mb-2">
+            Support for multiple channels, direct messaging, and community management tools allowing users to organize discussions based on different topics or interests.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/melonchat/melonchat4.png`,
+              `${BASE_PATH}/melonchat/melonchat5.png`,
+              `${BASE_PATH}/melonchat/melonchat6.png`,
             ]}
           />
         </div>
@@ -564,274 +314,258 @@ const projects: Project[] = [
     },
   },
   {
-    id: "peakposts",
-    category: "AI social SaaS",
-    title: "PeakPosts",
-    src: "/assets/projects-screenshots/peakposts/landing.png",
-    screenshots: ["landing.png"],
+    id: "flyby",
+    category: "Web Application",
+    title: "Flyby",
+    src: "/assets/projects-screenshots/flyby/flyby1.png",
+    screenshots: ["flyby1.png"],
     skills: {
       frontend: [
         PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.next,
         PROJECT_SKILLS.react,
         PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.motion,
-        PROJECT_SKILLS.nextIntl,
       ],
       backend: [
-        PROJECT_SKILLS.trpc,
-        PROJECT_SKILLS.drizzle,
-        PROJECT_SKILLS.postgres,
-        PROJECT_SKILLS.betterAuth,
-        PROJECT_SKILLS.aiSDK,
-        PROJECT_SKILLS.anthropic,
-        PROJECT_SKILLS.mistral,
-        PROJECT_SKILLS.cloudflare,
+        PROJECT_SKILLS.node,
       ],
     },
-    // Private repo (commercial product) — intentionally no public source link
-    live: "https://peakposts.ai/",
+    live: "https://github.com/Adityakumar747/Flyby",
+    github: "https://github.com/Adityakumar747/Flyby",
     get content() {
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            A multi-tenant SaaS that turns QR-scanned diner reviews into
-            AI-generated, multi-language social posts — built solo, end-to-end.
+            A modern, fast, and scalable web application.
           </TypographyP>
           <TypographyP className="font-mono ">
-            A production-grade, multi-tenant SaaS (~50K lines of TypeScript) on
-            the Next.js 15 App Router with end-to-end type safety from PostgreSQL
-            → Drizzle ORM → tRPC v11 → React, serving five distinct audiences —
-            diners, brand owners, counter staff, platform admins, and public
-            marketing — from a single application. 208 React components, 14 tRPC
-            routers, a normalized 19-table schema, and 5 AI subsystems across 5
-            languages.
+            Flyby is designed to deliver high performance and exceptional user experience. Incorporating modern design patterns and optimized architecture to handle intensive workloads gracefully.
           </TypographyP>
           <ProjectsLinks live={this.live} repo={this.github} />
 
-          <TypographyH3 className="my-4 mt-8">
-            Peakie — agentic AI analytics assistant
-          </TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Dashboard &amp; Analytics</TypographyH3>
           <p className="font-mono mb-2">
-            A hand-rolled tool-calling loop on the Vercel AI SDK (Mistral) over 10
-            brand-scoped tools — no agent framework — hardened against
-            small-model failure modes: spin-detection, hallucinated-tool-name
-            repair, per-tool and total over-fetch caps, exact-call de-duplication,
-            a token-budget history trimmer, and forced tool-choice on the final
-            step to guarantee termination within 6 steps. A terminal{" "}
-            <code>present_actions</code> tool forces structured, deep-linkable
-            answers, and every AI-produced link is re-validated against the
-            user&apos;s accessible scope so a hallucinated or out-of-scope
-            resource ID can never leak across tenant boundaries.
+            A comprehensive dashboard providing insights, data visualization, and quick controls for effective management of application resources.
           </p>
-          <SlideShow images={[`${BASE_PATH}/peakposts/dashboard.png`]} />
+          <SlideShow images={[
+              `${BASE_PATH}/flyby/flyby2.png`,
+              `${BASE_PATH}/flyby/flyby3.png`,
+              `${BASE_PATH}/flyby/flyby4.png`,
+              `${BASE_PATH}/flyby/flyby5.png`,
+          ]} />
 
-          <TypographyH3 className="my-4 mt-8">
-            AI content-generation pipeline
-          </TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Resource Library</TypographyH3>
           <p className="font-mono mb-2">
-            An Anthropic Claude pipeline converts a star rating + photo + note
-            into platform-tailored social captions across 6 platforms and 5
-            languages using Zod-schema-enforced structured output, brand-voice
-            configuration, content moderation, and deterministic fallbacks so
-            generation never hard-fails. The diner&apos;s locale does double duty
-            — selecting both the UI catalog and the language the AI writes in
-            (e.g. picking Chinese yields a Xiaohongshu-style caption). A
-            retrieval-augmented help center pairs Mistral embeddings + cosine
-            similarity with a weighted-TF lexical fallback for API outages.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/peakposts/posts.png`]} />
-
-          <TypographyH3 className="my-4 mt-8">
-            In-browser video editor &amp; multi-tenant security
-          </TypographyH3>
-          <p className="font-mono mb-2">
-            Diners generate H.264 MP4 video and images entirely client-side via
-            the WebCodecs <code>VideoEncoder</code> + mp4-muxer and Canvas 2D,
-            inside a direct-manipulation post editor (pinch/rotate/drag gestures,
-            caption presets, CJK font subsetting) — zero server-side render cost.
-            The multi-step diner flow persists to IndexedDB via a custom Zustand
-            adapter, with client-side image compression and presigned
-            direct-to-R2 uploads. Underneath sits a five-tier tRPC authorization
-            layer with brand- vs. outlet-scoped grants, existence-masking
-            (<code>NOT_FOUND</code> over <code>FORBIDDEN</code>), and two-factor
-            counter auth — a hashed device token plus per-staff PIN with
-            brute-force lockout.
-          </p>
-        </div>
-      );
-    },
-  },
-  {
-    id: "kanbi",
-    category: "Realtime project tracker",
-    title: "Kanbi",
-    src: "/assets/projects-screenshots/kanbi/landing.png",
-    screenshots: ["landing.png"],
-    skills: {
-      frontend: [
-        PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.next,
-        PROJECT_SKILLS.react,
-        PROJECT_SKILLS.reactNative,
-        PROJECT_SKILLS.expo,
-        PROJECT_SKILLS.tailwind,
-      ],
-      backend: [
-        PROJECT_SKILLS.trpc,
-        PROJECT_SKILLS.drizzle,
-        PROJECT_SKILLS.postgres,
-        PROJECT_SKILLS.betterAuth,
-        PROJECT_SKILLS.mcp,
-        PROJECT_SKILLS.cloudflare,
-        PROJECT_SKILLS.turborepo,
-        PROJECT_SKILLS.docker,
-      ],
-    },
-    live: "https://kanbi.adityakumar.dev",
-    github: "https://github.com/Adityakumar747/kanbi",
-    get content() {
-      return (
-        <div>
-          <TypographyP className="font-mono text-2xl text-center">
-            A keyboard-first, realtime Kanban tracker — &quot;Linear, but small
-            enough to own.&quot;
-          </TypographyP>
-          <TypographyP className="font-mono ">
-            A full-stack TypeScript monorepo (pnpm + Turborepo) spanning three
-            deployable surfaces — a Next.js 15 web app, an OAuth-secured MCP
-            server for AI agents, and an Expo mobile companion — with end-to-end
-            type safety from Postgres → Drizzle → tRPC v11 → React, so a schema
-            change ripples to compile errors in the UI with zero codegen. ~21K
-            lines of TypeScript, 16 domain tRPC routers, a 25-table schema, and 8
-            scoped MCP agent tools.
-          </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-
-          <TypographyH3 className="my-4 mt-8">
-            Realtime collaboration &amp; fractional ordering
-          </TypographyH3>
-          <p className="font-mono mb-2">
-            Drag-and-drop boards with optimistic UI and live multi-user updates,
-            powered by tRPC subscriptions over Server-Sent Events. An in-process
-            event bus broadcasts <code>boardId</code>-scoped invalidation signals
-            that carry <em>no payload</em> — clients simply refetch through React
-            Query, keeping the realtime layer cheap and consistent. Mutations
-            snapshot-and-rollback (<code>onMutate</code>/<code>onError</code>/
-            <code>onSettled</code>) and deletes are undoable (6-second deferred
-            server call + toast). Columns and cards order via fractional indexing
-            — new items insert at the midpoint between neighbors, so a reorder
-            touches one row instead of re-sequencing the whole list, with collapse
-            detection and rebalancing.
+            An organized repository interface to manage files, digital assets, and configurations seamlessly within the browser.
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/kanbi/board.png`,
-              `${BASE_PATH}/kanbi/dashboard.png`,
+              `${BASE_PATH}/flyby/flyby6.png`,
+              `${BASE_PATH}/flyby/flyby7.png`,
+              `${BASE_PATH}/flyby/flyby8.png`,
+              `${BASE_PATH}/flyby/flyby9.png`,
             ]}
           />
-
-          <TypographyH3 className="my-4 mt-8">
-            One auth model, three clients &amp; an MCP server for AI agents
-          </TypographyH3>
-          <p className="font-mono mb-2">
-            A layered, type-safe authorization model encodes access control at the
-            procedure level — <code>protectedProcedure</code> →{" "}
-            <code>projectProcedure</code> → <code>boardProcedure</code> →{" "}
-            <code>publicBoardProcedure</code> (share token, no auth) — with role
-            checks gating every mutation. The same model is reused across three
-            entry points so ACLs can&apos;t drift: browser cookies, hashed
-            per-device bearer tokens for mobile (SHA-256 at rest), and OAuth-2.1
-            JWTs for AI agents. The spec-compliant MCP server (Streamable HTTP)
-            exposes 8 read/write tools through a full OAuth 2.1 flow — dynamic
-            client registration, a consent screen, JWKS-verified JWTs — each tool a
-            thin wrapper over the existing tRPC procedures via a JWT→session
-            bridge, so permissions, validation, ordering, and the realtime bus are
-            all reused; agent-authored HTML is server-side sanitized.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/kanbi/profile.png`]} />
-
-          <TypographyH3 className="my-4 mt-8">
-            Native Android dock dashboard &amp; AI task drafting
-          </TypographyH3>
-          <p className="font-mono mb-2">
-            A custom native Android Expo module written in Kotlin implements
-            Android&apos;s <code>DreamService</code> (the system daydream): dock
-            the phone and the OS launches a React Native root view rendering the
-            active task and a Pomodoro timer — a genuine focus dashboard, with{" "}
-            <code>showWhenLocked</code>, screen-on, and keyguard dismissal handled
-            natively. Devices pair by QR with secure token storage
-            (<code>expo-secure-store</code>). On the web, paste a raw client
-            message and a Groq-backed LLM extracts structured, actionable issues
-            (title, description, label, priority); rich-text descriptions use Tiptap
-            with <code>@mention</code> and <code>#ticket</code> cross-reference
-            extensions.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/kanbi/ai-draft.png`]} />
         </div>
       );
     },
   },
   {
-    id: "portfolio",
-    category: "Portfolio",
-    title: "My Portfolio",
-    src: "/assets/projects-screenshots/portfolio/landing.png",
-    screenshots: ["1.png"],
-    live: "https://adityakumar.dev",
-    github:"https://github.com/Adityakumar747/3d-portfolio",
+    id: "idr",
+    category: "Responsive Homepage Design",
+    title: "IDR Digital",
+    src: "/assets/projects-screenshots/idr/idr.png",
+    screenshots: ["idr.png"],
     skills: {
       frontend: [
-        PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.next,
+        PROJECT_SKILLS.js,
+        PROJECT_SKILLS.react,
         PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.motion,
-        PROJECT_SKILLS.spline,
+      ],
+      backend: [],
+    },
+    live: "https://github.com/Adityakumar747/IDR-Digital",
+    github: "https://github.com/Adityakumar747/IDR-Digital",
+    get content() {
+      return (
+        <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            Institute of Digital Risk (IDR) Homepage
+          </TypographyP>
+          <TypographyP className="font-mono ">
+            This project is a fully responsive, beautifully designed homepage for the Institute of Digital Risk. Built using modern frontend tools to showcase organizational goals and resources effectively.
+          </TypographyP>
+          <ProjectsLinks live={this.live} repo={this.github} />
+
+          <TypographyH3 className="my-4 mt-8">Modern Aesthetic</TypographyH3>
+          <p className="font-mono mb-2">
+            Clean typography, balanced whitespace, and interactive elements designed to draw user attention to key information and call-to-actions.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/idr/idr1.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">Interactive Sections</TypographyH3>
+          <p className="font-mono mb-2">
+            Dynamic content areas that adapt to various screen sizes, ensuring a consistent and engaging experience across desktop and mobile devices.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/idr/idr2.png`,
+              `${BASE_PATH}/idr/idr3.png`,
+            ]}
+          />
+        </div>
+      );
+    },
+  },
+  {
+    id: "pmjs",
+    category: "Financial Web Application",
+    title: "Pmjs Wealth",
+    src: "/assets/projects-screenshots/pmjs/pmjs1.png",
+    screenshots: ["pmjs1.png"],
+    skills: {
+      frontend: [
+        PROJECT_SKILLS.js,
+        PROJECT_SKILLS.tailwind,
+      ],
+      backend: [
+        PROJECT_SKILLS.docker,
+      ],
+    },
+    live: "https://github.com/Adityakumar747/Pmjs-wealth-",
+    github: "https://github.com/Adityakumar747/Pmjs-wealth-",
+    get content() {
+      return (
+        <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            A comprehensive wealth management and tracking platform.
+          </TypographyP>
+          <TypographyP className="font-mono ">
+            Built to handle financial operations, track portfolios, and provide valuable insights for wealth management through an intuitive interface.
+          </TypographyP>
+          <ProjectsLinks live={this.live} repo={this.github} />
+
+          <TypographyH3 className="my-4 mt-8">Financial Dashboard</TypographyH3>
+          <p className="font-mono mb-2">
+            A centralized view of financial health, displaying key metrics, recent transactions, and portfolio performance trends in an easy-to-read format.
+          </p>
+          <SlideShow images={[
+              `${BASE_PATH}/pmjs/pmjs2.png`,
+              `${BASE_PATH}/pmjs/pmjs3.png`,
+              `${BASE_PATH}/pmjs/pmjs4.png`,
+          ]} />
+
+          <TypographyH3 className="my-4 mt-8">Insights &amp; Analytics</TypographyH3>
+          <p className="font-mono mb-2">
+            Detailed reporting tools that break down expenses, investments, and growth over time to help users make informed financial decisions.
+          </p>
+          <SlideShow images={[
+              `${BASE_PATH}/pmjs/pmjs5.png`,
+              `${BASE_PATH}/pmjs/pmjs6.png`,
+              `${BASE_PATH}/pmjs/pmjs7.png`,
+              `${BASE_PATH}/pmjs/pmjs8.png`,
+          ]} />
+        </div>
+      );
+    },
+  },
+  {
+    id: "setulink",
+    category: "Web Platform",
+    title: "Setulink",
+    src: "/assets/projects-screenshots/setulink/setulink1.png",
+    screenshots: ["setulink1.png"],
+    skills: {
+      frontend: [
+        PROJECT_SKILLS.js,
+        PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.react,
+      ],
+      backend: [
+        PROJECT_SKILLS.node,
+      ],
+    },
+    live: "https://github.com/Adityakumar747/Setulink-website-",
+    github: "https://github.com/Adityakumar747/Setulink-website-",
+    get content() {
+      return (
+        <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            A dynamic and responsive platform to connect users seamlessly.
+          </TypographyP>
+          <TypographyP className="font-mono ">
+            Setulink provides a comprehensive suite of tools designed for collaboration and resource sharing, wrapped in a modern, user-friendly interface.
+          </TypographyP>
+          <ProjectsLinks live={this.live} repo={this.github} />
+
+          <TypographyH3 className="my-4 mt-8">Interactive Dashboard</TypographyH3>
+          <p className="font-mono mb-2">
+            A streamlined control center that gives users quick access to their projects, settings, and communication channels.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/setulink/setulink2.png`,
+              `${BASE_PATH}/setulink/setulink3.png`,
+              `${BASE_PATH}/setulink/setulink4.png`,
+            ]}
+          />
+
+          <TypographyH3 className="my-4 mt-8">Project Management</TypographyH3>
+          <p className="font-mono mb-2">
+            Integrated tools for tracking progress, managing tasks, and collaborating with team members efficiently.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/setulink/setulink5.png`,
+              `${BASE_PATH}/setulink/setulink6.png`,
+            ]}
+          />
+        </div>
+      );
+    },
+  },
+  {
+    id: "karopitch",
+    category: "Landing Page",
+    title: "Karo Pitch",
+    src: "/assets/projects-screenshots/karopitch/karopitch.png",
+    screenshots: ["karopitch.png"],
+    live: "https://github.com/Adityakumar747/Karopitch",
+    github: "https://github.com/Adityakumar747/Karopitch",
+    skills: {
+      frontend: [
+        PROJECT_SKILLS.js,
+        PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.react,
       ],
       backend: [],
     },
     get content() {
       return (
         <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            A highly optimized and visually appealing landing page.
+          </TypographyP>
           <TypographyP className="font-mono ">
-            Welcome to my digital playground, where creativity meets code in the
-            dopest way possible.
+            Karo Pitch is a modern, responsive landing page designed to capture attention and deliver information effectively with smooth animations and clean layouts.
           </TypographyP>
           <ProjectsLinks live={this.live} repo={this.github} />
-          <TypographyH3 className="my-4 mt-8">
-            Beautiful 3D Objects{" "}
-          </TypographyH3>
+          
+          <TypographyH3 className="my-4 mt-8">Responsive Design</TypographyH3>
           <p className="font-mono mb-2">
-            Did you see that 3D keyboard modal? Yeah! I made that. That
-            interactive keyboard is being rendered in 3D on a webpage 🤯, and
-            pressing each keycap reveals a skill in a goofy way. It&apos;s like
-            typing, but make it art.
+            Carefully crafted to look perfect on devices of all sizes, from large desktop monitors down to mobile phones, ensuring a consistent user experience.
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/portfolio/landing.png`,
-              `${BASE_PATH}/portfolio/skills.png`,
+              `${BASE_PATH}/karopitch/karopitch2.png`,
+              `${BASE_PATH}/karopitch/karopitch3.png`,
             ]}
           />
-          <TypographyH3 className="my-4 ">Space Theme</TypographyH3>
+          
+          <TypographyH3 className="my-4 mt-8">Performance Optimized</TypographyH3>
           <p className="font-mono mb-2">
-            Dark background + floating particles = out-of-this-world cool.
+            Built with modern web standards prioritizing fast load times, accessibility, and high performance scores across all metrics.
           </p>
-          <SlideShow images={[`${BASE_PATH}/portfolio/navbar.png`]} />
-          <TypographyH3 className="my-4 mt-8">Projects</TypographyH3>
-
-          <p className="font-mono mb-2">
-            My top personal and freelance projects — no filler, all killer.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/portfolio/projects.png`,
-              `${BASE_PATH}/portfolio/project.png`,
-            ]}
-          />
-          <p className="font-mono mb-2 mt-8 text-center">
-            This site&apos;s not just a portfolio — it&apos;s a whole vibe.
-          </p>
+          <SlideShow images={[`${BASE_PATH}/karopitch/karopitch4.png`]} />
         </div>
       );
     },
