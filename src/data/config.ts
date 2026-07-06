@@ -31,7 +31,7 @@ const config = {
   },
   social: {
     twitter: "https://x.com/adityakumar747",
-    linkedin: "https://www.linkedin.com/in/aditya-kumar-087801525/",
+    linkedin: "https://www.linkedin.com/in/aditya-kumar-08780b325/",
     instagram: "https://www.instagram.com/adityakumar747",
     facebook: "https://www.facebook.com/adityakumar747",
     github: "https://github.com/Adityakumar747",

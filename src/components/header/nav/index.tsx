@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type React from "react";
 import { motion } from "motion/react";
 import styles from "./style.module.scss";
 import { height } from "../anim";
@@ -24,6 +25,12 @@ const Index: React.FC<IndexProps> = ({ setIsActive }) => {
     index: 0,
   });
 
+  const closeFromBackdrop = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) {
+      setIsActive(false);
+    }
+  };
+
   return (
     <motion.div
       variants={height}
@@ -32,7 +39,7 @@ const Index: React.FC<IndexProps> = ({ setIsActive }) => {
       exit="exit"
       // Clicking the empty overlay area (anything that isn't a link/control)
       // closes the menu.
-      onClick={() => setIsActive(false)}
+      onClick={closeFromBackdrop}
       className={cn(styles.nav, "relative")}
     >
       <div className={cn(styles.wrapper, 'flex justify-end sm:justify-start')}>

@@ -378,7 +378,7 @@ function ElasticCursor() {
           height: CURSOR_DIAMETER,
           borderRadius: CURSOR_DIAMETER / 2,
           boxSizing: "border-box",
-          zIndex: 100,
+          zIndex: 1100,
           backdropFilter: "invert(100%)",
         }}
       ></div>
@@ -388,7 +388,7 @@ function ElasticCursor() {
         style={{
           opacity: 0,
           backdropFilter: "invert(100%)",
-          zIndex: 101,
+          zIndex: 1101,
         }}
       ></div>
     </>

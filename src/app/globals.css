@@ -115,6 +115,123 @@ body > canvas {
   transform: scale(1.02);
 }
 
+.intro-runway {
+  position: relative;
+  z-index: 30;
+  height: 100vh;
+  pointer-events: none;
+  background: #000;
+}
+
+.intro-pinned {
+  position: relative;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
+}
+
+.intro-name-wrap {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  pointer-events: auto;
+}
+
+.intro-name {
+  position: relative;
+  max-width: 96vw;
+  padding-inline: 5vw;
+  text-align: center;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(3.5rem, 12vw, 11rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.intro-name-base {
+  color: rgb(255 255 255 / 0.28);
+  text-shadow: none;
+}
+
+.intro-name-glow {
+  --mx: 50%;
+  --my: 50%;
+  --glow-opacity: 0;
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background: radial-gradient(
+    circle 160px at var(--mx) var(--my),
+    #e8602e 0%,
+    rgb(232 96 46 / 0.55) 35%,
+    transparent 72%
+  );
+  background-clip: text;
+  opacity: var(--glow-opacity);
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  -webkit-background-clip: text;
+}
+
+.intro-scroll {
+  position: absolute;
+  bottom: 5vh;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  color: rgb(255 255 255 / 0.45);
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.intro-site-card {
+  position: relative;
+  z-index: 10;
+  margin-top: 0;
+  min-height: 100vh;
+  background: transparent;
+}
+
+.dark .intro-site-card {
+  background: transparent;
+}
+
+.portfolio-intro-active .animated-background-canvas {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.portfolio-intro-active header {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 700px) {
+  .intro-runway {
+    height: 100vh;
+  }
+
+  .intro-site-card {
+    margin-top: 0;
+  }
+
+  .intro-name {
+    font-size: clamp(3rem, 14vw, 5.4rem);
+    white-space: normal;
+  }
+}
+
 @layer utilities {
   .canvas-overlay-mode {
     pointer-events: none;

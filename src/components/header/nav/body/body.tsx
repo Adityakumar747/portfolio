@@ -56,7 +56,9 @@ export default function Body({
 
   return (
     <div className={cn(styles.body, "flex flex-col items-end md:flex-row")}>
-      <FunnyThemeToggle className="w-6 h-6 mr-6 flex md:hidden" />
+      <div onClick={(event) => event.stopPropagation()}>
+        <FunnyThemeToggle className="w-6 h-6 mr-6 flex md:hidden" />
+      </div>
       {links.map((link, index) => {
         const { title, href, target } = link;
 

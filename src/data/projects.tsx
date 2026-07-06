@@ -319,7 +319,7 @@ const projects: Project[] = [
       ],
     },
     live: "https://www.codingducks.xyz/",
-    github: "https://github.com/Naresh-Khatri/Coding-Ducks",
+    github: "https://github.com/Adityakumar747/Coding-Ducks",
     get content() {
       return (
         <div>
@@ -504,8 +504,8 @@ const projects: Project[] = [
         PROJECT_SKILLS.docker,
       ],
     },
-    live: "https://waku.nareshkhatri.site",
-    github: "https://github.com/Naresh-Khatri/waku",
+    live: "https://waku.adityakumar.dev",
+    github: "https://github.com/Adityakumar747/waku",
     get content() {
       return (
         <div>
@@ -688,8 +688,8 @@ const projects: Project[] = [
         PROJECT_SKILLS.docker,
       ],
     },
-    live: "https://kanbi.nareshkhatri.site",
-    github: "https://github.com/naresh-Khatri/kanbi",
+    live: "https://kanbi.adityakumar.dev",
+    github: "https://github.com/Adityakumar747/kanbi",
     get content() {
       return (
         <div>
@@ -778,8 +778,8 @@ const projects: Project[] = [
     title: "My Portfolio",
     src: "/assets/projects-screenshots/portfolio/landing.png",
     screenshots: ["1.png"],
-    live: "http://nareshkhatri.vercel.app",
-    github:"https://github.com/Naresh-Khatri/Portfolio",
+    live: "https://adityakumar.dev",
+    github:"https://github.com/Adityakumar747/3d-portfolio",
     skills: {
       frontend: [
         PROJECT_SKILLS.ts,

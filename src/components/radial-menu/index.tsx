@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { RadialMenuPresentational } from './radial-menu-presentational';
 import { Shockwave, ShockwaveData } from './shockwave';
 import { MenuItem, Position } from './types';
-import { SocketContext } from '@/contexts/socketio';
-import { useSounds } from '@/components/realtime/hooks/use-sounds';
+import { useSounds } from '@/hooks/use-sounds';
 import { RightClickHint } from './right-click-hint';
 
 // Define our menu items
@@ -27,7 +26,6 @@ const COOLDOWN_THRESHOLD = 0.7; // only trigger cooldown above this intensity
 const INTERACTIVE_SELECTOR = 'a, button, input, textarea, select, [contenteditable], img, video, audio, [data-radix-popper-content-wrapper], [data-radix-popper-content-wrapper] *';
 
 export default function RadialMenu() {
-  const { socket } = useContext(SocketContext);
   const { playConfettiSound, startChargeTone, updateChargeTone, stopChargeTone } = useSounds();
   const [isOpen, setIsOpen] = useState(false);
   const [menuPos, setMenuPos] = useState<Position>({ x: 0, y: 0 });
@@ -47,9 +45,6 @@ export default function RadialMenu() {
   // Cooldown
   const cooldownUntilRef = useRef(0);
   const cooldownEndRef = useRef(0); // timestamp when cooldown ends (for ring animation)
-
-  // Track our own triggers to ignore echos
-  const myTriggersRef = useRef<Set<string>>(new Set());
 
   // Sync refs
   useEffect(() => {
@@ -110,32 +105,6 @@ export default function RadialMenu() {
       cooldownEndRef.current = Date.now() + cooldownDuration;
     }
   };
-
-  // Listen for remote confetti
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleConfettiReceive = (data: { id: string; emoji: string; x: number; y: number; intensity: number }) => {
-      if (myTriggersRef.current.has(data.id)) {
-        myTriggersRef.current.delete(data.id);
-        return;
-      }
-
-      const int = data.intensity ?? 0.5;
-      fireConfetti(data.x, data.y, data.emoji, int);
-      playConfettiSound(int);
-      const cx = data.x - window.scrollX;
-      const cy = data.y - window.scrollY;
-      const item = MENU_ITEMS.find(m => m.emoji === data.emoji);
-      spawnShockwave(cx, cy, item?.color ?? '#fff', data.emoji, int);
-    };
-
-    socket.on("confetti-receive", handleConfettiReceive);
-
-    return () => {
-      socket.off("confetti-receive", handleConfettiReceive);
-    };
-  }, [socket, fireConfetti, spawnShockwave]);
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
     if (e.button === 2) {
@@ -210,22 +179,6 @@ export default function RadialMenu() {
         const int = intensityRef.current;
         triggerConfetti(e.pageX, e.pageY, item, int);
 
-        if (socket) {
-          const burstId = `${socket.id}-${Date.now()}-${Math.random()}`;
-          myTriggersRef.current.add(burstId);
-
-          if (myTriggersRef.current.size > 100) {
-            myTriggersRef.current.clear();
-          }
-
-          socket.emit("confetti-send", {
-            id: burstId,
-            emoji: item.emoji,
-            x: e.pageX,
-            y: e.pageY,
-            intensity: int,
-          });
-        }
       }
 
       setIsOpen(false);

@@ -3,10 +3,8 @@ import { Space_Grotesk, Unbounded } from "next/font/google";
 import "./globals.css";
 import { config } from "@/data/config";
 
-import Script from "next/script";
 import SiteFrame from "@/components/site-frame";
 import { Providers } from "@/components/providers";
-import { GoogleAnalytics } from "@next/third-parties/google";
 
 /* Body/base font — Space Grotesk, bound to --font-sans (applied as `font-sans`
  * on <html>). Everything that isn't a heading inherits this. */
@@ -74,19 +72,17 @@ export default function RootLayout({
         {/* The Spline runtime lazy-loads its wasm from unpkg; warm the
             connection early so the 3D scene starts faster. */}
         <link rel="preconnect" href="https://unpkg.com" crossOrigin="anonymous" />
-        <Script
-          defer
-          src={process.env.UMAMI_DOMAIN}
-          data-website-id={process.env.UMAMI_SITE_ID}
-        ></Script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;1,400&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body>
         <Providers>
           <SiteFrame>{children}</SiteFrame>
         </Providers>
-        {process.env.NEXT_PUBLIC_GA_ID && (
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-        )}
       </body>
     </html>
   );

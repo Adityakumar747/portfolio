@@ -14,10 +14,15 @@ export default function FunnyThemeToggle({
 }: {
   className?: string;
 }) {
-  const { setTheme, theme } = useTheme();
+  const { setTheme, theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
   const [counter, setCounter] = React.useState({ dark: 0, light: 0 });
   const { toast } = useToast();
-  const ref = React.useRef<HTMLButtonElement>(null);
+  const currentTheme = theme === "system" ? resolvedTheme : theme;
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleTheme = async (newTheme: string, event?: React.MouseEvent) => {
     // @ts-ignore
@@ -27,7 +32,7 @@ export default function FunnyThemeToggle({
     }
 
     const { top, left, width, height } = (
-      event.target as HTMLElement
+      event.currentTarget as HTMLElement
     ).getBoundingClientRect();
     const x = left + width / 2;
     const y = top + height / 2;
@@ -60,14 +65,14 @@ export default function FunnyThemeToggle({
   };
 
   const goLight = (e: React.MouseEvent) => {
-    setCounter({ ...counter, light: counter.light + 1 });
+    setCounter((value) => ({ ...value, light: value.light + 1 }));
     toggleTheme("light", e);
   };
 
   const goDark = (e: React.MouseEvent) => {
     const description =
       themeDisclaimers.dark[counter.dark % themeDisclaimers.dark.length];
-    setCounter({ ...counter, dark: counter.dark + 1 });
+    setCounter((value) => ({ ...value, dark: value.dark + 1 }));
     toast({
       description: description,
       className:
@@ -76,9 +81,23 @@ export default function FunnyThemeToggle({
     toggleTheme("dark", e);
   };
 
+  if (!mounted) {
+    return (
+      <Button
+        variant="outline"
+        size="icon"
+        className={cn("border-none bg-transparent", className)}
+        disabled
+      >
+        <Moon className="h-[1.2rem] w-[1.2rem]" />
+        <span className="sr-only">Toggle theme</span>
+      </Button>
+    );
+  }
+
   return (
     <>
-      {theme === "light" ? (
+      {currentTheme === "light" ? (
         <Button
           variant="outline"
           size="icon"
@@ -105,7 +124,7 @@ export default function FunnyThemeToggle({
           <PopoverContent className="z-[99999] flex flex-col items-center gap-2">
             {/* <p className="text-sm">these stunts are done by professional only</p> */}
             <p className="text-sm text-center">
-              {themeDisclaimers.light[counter.light]}
+              {themeDisclaimers.light[counter.light % themeDisclaimers.light.length]}
             </p>
             <Button onClick={goLight}>Go Light</Button>
           </PopoverContent>

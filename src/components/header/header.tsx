@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import styles from "./style.module.scss";
 import { opacity, background } from "./anim";
 import Nav from "./nav";
@@ -10,7 +9,6 @@ import { cn } from "@/lib/utils";
 import FunnyThemeToggle from "../theme/funny-theme-toggle";
 import { Button } from "../ui/button";
 import { config } from "@/data/config";
-import OnlineUsers from "../realtime/online-users";
 
 interface HeaderProps {
   loader?: boolean;
@@ -18,7 +16,6 @@ interface HeaderProps {
 
 const Header = ({ loader }: HeaderProps) => {
   const [isActive, setIsActive] = useState<boolean>(false);
-  const isHome = usePathname() === "/";
   return (
     <motion.header
       className={cn(
@@ -49,19 +46,25 @@ const Header = ({ loader }: HeaderProps) => {
       >
       </div> */}
       <div className={cn(styles.bar, "flex items-center justify-between")}>
-        <Link href="/" className="flex items-center justify-center">
+        <Link
+          href="/"
+          className="flex items-center justify-center"
+          data-no-custom-cursor="true"
+        >
           <Button variant={"link"} className="text-md">
             {config.author}
           </Button>
         </Link>
 
-        <FunnyThemeToggle className="w-6 h-6 mr-4 hidden md:flex" />
-        {isHome && process.env.NEXT_PUBLIC_WS_URL && <OnlineUsers />}
+        <div data-no-custom-cursor="true">
+          <FunnyThemeToggle className="w-6 h-6 mr-4 hidden md:flex" />
+        </div>
         <Button
           variant={"ghost"}
           onClick={() => setIsActive(!isActive)}
           aria-label={isActive ? "Close menu" : "Open menu"}
           aria-expanded={isActive}
+          data-no-custom-cursor="true"
           className={cn(
             styles.el,
             "m-0 p-0 h-6 bg-transparent flex items-center justify-center"

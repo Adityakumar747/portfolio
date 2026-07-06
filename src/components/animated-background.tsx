@@ -10,7 +10,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { usePreloader } from "./preloader";
 import { useTheme } from "next-themes";
 import { Section, getKeyboardState } from "./animated-background-config";
-import { useSounds } from "./realtime/hooks/use-sounds";
+import { useSounds } from "@/hooks/use-sounds";
 import { usePerfProfile } from "@/hooks/use-perf-profile";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -482,7 +482,7 @@ const KeyboardScene = ({ maxDpr }: { maxDpr: number }) => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Spline
-        className="w-full h-full fixed"
+        className="animated-background-canvas fixed inset-0 z-0 h-screen w-screen"
         ref={splineContainer}
         onLoad={(app: Application) => {
           setSplineApp(app);
