@@ -245,8 +245,6 @@ export default function Particles({
     rafId.current = window.requestAnimationFrame(animate);
   };
 
-  if (isBlogPost) return null;
-
   return (
     <div
       className={cn(
