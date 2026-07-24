@@ -52,19 +52,40 @@ export default function BlogListClient({ posts }: { posts: Post[] }) {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="mb-20"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-px flex-1 max-w-[60px] bg-[hsl(20,100%,70%)]" />
-            <span className="text-[hsl(20,100%,70%)] text-sm font-medium tracking-[0.2em] uppercase font-sans">
-              Blog
-            </span>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-px flex-1 max-w-[60px] bg-[hsl(20,100%,70%)]" />
+                <span className="text-[hsl(20,100%,70%)] text-sm font-medium tracking-[0.2em] uppercase font-sans">
+                  Blog
+                </span>
+              </div>
+              <h1 className="font-display text-3xl md:text-5xl leading-[0.95] tracking-tight">
+                Hello.<br />
+                <span className="text-[hsl(20,100%,70%)]">I am Aditya</span>
+              </h1>
+              <p className="mt-6 text-muted-foreground text-lg max-w-lg leading-relaxed font-sans">
+                Notes on building things, breaking things, and occasionally writing about it.
+              </p>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -10, rotate: 2 }}
+              className="shrink-0"
+            >
+              <div className="relative w-64 h-80 md:w-72 md:h-96 rounded-2xl overflow-hidden border border-border/50 bg-card/30 backdrop-blur-sm shadow-2xl">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[hsl(20,100%,70%)]/10 to-transparent rounded-bl-full" />
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop&crop=face"
+                  alt="Aditya Kumar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </motion.div>
           </div>
-          <h1 className="font-display text-3xl md:text-5xl leading-[0.95] tracking-tight">
-            Thoughts &<br />
-            <span className="text-[hsl(20,100%,70%)]">Dispatches</span>
-          </h1>
-          <p className="mt-6 text-muted-foreground text-lg max-w-lg leading-relaxed font-sans">
-            Notes on building things, breaking things, and occasionally writing about it.
-          </p>
         </motion.div>
 
         {/* Featured post */}
