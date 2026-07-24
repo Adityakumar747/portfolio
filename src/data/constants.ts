@@ -253,30 +253,30 @@ export type Experience = {
   company: string;
   description: string[];
   skills: SkillNames[];
+  hideDate?: boolean;
 };
 
 export const EXPERIENCE: Experience[] = [
   {
-    id: 1,
-    startDate: "Dec 2024",
-    endDate: "Present",
-    title: "Full Stack Developer",
-    company: "OmniNexus Sdn Bhd",
+    id: 3,
+    startDate: "Apr 2026",
+    endDate: "Jun 2026",
+    title: "Web Developer Intern",
+    company: "Sysroot Solution",
     description: [
-      "Built a custom image editor from scratch, cutting $4.8k/year in SaaS costs.",
-      "Architected async job queues processing 1k+ AI tasks daily with bulletproof reliability.",
-      "Optimized media delivery pipeline, slashing asset load times by 40%.",
-      "Shipped high-impact features end-to-end from requirements to production.",
+      "Developed and deployed 3 responsive web applications, implementing RESTful APIs and following Agile development practices to deliver scalable solutions.",
+      "Reduced initial page load time by approximately 30% through code splitting, lazy loading, and image optimization.",
+      "Collaborated with cross-functional teams using Git-based version control to develop, test, and deploy high-quality features while ensuring clean and reusable code.",
     ],
     skills: [
+      SkillNames.REACT,
       SkillNames.NEXTJS,
       SkillNames.TS,
-      SkillNames.REACT,
       SkillNames.NODEJS,
       SkillNames.POSTGRES,
       SkillNames.MONGODB,
       SkillNames.DOCKER,
-      SkillNames.GCP,
+      SkillNames.GIT,
     ],
   },
   {
@@ -285,11 +285,12 @@ export const EXPERIENCE: Experience[] = [
     endDate: "Dec 2024",
     title: "Freelance Full Stack Developer",
     company: "Self-employed",
+    hideDate: true,
     description: [
-      "Transformed chaotic Excel sheets into polished internal tools for various clients.",
-      "Shipped dashboards and custom CMS platforms tailored to each client's workflow.",
-      "Automated repetitive processes, improving efficiency and reducing human error.",
-      "Focused on clean, maintainable code and interfaces that users actually enjoy.",
+      "Delivered 7+ production projects across fintech, travel, salon booking, real-time chat, security, and AI voice automation.",
+      "Shipped secure, scalable apps using Next.js, React, Node.js, PHP, MongoDB, PostgreSQL, and MySQL with real-time and payment integrations.",
+      "Automated complex workflows — booking systems, AI calling campaigns, community chat, and dashboards — cutting manual work and improving efficiency.",
+      "Strong focus on clean architecture, responsive UI, and reliable deployments across Vercel, Render, and traditional hosting.",
     ],
     skills: [
       SkillNames.REACT,

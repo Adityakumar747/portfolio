@@ -1,10 +1,6 @@
 import AceTernityLogo from "@/components/logos/aceternity";
 import SlideShow from "@/components/slide-show";
-import { Button } from "@/components/ui/button";
 import { TypographyH3, TypographyP } from "@/components/ui/typography";
-import { ArrowUpRight, ExternalLink, Link2, MoveUpRight } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { ReactNode } from "react";
 // Spline has no thesvg entry — keep the Three.js mark as its stand-in.
 import { SiThreedotjs } from "react-icons/si";
@@ -32,39 +28,6 @@ const MaskIcon = ({ src, title }: { src: string; title?: string }) => (
     }}
   />
 );
-
-const ProjectsLinks = ({ live, repo }: { live?: string; repo?: string }) => {
-  return (
-    <div className="flex flex-col md:flex-row items-center justify-start gap-3 my-3 mb-8">
-      {live && live !== "#" && (
-        <Link
-          className="font-mono underline flex gap-2"
-          rel="noopener"
-          target="_new"
-          href={live}
-        >
-          <Button variant={"default"} size={"sm"}>
-            Visit Website
-            <ArrowUpRight className="ml-3 w-5 h-5" />
-          </Button>
-        </Link>
-      )}
-      {repo && repo !== "#" && (
-        <Link
-          className="font-mono underline flex gap-2"
-          rel="noopener"
-          target="_new"
-          href={repo}
-        >
-          <Button variant={"default"} size={"sm"}>
-            Github
-            <ArrowUpRight className="ml-3 w-5 h-5" />
-          </Button>
-        </Link>
-      )}
-    </div>
-  );
-};
 
 export type Skill = {
   title: string;
@@ -185,6 +148,126 @@ const PROJECT_SKILLS = {
     fg: "white",
     icon: <span className="text-xs font-bold">MCP</span>,
   },
+  mysql: {
+    title: "MySQL",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">MySQL</span>,
+  },
+  paypal: {
+    title: "PayPal",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">PayPal</span>,
+  },
+  vercel: {
+    title: "Vercel",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Vercel</span>,
+  },
+  twilio: {
+    title: "Twilio",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Twilio</span>,
+  },
+  groq: {
+    title: "Groq",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Groq</span>,
+  },
+  clerk: {
+    title: "Clerk",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Clerk</span>,
+  },
+  stream: {
+    title: "Stream",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Stream</span>,
+  },
+  php: {
+    title: "PHP",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">PHP</span>,
+  },
+  bootstrap: {
+    title: "Bootstrap",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">BS</span>,
+  },
+  html5: {
+    title: "HTML5",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">HTML5</span>,
+  },
+  css3: {
+    title: "CSS3",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">CSS3</span>,
+  },
+  flexbox: {
+    title: "Flexbox",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Flexbox</span>,
+  },
+  googleFonts: {
+    title: "Google Fonts",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">GFonts</span>,
+  },
+  figma: {
+    title: "Figma",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Figma</span>,
+  },
+  context: {
+    title: "Context API",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Context</span>,
+  },
+  mongodbAtlas: {
+    title: "MongoDB Atlas",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Mongo Atlas</span>,
+  },
+  jwt: {
+    title: "JWT",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">JWT</span>,
+  },
+  bcrypt: {
+    title: "Bcrypt",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Bcrypt</span>,
+  },
+  cloudinary: {
+    title: "Cloudinary",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Cloudinary</span>,
+  },
+  render: {
+    title: "Render",
+    bg: "black",
+    fg: "white",
+    icon: <span className="text-xs font-bold">Render</span>,
+  },
 };
 export type Project = {
   id: string;
@@ -199,6 +282,70 @@ export type Project = {
 };
 const projects: Project[] = [
   {
+    id: "voiceforge",
+    category: "AI Agent Application",
+    title: "Voice Forge",
+    src: "/assets/projects-screenshots/voiceforge/VoiceForge1.png",
+    screenshots: ["VoiceForge1.png", "VoiceForge2.png"],
+    skills: {
+      frontend: [
+        PROJECT_SKILLS.next,
+        PROJECT_SKILLS.ts,
+        PROJECT_SKILLS.prisma,
+        PROJECT_SKILLS.postgres,
+        PROJECT_SKILLS.redis,
+        PROJECT_SKILLS.twilio,
+        PROJECT_SKILLS.sockerio,
+        PROJECT_SKILLS.jwt,
+        PROJECT_SKILLS.groq,
+      ],
+      backend: [
+        PROJECT_SKILLS.node,
+        PROJECT_SKILLS.aiSDK,
+      ],
+    },
+    live: "https://ai-agent-flow-lake.vercel.app/",
+    github: "",
+    get content() {
+      return (
+        <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            Voice Forge — AI-Powered Voice Agent Platform
+          </TypographyP>
+          <TypographyP className="font-mono ">
+            Voice Forge is an enterprise-grade AI voice automation platform that orchestrates intelligent outbound campaigns, inbound call handling, and appointment scheduling through natural voice conversations. Built with a robust full-stack architecture, it combines real-time telephony, background job orchestration, and LLM-powered agent reasoning into a unified command center.
+          </TypographyP>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/voiceforge/VoiceForge1.png`,
+              `${BASE_PATH}/voiceforge/VoiceForge2.png`,
+            ]}
+          />
+          <p className="font-mono mb-2">
+            At the core of Voice Forge is an AI agent capable of conducting natural conversations using GPT-4 and Whisper. The system handles end-to-end calling campaigns — from automated outbound dialing to smart IVR for inbound calls — with real-time sentiment analysis and dynamic FAQ resolution from a customizable knowledge base.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/voiceforge/VoiceForge1.png`,
+              `${BASE_PATH}/voiceforge/VoiceForge2.png`,
+            ]}
+          />
+
+          <TypographyH3 className="my-4 mt-8">Real-Time Operations Dashboard</TypographyH3>
+          <p className="font-mono mb-2">
+            A comprehensive analytics dashboard provides live visibility into active calls, campaign progress, conversion rates, and sentiment trends. WebSocket-powered updates ensure instant status changes, while JWT-based RBAC secures access across Admin, Agent, and Viewer roles. Twilio integration handles telephony infrastructure with webhook signature validation and rate limiting.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/voiceforge/VoiceForge1.png`,
+              `${BASE_PATH}/voiceforge/VoiceForge2.png`,
+            ]}
+          />
+        </div>
+      );
+    },
+  },
+  {
     id: "salon",
     category: "Full-Stack Web App",
     title: "Salon Booking App",
@@ -206,14 +353,21 @@ const projects: Project[] = [
     screenshots: ["salon_landing.png"],
     skills: {
       frontend: [
-        PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.react,
+        PROJECT_SKILLS.next,
         PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.motion,
+        PROJECT_SKILLS.reactQuery,
+        PROJECT_SKILLS.context,
       ],
       backend: [
         PROJECT_SKILLS.node,
         PROJECT_SKILLS.express,
-        PROJECT_SKILLS.mongo,
+        PROJECT_SKILLS.mongodbAtlas,
+        PROJECT_SKILLS.jwt,
+        PROJECT_SKILLS.bcrypt,
+        PROJECT_SKILLS.cloudinary,
+        PROJECT_SKILLS.vercel,
+        PROJECT_SKILLS.render,
       ],
     },
     live: "https://github.com/Adityakumar747/salon-booking-fullstack",
@@ -222,16 +376,14 @@ const projects: Project[] = [
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            A full-stack salon booking application built with the MERN stack.
+            Jawed Habib • Salon Booking Platform
           </TypographyP>
           <TypographyP className="font-mono ">
-            Features user authentication, service browsing, and appointment scheduling with a responsive UI. Designed to streamline operations for salon businesses while providing an intuitive booking experience for clients.
+            A modern, high-luxury full-stack salon management and booking platform inspired by the premium Jawed Habib heritage brand. The application delivers a seamless experience for both customers and administrators, featuring luxury branding, intelligent booking logic, and a comprehensive admin command center.
           </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          
-          <TypographyH3 className="my-4 mt-8">Authentication &amp; User Flow</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Luxury Experience &amp; Smart Booking</TypographyH3>
           <p className="font-mono mb-2">
-            Secure user authentication allowing clients to create accounts, manage profiles, and track their past and upcoming salon appointments seamlessly.
+            The platform features high-contrast premium UI/UX with smooth Framer Motion animations and elite portfolio imagery across 12+ service categories — from Hair and Skin to Bridal and Grooming. Smart booking logic includes date/time slot validation, auto-advance scheduling, and dynamic audience filtering for Men, Women, and Kids.
           </p>
           <SlideShow
             images={[
@@ -241,9 +393,9 @@ const projects: Project[] = [
             ]}
           />
 
-          <TypographyH3 className="my-4 mt-8">Service Management</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Authentication &amp; Admin Command Center</TypographyH3>
           <p className="font-mono mb-2">
-            Dynamic service catalog integration where administrators can update offerings, pricing, and availability in real-time, displayed with elegant styling.
+            Secure JWT-based authentication protects both user and admin accounts. The admin dashboard provides full control over services, real-time analytics, and appointment management. Media assets are optimized and served via Cloudinary, with the frontend deployed on Vercel and the backend on Render for scalable performance.
           </p>
           <SlideShow
             images={[
@@ -264,14 +416,15 @@ const projects: Project[] = [
     screenshots: ["melonchat_landing.png"],
     skills: {
       frontend: [
-        PROJECT_SKILLS.ts,
         PROJECT_SKILLS.next,
         PROJECT_SKILLS.react,
         PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.clerk,
+        PROJECT_SKILLS.stream,
+        PROJECT_SKILLS.js,
+        PROJECT_SKILLS.vercel,
       ],
-      backend: [
-        PROJECT_SKILLS.node,
-      ],
+      backend: [],
     },
     live: "https://github.com/Adityakumar747/Melonchat",
     github: "https://github.com/Adityakumar747/Melonchat",
@@ -279,16 +432,14 @@ const projects: Project[] = [
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            Real-time community chat platform.
+            Melon Chat — Real-Time Community Platform
           </TypographyP>
           <TypographyP className="font-mono ">
-            Built with Next.js, Clerk authentication, and Stream Chat APIs. It allows users to connect, form communities, and engage in real-time conversations with a sleek and modern UI.
+            A modern full-stack chat application built with Next.js, Clerk authentication, and Stream Chat APIs. It enables users to securely authenticate, join topic-based discussion forums, and engage in real-time conversations with a sleek, responsive UI.
           </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-
-          <TypographyH3 className="my-4 mt-8">Real-time Messaging</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Secure Authentication &amp; Onboarding</TypographyH3>
           <p className="font-mono mb-2">
-            Instant message delivery, typing indicators, and online presence features powered by Stream Chat APIs to provide a robust and engaging chat experience.
+            Users authenticate securely through Clerk, gaining access to topic-based discussion forums. Each topic maps directly to a Stream chat channel, creating a structured yet flexible community experience.
           </p>
           <SlideShow
             images={[
@@ -298,9 +449,9 @@ const projects: Project[] = [
             ]}
           />
 
-          <TypographyH3 className="my-4 mt-8">Community &amp; Channels</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Real-Time Messaging &amp; Community</TypographyH3>
           <p className="font-mono mb-2">
-            Support for multiple channels, direct messaging, and community management tools allowing users to organize discussions based on different topics or interests.
+            Multiple users can join the same discussion room and exchange messages instantly via Stream's real-time infrastructure. The platform supports typing indicators, online presence, and organized channel management for seamless community engagement.
           </p>
           <SlideShow
             images={[
@@ -315,18 +466,19 @@ const projects: Project[] = [
   },
   {
     id: "flyby",
-    category: "Web Application",
+    category: "Travel Booking Platform",
     title: "Flyby",
     src: "/assets/projects-screenshots/flyby/flyby1.png",
     screenshots: ["flyby1.png"],
     skills: {
       frontend: [
-        PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.react,
-        PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.php,
+        PROJECT_SKILLS.bootstrap,
       ],
       backend: [
-        PROJECT_SKILLS.node,
+        PROJECT_SKILLS.php,
+        PROJECT_SKILLS.mysql,
+        PROJECT_SKILLS.paypal,
       ],
     },
     live: "https://github.com/Adityakumar747/Flyby",
@@ -335,16 +487,14 @@ const projects: Project[] = [
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            A modern, fast, and scalable web application.
+            Flyby — Travel Booking Platform
           </TypographyP>
           <TypographyP className="font-mono ">
-            Flyby is designed to deliver high performance and exceptional user experience. Incorporating modern design patterns and optimized architecture to handle intensive workloads gracefully.
+            A full-featured travel booking website built with PHP and MySQL, enabling users to browse destinations, book travel orders, and complete payments securely through PayPal integration. The platform manages the complete booking lifecycle from search to confirmation.
           </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-
-          <TypographyH3 className="my-4 mt-8">Dashboard &amp; Analytics</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Travel Search &amp; Booking Flow</TypographyH3>
           <p className="font-mono mb-2">
-            A comprehensive dashboard providing insights, data visualization, and quick controls for effective management of application resources.
+            Users can search for travel destinations, view available options, and book orders through an intuitive booking interface. The system handles booking management, availability tracking, and order confirmation workflows powered by a robust PHP backend.
           </p>
           <SlideShow images={[
               `${BASE_PATH}/flyby/flyby2.png`,
@@ -353,9 +503,9 @@ const projects: Project[] = [
               `${BASE_PATH}/flyby/flyby5.png`,
           ]} />
 
-          <TypographyH3 className="my-4 mt-8">Resource Library</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Secure Payments &amp; Data Management</TypographyH3>
           <p className="font-mono mb-2">
-            An organized repository interface to manage files, digital assets, and configurations seamlessly within the browser.
+            PayPal integration ensures secure, trusted payment processing for travel bookings. All booking data, user information, and transaction records are managed through a MySQL database, providing reliable data persistence and retrieval across the platform.
           </p>
           <SlideShow
             images={[
@@ -377,9 +527,12 @@ const projects: Project[] = [
     screenshots: ["idr.png"],
     skills: {
       frontend: [
+        PROJECT_SKILLS.html5,
+        PROJECT_SKILLS.css3,
         PROJECT_SKILLS.js,
-        PROJECT_SKILLS.react,
-        PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.flexbox,
+        PROJECT_SKILLS.googleFonts,
+        PROJECT_SKILLS.figma,
       ],
       backend: [],
     },
@@ -389,22 +542,20 @@ const projects: Project[] = [
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            Institute of Digital Risk (IDR) Homepage
+            IDR Digital — Institute of Digital Risk
           </TypographyP>
           <TypographyP className="font-mono ">
-            This project is a fully responsive, beautifully designed homepage for the Institute of Digital Risk. Built using modern frontend tools to showcase organizational goals and resources effectively.
+            A fully responsive, professionally designed homepage for the Institute of Digital Risk (IDR). The design is built around a cube-inspired geometric logo concept representing structured systems, layered digital risk, and stability in complex environments.
           </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-
-          <TypographyH3 className="my-4 mt-8">Modern Aesthetic</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Design System &amp; Identity</TypographyH3>
           <p className="font-mono mb-2">
-            Clean typography, balanced whitespace, and interactive elements designed to draw user attention to key information and call-to-actions.
+            The visual identity combines an orange accent for innovation and forward momentum with a black and white base for a clean, professional look. Modern, minimal typography reinforces credibility, while the logo appears in both icon-only and full-institute-name variants across the site.
           </p>
           <SlideShow images={[`${BASE_PATH}/idr/idr1.png`]} />
 
-          <TypographyH3 className="my-4 mt-8">Interactive Sections</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Core Pillars &amp; Community</TypographyH3>
           <p className="font-mono mb-2">
-            Dynamic content areas that adapt to various screen sizes, ensuring a consistent and engaging experience across desktop and mobile devices.
+            The site highlights three foundational pillars: the Academy for training programs, Innovation & Incubation for AI and risk models, and Advisory Services covering NIST, ISO 27001, and NIS2 frameworks. A dedicated community section supports students and professionals in upskilling within cyber risk.
           </p>
           <SlideShow
             images={[
@@ -425,10 +576,10 @@ const projects: Project[] = [
     skills: {
       frontend: [
         PROJECT_SKILLS.js,
-        PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.bootstrap,
       ],
       backend: [
-        PROJECT_SKILLS.docker,
+        PROJECT_SKILLS.php,
       ],
     },
     live: "https://github.com/Adityakumar747/Pmjs-wealth-",
@@ -437,16 +588,14 @@ const projects: Project[] = [
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            A comprehensive wealth management and tracking platform.
+            PMJS Wealth — Financial Planning Platform
           </TypographyP>
           <TypographyP className="font-mono ">
-            Built to handle financial operations, track portfolios, and provide valuable insights for wealth management through an intuitive interface.
+            A comprehensive web platform built for a financial services brand, focusing on SIP investments, insurance planning, and holistic wealth management. The site provides an intuitive interface for users to explore financial products and plan their financial futures.
           </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-
-          <TypographyH3 className="my-4 mt-8">Financial Dashboard</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Financial Products &amp; Services</TypographyH3>
           <p className="font-mono mb-2">
-            A centralized view of financial health, displaying key metrics, recent transactions, and portfolio performance trends in an easy-to-read format.
+            The platform showcases a curated suite of financial offerings including Systematic Investment Plans (SIP), life and general insurance products, and personalized financial planning tools. Structured sections guide users through product discovery and comparison.
           </p>
           <SlideShow images={[
               `${BASE_PATH}/pmjs/pmjs2.png`,
@@ -454,9 +603,9 @@ const projects: Project[] = [
               `${BASE_PATH}/pmjs/pmjs4.png`,
           ]} />
 
-          <TypographyH3 className="my-4 mt-8">Insights &amp; Analytics</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Wealth Management &amp; Insights</TypographyH3>
           <p className="font-mono mb-2">
-            Detailed reporting tools that break down expenses, investments, and growth over time to help users make informed financial decisions.
+            Interactive dashboards and reporting sections help users visualize their financial health, track investments, and understand growth trajectories. The design balances data density with readability, making complex financial information accessible.
           </p>
           <SlideShow images={[
               `${BASE_PATH}/pmjs/pmjs5.png`,
@@ -476,12 +625,10 @@ const projects: Project[] = [
     screenshots: ["setulink1.png"],
     skills: {
       frontend: [
-        PROJECT_SKILLS.js,
-        PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.react,
+        PROJECT_SKILLS.bootstrap,
       ],
       backend: [
-        PROJECT_SKILLS.node,
+        PROJECT_SKILLS.php,
       ],
     },
     live: "https://github.com/Adityakumar747/Setulink-website-",
@@ -490,16 +637,14 @@ const projects: Project[] = [
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            A dynamic and responsive platform to connect users seamlessly.
+            SetuLink — CCTV Services Platform
           </TypographyP>
           <TypographyP className="font-mono ">
-            Setulink provides a comprehensive suite of tools designed for collaboration and resource sharing, wrapped in a modern, user-friendly interface.
+            A professional web platform built for a CCTV services company, designed to showcase security solutions, service offerings, and enable seamless customer engagement. The site presents a modern, trustworthy digital presence for a surveillance and security business.
           </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-
-          <TypographyH3 className="my-4 mt-8">Interactive Dashboard</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Service Showcase</TypographyH3>
           <p className="font-mono mb-2">
-            A streamlined control center that gives users quick access to their projects, settings, and communication channels.
+            The platform highlights a comprehensive range of CCTV and security services, from installation and maintenance to surveillance system consulting. Clean layouts and structured sections guide visitors through offerings, helping them find the right security solution.
           </p>
           <SlideShow
             images={[
@@ -509,9 +654,9 @@ const projects: Project[] = [
             ]}
           />
 
-          <TypographyH3 className="my-4 mt-8">Project Management</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">Customer Engagement &amp; Inquiry</TypographyH3>
           <p className="font-mono mb-2">
-            Integrated tools for tracking progress, managing tasks, and collaborating with team members efficiently.
+            Integrated contact and inquiry flows make it easy for potential clients to reach out for consultations, quotes, and support requests. The design emphasizes trust and professionalism through consistent branding and clear call-to-action pathways.
           </p>
           <SlideShow
             images={[
@@ -533,9 +678,9 @@ const projects: Project[] = [
     github: "https://github.com/Adityakumar747/Karopitch",
     skills: {
       frontend: [
+        PROJECT_SKILLS.html5,
+        PROJECT_SKILLS.css3,
         PROJECT_SKILLS.js,
-        PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.react,
       ],
       backend: [],
     },
@@ -543,16 +688,14 @@ const projects: Project[] = [
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            A highly optimized and visually appealing landing page.
+            Karo Pitch — Startup Pitch Platform
           </TypographyP>
           <TypographyP className="font-mono ">
-            Karo Pitch is a modern, responsive landing page designed to capture attention and deliver information effectively with smooth animations and clean layouts.
+            A modern, responsive landing page designed to support founders across India in raising funding. The platform connects startups with investors through a structured pitch process, backed by KaroStartup's storytelling platform.
           </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          
-          <TypographyH3 className="my-4 mt-8">Responsive Design</TypographyH3>
+          <TypographyH3 className="my-4 mt-8">How It Works</TypographyH3>
           <p className="font-mono mb-2">
-            Carefully crafted to look perfect on devices of all sizes, from large desktop monitors down to mobile phones, ensuring a consistent user experience.
+            A simple 4-step process guides founders from application to funding. Startups apply with their pitch deck, get shortlisted by KaroStartup, pitch live to investors, and raise funding to scale their ventures.
           </p>
           <SlideShow
             images={[
@@ -560,12 +703,17 @@ const projects: Project[] = [
               `${BASE_PATH}/karopitch/karopitch3.png`,
             ]}
           />
-          
-          <TypographyH3 className="my-4 mt-8">Performance Optimized</TypographyH3>
+
+          <TypographyH3 className="my-4 mt-8">Who Can Apply</TypographyH3>
           <p className="font-mono mb-2">
-            Built with modern web standards prioritizing fast load times, accessibility, and high performance scores across all metrics.
+            The platform is open to a diverse range of startup categories: D2C Brands, Consumer Startups, MSMEs, SaaS Startups, Manufacturing Businesses, and Bharat-focused startups. Each category is represented through dedicated sections and investor matching.
           </p>
           <SlideShow images={[`${BASE_PATH}/karopitch/karopitch4.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">Investors &amp; Featured Startups</TypographyH3>
+          <p className="font-mono mb-2">
+            A dedicated investors section showcases the ecosystem of backers attending pitch events. Featured startup cards display sample ventures across categories, giving visitors a clear picture of the platform's reach and impact.
+          </p>
         </div>
       );
     },
