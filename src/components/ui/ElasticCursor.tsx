@@ -14,7 +14,6 @@ import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
 import { usePreloader } from "../preloader";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { usePathname } from "next/navigation";
 
 function useTicker(callback: any, paused: boolean) {
   useEffect(() => {
@@ -94,9 +93,6 @@ function measure(el: HTMLElement): Base {
 }
 
 function ElasticCursor() {
-  const pathname = usePathname();
-  const isBlogPost = pathname.startsWith("/blogs/") && pathname !== "/blogs";
-
   const { loadingPercent, isLoading } = usePreloader();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -131,7 +127,7 @@ function ElasticCursor() {
   const set = useInstance<Setters>(() => ({}));
 
   // Bind GSAP quick setters to the live nodes. Re-runs on remount
-  // (isMobile/isBlogPost toggle `return null`, swapping in fresh DOM nodes);
+  // (isMobile toggle `return null`, swapping in fresh DOM nodes);
   // without rebinding they'd write to detached elements and freeze.
   useLayoutEffect(() => {
     const jellyEl = jellyRef.current;
@@ -153,7 +149,7 @@ function ElasticCursor() {
     set.dotX = gsap.quickSetter(dotEl, "x", "px");
     set.dotY = gsap.quickSetter(dotEl, "y", "px");
     set.dotOpacity = gsap.quickSetter(dotEl, "opacity");
-  }, [isMobile, isBlogPost]);
+  }, [isMobile]);
 
   // Single render loop. Reads everything from refs so it stays stable and the
   // ticker isn't re-added on every hover.
@@ -247,7 +243,7 @@ function ElasticCursor() {
 
   // Track the raw pointer, drive the free-roam spring, and update hide flag.
   useEffect(() => {
-    if (isMobile || isBlogPost) return;
+    if (isMobile) return;
     const onMove = (e: MouseEvent) => {
       pointer.x = e.clientX;
       pointer.y = e.clientY;
@@ -274,12 +270,12 @@ function ElasticCursor() {
     };
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
-  }, [isMobile, isBlogPost]);
+  }, [isMobile]);
 
   // Acquire/release targets via event delegation — fires once per target
   // instead of re-scanning on every mousemove.
   useEffect(() => {
-    if (isMobile || isBlogPost) return;
+    if (isMobile) return;
 
     const acquire = (el: HTMLElement) => {
       gsap.killTweensOf(el);
@@ -352,7 +348,7 @@ function ElasticCursor() {
       window.removeEventListener("scroll", onScroll);
       if (active.el) release();
     };
-  }, [isMobile, isBlogPost]);
+  }, [isMobile]);
 
   // Preloader uses the blob as a loading bar.
   useEffect(() => {
@@ -362,8 +358,8 @@ function ElasticCursor() {
     jellyRef.current.style.width = loadingPercent * 2 + "vw";
   }, [loadingPercent]);
 
-  useTicker(render, isLoading || !cursorMoved || isMobile || isBlogPost);
-  if (isMobile || isBlogPost) return null;
+  useTicker(render, isLoading || !cursorMoved || isMobile);
+  if (isMobile) return null;
 
   return (
     <>

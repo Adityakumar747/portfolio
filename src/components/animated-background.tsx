@@ -8,14 +8,14 @@ import { Skill, SkillNames, SKILLS } from "@/data/constants";
 import { sleep } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { usePreloader } from "./preloader";
-import { useTheme } from "next-themes";
+import { useTheme } from "./theme-provider";
 import { Section, getKeyboardState } from "./animated-background-config";
 import { useSounds } from "@/hooks/use-sounds";
 import { usePerfProfile } from "@/hooks/use-perf-profile";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const KeyboardScene = ({ maxDpr }: { maxDpr: number }) => {
+const KeyboardScene = ({ maxDpr, onError }: { maxDpr: number; onError: () => void }) => {
   const { isLoading, bypassLoading } = usePreloader();
   const { theme } = useTheme();
   const isMobile = useMediaQuery("(max-width: 767px)");
@@ -33,6 +33,7 @@ const KeyboardScene = ({ maxDpr }: { maxDpr: number }) => {
   const keycapAnimationsRef = useRef<{ start: () => void; stop: () => void }>(null);
 
   const [keyboardRevealed, setKeyboardRevealed] = useState(false);
+  const [splineError, setSplineError] = useState(false);
 
   // --- Event Handlers ---
 
@@ -488,6 +489,11 @@ const KeyboardScene = ({ maxDpr }: { maxDpr: number }) => {
           setSplineApp(app);
           bypassLoading();
         }}
+        onError={() => {
+          setSplineError(true);
+          bypassLoading();
+          onError();
+        }}
         scene="/assets/skills-keyboard.spline"
       />
     </Suspense>
@@ -510,8 +516,15 @@ const KeyboardScene = ({ maxDpr }: { maxDpr: number }) => {
  */
 const AnimatedBackground = () => {
   const { disable3D, maxDpr, ready } = usePerfProfile();
+  const [splineError, setSplineError] = useState(false);
+
   if (!ready || disable3D) return null;
-  return <KeyboardScene maxDpr={maxDpr} />;
+
+  if (splineError) {
+    return <div className="fixed inset-0 z-0 bg-background" />;
+  }
+
+  return <KeyboardScene maxDpr={maxDpr} onError={() => setSplineError(true)} />;
 };
 
 /**

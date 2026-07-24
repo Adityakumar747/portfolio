@@ -2,9 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Particles from "@/components/Particles";
-import EasterEggs from "@/components/easter-eggs";
 import ElasticCursor from "@/components/ui/ElasticCursor";
-import RadialMenu from "@/components/radial-menu/index";
 import MotionNudge from "@/components/motion-nudge";
 import { usePerfProfile } from "@/hooks/use-perf-profile";
 
@@ -25,9 +23,7 @@ export default function AppOverlays() {
           maxDpr={maxDpr}
         />
       )}
-      <EasterEggs />
       {!isResume && !disableDecorative && <ElasticCursor />}
-      {isHome && <RadialMenu />}
       {isHome && <MotionNudge />}
     </>
   );

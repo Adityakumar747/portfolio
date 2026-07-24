@@ -3,7 +3,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useMousePosition } from "@/utils/mouse";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
 
 interface ParticlesProps {
   className?: string;
@@ -36,9 +35,6 @@ export default function Particles({
   refresh = false,
   maxDpr = 2,
 }: ParticlesProps) {
-  const pathname = usePathname();
-  const isBlogPost = pathname.startsWith("/blogs/") && pathname !== "/blogs";
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const context = useRef<CanvasRenderingContext2D | null>(null);
@@ -52,7 +48,6 @@ export default function Particles({
     typeof window !== "undefined" ? Math.min(window.devicePixelRatio, maxDpr) : 1;
 
   useEffect(() => {
-    if (isBlogPost) return;
     if (canvasRef.current) {
       context.current = canvasRef.current.getContext("2d");
     }
@@ -60,8 +55,6 @@ export default function Particles({
     animate();
     window.addEventListener("resize", initCanvas);
 
-    // Pause the render loop while the tab is hidden — no point burning frames
-    // (and battery) drawing to a canvas nobody can see.
     const onVisibility = () => {
       if (document.hidden) {
         cancelAnimationFrame(rafId.current);
@@ -77,7 +70,7 @@ export default function Particles({
       window.removeEventListener("resize", initCanvas);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [isBlogPost]);
+  }, []);
 
   useEffect(() => {
     onMouseMove();

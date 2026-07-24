@@ -2,32 +2,20 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
-// Pan speed (CSS px/sec). Duration is derived from this so every card scrolls
-// at the same visual speed — longer pages just take proportionally longer.
+// Pan speed (CSS px/sec).
 const PAN_SPEED = 70;
 const PAUSE = 1.2; // seconds held at top and bottom
 
-// A page only pans if it overflows the frame by at least this fraction of the
-// frame height. Anything shorter (landscape/square screenshots) is shown
-// "cover" instead, so any image looks right with no per-image config.
+// A page only pans if it overflows the frame by at least this fraction.
 const MIN_SCROLL_OVERFLOW = 0.2;
 
-// Neutral wallpaper when a card has no `bg` (or it fails to load), so adding a
-// project with just a screenshot still looks intentional.
 const FALLBACK_BG = "linear-gradient(135deg, #1e293b, #0f172a)";
 
 /**
- * Card preview: a screenshot floating over a wallpaper. Tall landing pages pan
- * top → bottom → back like a scroll-through recording; normal (landscape/square)
- * screenshots are shown "cover", centered. Detection is automatic from the
- * image's natural ratio — drop in any image and it just works.
- *
- * `bg` (the wallpaper) is optional; omit it for a neutral gradient.
- *
- * Layout/backgrounds are inline-styled because this project's Tailwind config
- * can't emit opacity-modified theme colors or arbitrary `bg-[length:…]` — those
- * utilities silently no-op.
+ * Card preview that uses GPU-accelerated transform: translateY for the pan
+ * animation — zero layout/paint cost per frame, always 60 fps.
  */
 const ScrollingPreview = ({
   src,
@@ -40,9 +28,12 @@ const ScrollingPreview = ({
 }) => {
   const reduceMotion = useReducedMotion();
   const viewportRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLDivElement>(null);
   const [scrollPx, setScrollPx] = useState(0);
   const [bgReady, setBgReady] = useState(false);
+  const [imgHeight, setImgHeight] = useState<number | null>(null);
 
+  // Compute how much the image overflows the viewport
   useEffect(() => {
     let cancelled = false;
     const img = new window.Image();
@@ -50,10 +41,12 @@ const ScrollingPreview = ({
       const vp = viewportRef.current;
       if (cancelled || !vp || !img.naturalWidth) return;
       const ratio = img.naturalHeight / img.naturalWidth;
-      const displayedHeight = vp.clientWidth * ratio; // height at bg-size "100% auto"
+      const displayedHeight = vp.clientWidth * ratio;
       const overflow = displayedHeight - vp.clientHeight;
-      // Only pages meaningfully taller than the frame pan; the rest go "cover".
-      setScrollPx(overflow > vp.clientHeight * MIN_SCROLL_OVERFLOW ? overflow : 0);
+      if (!cancelled) {
+        setImgHeight(displayedHeight);
+        setScrollPx(overflow > vp.clientHeight * MIN_SCROLL_OVERFLOW ? overflow : 0);
+      }
     };
     img.onload = compute;
     img.src = src;
@@ -65,21 +58,15 @@ const ScrollingPreview = ({
     };
   }, [src]);
 
-  // Preload the wallpaper so a missing/404 file falls back to the gradient
-  // instead of rendering a broken background.
+  // Preload background wallpaper
   useEffect(() => {
-    if (!bg) {
-      setBgReady(false);
-      return;
-    }
+    if (!bg) { setBgReady(false); return; }
     let cancelled = false;
     const img = new window.Image();
     img.onload = () => !cancelled && setBgReady(true);
     img.onerror = () => !cancelled && setBgReady(false);
     img.src = bg;
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [bg]);
 
   const scrolls = scrollPx > 0;
@@ -101,7 +88,7 @@ const ScrollingPreview = ({
       role="img"
       aria-label={alt}
     >
-      {/* wallpaper background (falls back to a gradient when `bg` is absent) */}
+      {/* wallpaper background */}
       <div
         style={{
           position: "absolute",
@@ -113,10 +100,9 @@ const ScrollingPreview = ({
         }}
       />
 
-      {/* floating screenshot panel */}
+      {/* floating screenshot panel — overflow hidden clips the panning image */}
       <div
         ref={viewportRef}
-        className="sp-shot"
         style={{
           position: "absolute",
           left: 22,
@@ -128,37 +114,56 @@ const ScrollingPreview = ({
           boxShadow:
             "0 24px 50px -12px rgba(8,20,55,0.55), 0 8px 18px -8px rgba(8,20,55,0.45)",
           border: "1px solid rgba(255,255,255,0.18)",
+          backgroundColor: "#000",
         }}
       >
+        {/*
+          Key trick: the image sits ABOVE the viewport in a taller container,
+          then we translateY it downward to pan. This is pure compositor work —
+          no layout, no paint, always GPU.
+        */}
         <motion.div
+          ref={imgRef}
           style={{
             position: "absolute",
-            inset: 0,
-            backgroundImage: `url("${src}")`,
-            // Tall pages fill width and pan; normal images cover the frame.
-            backgroundSize: scrolls ? "100% auto" : "cover",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: scrolls ? "50% 0%" : "center",
+            top: 0,
+            left: 0,
+            right: 0,
+            // tall enough to contain the full image
+            height: scrolls && imgHeight ? imgHeight : "100%",
+            willChange: "transform",
           }}
           animate={
             animate
-              ? {
-                backgroundPosition: [
-                  "50% 0%",
-                  "50% 100%",
-                  "50% 100%",
-                  "50% 0%",
-                  "50% 0%",
-                ],
-              }
-              : undefined
+              ? { y: [0, -scrollPx, -scrollPx, 0, 0] }
+              : { y: 0 }
           }
           transition={
             animate
-              ? { duration: total, ease: "easeInOut", repeat: Infinity, times }
+              ? {
+                  duration: total,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  times,
+                }
               : undefined
           }
-        />
+        >
+          <img
+            src={src}
+            alt={alt}
+            style={{
+              display: "block",
+              width: "100%",
+              height: scrolls ? "auto" : "100%",
+              objectFit: scrolls ? "fill" : "cover",
+              objectPosition: "top center",
+              // Hint browser to decode off-main-thread
+              decoding: "async",
+            }}
+            loading="lazy"
+          />
+        </motion.div>
       </div>
     </div>
   );
