@@ -158,8 +158,6 @@ const ScrollingPreview = ({
               height: scrolls ? "auto" : "100%",
               objectFit: scrolls ? "fill" : "cover",
               objectPosition: "top center",
-              // Hint browser to decode off-main-thread
-              decoding: "async",
             }}
             loading="lazy"
           />
