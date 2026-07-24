@@ -53,7 +53,7 @@ export default function BlogListClient({ posts }: { posts: Post[] }) {
           className="mb-20"
         >
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex-1">
+            <div className="flex-1 relative p-6 md:p-8 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10">
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-px flex-1 max-w-[60px] bg-[hsl(20,100%,70%)]" />
                 <span className="text-[hsl(20,100%,70%)] text-sm font-medium tracking-[0.2em] uppercase font-sans">
@@ -61,8 +61,8 @@ export default function BlogListClient({ posts }: { posts: Post[] }) {
                 </span>
               </div>
               <h1 className="font-display text-3xl md:text-5xl leading-[0.95] tracking-tight">
-                <span className="text-black">Hello.</span><br />
-                <span className="text-[hsl(20,100%,70%)]">I am Aditya</span>
+                <span className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">Hello.</span><br />
+                <span className="text-black drop-shadow-[0_2px_4px_rgba(255,255,255,0.5)]">I am Aditya</span>
               </h1>
               <p className="mt-6 text-muted-foreground text-lg max-w-lg leading-relaxed font-sans">
                 Notes on building things, breaking things, and occasionally writing about it.
