@@ -305,7 +305,7 @@ const projects: Project[] = [
       ],
     },
     live: "https://ai-agent-flow-lake.vercel.app/",
-    github: "",
+    github: "https://github.com/Adityakumar747/AI-agent_flow",
     get content() {
       return (
         <div>

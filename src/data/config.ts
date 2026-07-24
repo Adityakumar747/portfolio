@@ -1,7 +1,7 @@
 const config = {
   title: "Aditya Kumar | Full-Stack Developer",
   description: {
-    long: "Explore the portfolio of Aditya Kumar, a full-stack web developer specializing in React.js, Next.js, Node.js, and responsive design. Discover innovative projects including Salon Booking System, Melon Chat, and more. Let's build something amazing together!",
+    long: "Explore the portfolio of Aditya Kumar, a full-stack web developer specializing in React.js, Next.js, Node.js, and responsive design. Discover innovative projects including VoiceForge, Melon Chat, and more. Let's build something amazing together!",
     short:
       "Discover the portfolio of Aditya Kumar, a full-stack developer creating interactive web applications and innovative projects.",
   },
@@ -19,12 +19,12 @@ const config = {
     "responsive design",
   ],
   author: "Aditya Kumar",
-  email: "adityakumar7463029@gmail.com",
+  email: "adityakumar746302@gmail.com",
   site: "https://adityakumar.dev",
 
   // for github stars button
   githubUsername: "Adityakumar747",
-  githubRepo: "3d-portfolio",
+  githubRepo: "portfolio",
 
   get ogImg() {
     return this.site + "/assets/seo/og-image.png";
