@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
+
+type Theme = "light" | "dark" | "system";
 import { flushSync } from "react-dom";
 
 import { Button } from "@/components/ui/button";
@@ -24,7 +26,7 @@ export default function FunnyThemeToggle({
     setMounted(true);
   }, []);
 
-  const toggleTheme = async (newTheme: string, event?: React.MouseEvent) => {
+  const toggleTheme = async (newTheme: Theme, event?: React.MouseEvent) => {
     // @ts-ignore
     if (!document.startViewTransition || !event) {
       setTheme(newTheme);
