@@ -6,7 +6,9 @@ A jaw-dropping developer portfolio packed with interactive 3D animations, butter
 
 
 
-[![Portfolio Preview](https://github.com/Adityakumar747/portfolio/blob/main/public/assets/projects-screenshots/portfolio/landing.png?raw=true)](https://portfolio1-bay-ten.vercel.app/)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Adityakumar747/portfolio1)
+
+![Portfolio Preview](https://github.com/Adityakumar747/portfolio1/blob/main/public/assets/projects-screenshots/portfolio/project-preview.png?raw=true)
 
 ## ✨ Features
 
@@ -43,8 +45,8 @@ A jaw-dropping developer portfolio packed with interactive 3D animations, butter
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/Adityakumar747/3d-portfolio.git
-    cd 3d-portfolio
+    git clone https://github.com/Adityakumar747/portfolio1.git
+    cd portfolio1
     ```
 
 2. **Install dependencies:**
@@ -162,7 +164,7 @@ These features activate automatically when the `NEXT_PUBLIC_WS_URL` environment 
 
 ## 🚀 Deployment
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Adityakumar747/3d-portfolio)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Adityakumar747/portfolio1)
 
 This site is deployed on **Vercel**. To deploy your own:
 
