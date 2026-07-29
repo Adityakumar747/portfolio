@@ -6,7 +6,7 @@ A jaw-dropping developer portfolio packed with interactive 3D animations, butter
 
 
 
-[![Portfolio Preview](https://github.com/Adityakumar747/3d-portfolio/blob/main/public/assets/projects-screenshots/portfolio/landing.png?raw=true)](https://portfolio1-bay-ten.vercel.app/)
+[![Portfolio Preview](https://github.com/Adityakumar747/portfolio/blob/main/public/assets/projects-screenshots/portfolio/landing.png?raw=true)](https://portfolio1-bay-ten.vercel.app/)
 
 ## ✨ Features
 
