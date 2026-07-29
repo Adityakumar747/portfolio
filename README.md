@@ -10,6 +10,8 @@ A jaw-dropping developer portfolio packed with interactive 3D animations, butter
 
 ![Portfolio Preview](https://github.com/Adityakumar747/portfolio/blob/main/public/assets/projects-screenshots/portfolio/project-preview.png?raw=true)
 
+preview link - https://portfolio1-bay-ten.vercel.app/
+
 ## ✨ Features
 
 - **Interactive 3D Keyboard** — Custom Spline keyboard where each keycap represents a skill, revealing titles and descriptions on hover/press
