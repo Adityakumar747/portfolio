@@ -6,9 +6,9 @@ A jaw-dropping developer portfolio packed with interactive 3D animations, butter
 
 
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Adityakumar747/portfolio1)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Adityakumar747/portfolio)
 
-![Portfolio Preview](https://github.com/Adityakumar747/portfolio1/blob/main/public/assets/projects-screenshots/portfolio/project-preview.png?raw=true)
+![Portfolio Preview](https://github.com/Adityakumar747/portfolio/blob/main/public/assets/projects-screenshots/portfolio/project-preview.png?raw=true)
 
 ## ✨ Features
 
@@ -45,7 +45,7 @@ A jaw-dropping developer portfolio packed with interactive 3D animations, butter
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/Adityakumar747/portfolio1.git
+    git clone https://github.com/Adityakumar747/portfolio.git
     cd portfolio1
     ```
 
@@ -164,7 +164,7 @@ These features activate automatically when the `NEXT_PUBLIC_WS_URL` environment 
 
 ## 🚀 Deployment
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Adityakumar747/portfolio1)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Adityakumar747/portfolio)
 
 This site is deployed on **Vercel**. To deploy your own:
 
